@@ -1,20 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define EXECCPU 0
+
 #define block_size   32
 #define vector_size  1000000000
 
-#define ROWS 300
-#define K 400
-#define COLS 500
-#define INTSIZE sizeof(int)
-#define BLOCK_SIZE 16 
+#define ROWS 3000
+#define K 4000
+#define COLS 5000
+#define INTSIZE sizeof(unsigned int)
+#define BLOCK_SIZE 32 
 
-__global__ void matMult(int* a, int* b, int* res, int rows, int k, int cols){
-    int r = blockIdx.y * blockDim.y + threadIdx.y;
-    int c = blockIdx.x * blockDim.x + threadIdx.x;
+__global__ void matMult(int* a, int* b, int* res,unsigned  int rows, unsigned int k, unsigned int cols){
+    unsigned int r = blockIdx.y * blockDim.y + threadIdx.y;
+    unsigned int c = blockIdx.x * blockDim.x + threadIdx.x;
 
-    int sum = 0;
+    unsigned int sum = 0;
 
     if(r< rows && c< cols){
         for(int x=0; x<k; x++){
@@ -28,7 +30,7 @@ int main( void ) {
 
     // Set device that we will use for our cuda code
     // It will be either 0 or 1
-    cudaSetDevice(0);
+    cudaSetDevice(1);
 
     srand(time(NULL));
 
@@ -39,9 +41,9 @@ int main( void ) {
     cudaEventCreate (&stop);
 
     // Express matrix elements as 1 dimension
-    int aSize =  ROWS * K * INTSIZE;
-    int bSize =  K * COLS* INTSIZE;
-    int cSize =  ROWS * COLS * INTSIZE;
+    unsigned int aSize =  ROWS * K * INTSIZE;
+    unsigned int bSize =  K * COLS* INTSIZE;
+    unsigned int cSize =  ROWS * COLS * INTSIZE;
 
     int *a, *b, *c_cpu, *c_gpu;
     cudaMallocHost((void**)&a,aSize);
@@ -74,15 +76,17 @@ int main( void ) {
     printf("Running sequential job.\n");
     cudaEventRecord(start,0);
 
-    // Calculate C in the CPU
-    for(int r=0; r<ROWS; r++){
-        for(int c=0; c<COLS; c++){
+    if(EXECCPU){
+        // Calculate C in the CPU
+        for(unsigned int r=0; r<ROWS; r++){
+            for(unsigned int c=0; c<COLS; c++){
 
-            int sum = 0; 
-            for(int k=0; k<K;k++){
-                sum +=  a[r*K + k] + b[k*COLS + c];
+                int sum = 0; 
+                for(int k=0; k<K;k++){
+                    sum +=  a[r*K + k] + b[k*COLS + c];
+                }
+                c_cpu[r*COLS + c] = sum;
             }
-            c_cpu[r*COLS + c] = sum;
         }
     }
 
@@ -106,8 +110,8 @@ int main( void ) {
     ////////////////////////
     printf("Running parallel job.\n");
 
-    int gridRows =  (ROWS + BLOCK_SIZE - 1)/ BLOCK_SIZE; 
-    int gridCols =  (COLS+ BLOCK_SIZE - 1)/ BLOCK_SIZE; 
+    unsigned int gridRows =  (ROWS + BLOCK_SIZE - 1)/ BLOCK_SIZE; 
+    unsigned int gridCols =  (COLS+ BLOCK_SIZE - 1)/ BLOCK_SIZE; 
 
     dim3 grids(gridCols, gridRows);
     dim3 blocks(BLOCK_SIZE, BLOCK_SIZE);
@@ -122,19 +126,22 @@ int main( void ) {
 
     cudaMemcpy( c_gpu, dev_c, cSize, cudaMemcpyDeviceToHost);
 
-    // compare the results
-    int error = 0;
-    for(int r=0; r<ROWS; r++){
-        for(int c=0; c<COLS; c++){
-            if (c_cpu[r*COLS + c] != c_gpu[r*COLS + c]){
-                error = 1;
-                break;
+    if(EXECCPU){
+        // compare the results
+        int error = 0;
+        for(unsigned int r=0; r<ROWS; r++){
+            for(unsigned int c=0; c<COLS; c++){
+                if (c_cpu[r*COLS + c] != c_gpu[r*COLS + c]){
+                    error = 1;
+                    break;
+                }
             }
         }
-    }
 
-    if (error == 0){
-        printf ("Correct result. No errors were found.\n");
+        if (error == 0){
+            printf ("Correct result. No errors were found.\n");
+
+        }
     }
 
     cudaFree(dev_a);
