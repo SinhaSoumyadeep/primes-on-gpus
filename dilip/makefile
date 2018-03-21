@@ -11,5 +11,5 @@ clean:
 %.o: %.cu
 	$(CC) $<  -o $@
 
-check: MatMult.o 
-	./MatMult.o
+check: mat_mult.o 
+	./mat_mult.o
