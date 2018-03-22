@@ -35,13 +35,15 @@ int main( void ) {
         small_sieve[i] = true;
     }
 
-    for (unsigned long long int i = 2; i <= pl_end_number; i++) {
+    for (unsigned long long int i = 2; i <= int(sqrt(pl_end_number))+1; i++) {
         for (unsigned long long int j = i+1; j <= pl_end_number; j++) {
             if (j % i == 0) {
                 small_sieve[j] == false;
             }
         }        
     }
+
+
 
 
     // Input Arrays and variables
@@ -99,7 +101,7 @@ int main( void ) {
     grid_size++;
 
     cudaEventRecord(start,0);
-    add<<<grid_size,block_size>>>( dev_a, dev_b, dev_c);
+    //prime<<<grid_size,block_size>>>( dev_a, dev_b, dev_c);
 
     cudaEventRecord(stop,0);
     cudaEventSynchronize(stop);
