@@ -32,7 +32,7 @@ int main( void ) {
     bool *small_sieve = new bool [pl_end_number];
 
     for (unsigned long long int i = 0; i < pl_end_number; i++) {
-        
+        pl_end_number[i] = false;
     }
 
     for (unsigned long long int i = 0; i < sqrt(pl_end_number); i++) {
