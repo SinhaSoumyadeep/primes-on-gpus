@@ -51,7 +51,7 @@ int main( void ) {
 
     cout << "Primes till 100\n";
 
-    for (unsigned long long int i = 2; i <= pl_end_number) {
+    for (unsigned long long int i = 2; i <= pl_end_number; i++) {
         if (small_sieve[i]) {
             cout << i << " ";
         }
