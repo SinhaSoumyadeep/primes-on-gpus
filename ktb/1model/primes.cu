@@ -86,11 +86,21 @@ int main( void ) {
     int *dev_il;
     int *dev_pl;
 
+    // Create Input list
+    unsigned long long int start_number = pl_end_number+1;
+
+    unsigned long long int il_size = pl_end_number*pl_end_number;
+
+    bool *input_list = new bool [pl_end_number*pl_end_number];
+
+    for (unsigned long long int i =0; i < pl_end_number*pl_end_number; i++) {
+        input_list[i] = true;
+    }
 
 
     // allocate the memory on the GPU
-    cudaMalloc( (void**)&dev_il,  vector_size * sizeof(int) );
-    cudaMalloc( (void**)&dev_pl,  vector_size * sizeof(int) );
+    cudaMalloc( (void**)&dev_il,  vector_size * bool_size );
+    cudaMalloc( (void**)&dev_pl,  small_sieve_counter * bool_size );
 
     // copy the arrays 'a' and 'b' to the GPU
     // cudaMemcpy( dev_a, a, vector_size * sizeof(int),
