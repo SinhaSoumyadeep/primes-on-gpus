@@ -1,8 +1,8 @@
 CC=nvcc
 
-all: check
+all: pbasic 
 
-default: check
+default: pbasic 
 
 clean:
 	rm -rf *.o *.so ${TESTS} *out*
@@ -13,3 +13,6 @@ clean:
 
 check: mat_mult.o 
 	./mat_mult.o
+
+pbasic : prime_basic.o 
+	./prime_basic.o
