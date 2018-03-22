@@ -30,6 +30,10 @@ int main( void ) {
 
     bool *small_sieve = new bool [pl_end_number];
 
+    for (unsigned long long int i = 0; i < pl_end_number; i++) {
+        
+    }
+
     // Input Arrays and variables
     int *input_list        = new int [vector_size]; 
     int *prime_list        = new int [vector_size]; 
