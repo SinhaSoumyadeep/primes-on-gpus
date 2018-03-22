@@ -88,10 +88,11 @@ int main( void ) {
     cudaMalloc( (void**)&dev_c,  vector_size * sizeof(int) );
 
     // copy the arrays 'a' and 'b' to the GPU
-    cudaMemcpy( dev_a, a, vector_size * sizeof(int),
-            cudaMemcpyHostToDevice );
-    cudaMemcpy( dev_b, b, vector_size * sizeof(int),
-            cudaMemcpyHostToDevice );
+    // cudaMemcpy( dev_a, a, vector_size * sizeof(int),
+    //         cudaMemcpyHostToDevice );
+    // cudaMemcpy( dev_b, b, vector_size * sizeof(int),
+    //         cudaMemcpyHostToDevice );
+
 
     //
     // GPU Calculation
