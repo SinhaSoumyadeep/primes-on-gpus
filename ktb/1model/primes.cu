@@ -3,6 +3,8 @@
 #include <math.h>
 #include <iostream>
 
+using namespace std;
+
 #define block_size   32
 #define pl_end_number 100
 #define vector_size 1000
