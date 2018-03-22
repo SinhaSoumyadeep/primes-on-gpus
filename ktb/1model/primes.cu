@@ -37,7 +37,9 @@ int main( void ) {
 
     for (unsigned long long int i = 2; i <= pl_end_number; i++) {
         for (unsigned long long int j = i+1; j <= pl_end_number; j++) {
-            
+            if (j % i == 0) {
+                small_sieve[j] == false;
+            }
         }        
     }
 
