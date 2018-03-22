@@ -35,9 +35,9 @@ int main( void ) {
         small_sieve[i] = true;
     }
 
-for (unsigned long long int i = 2;i <= pl_end_number; i++) {
-    
-}
+    for (unsigned long long int i = 2;i <= pl_end_number; i++) {
+
+    }
 
     // Input Arrays and variables
     int *input_list        = new int [vector_size]; 
