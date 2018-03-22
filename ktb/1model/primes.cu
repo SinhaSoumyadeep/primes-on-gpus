@@ -59,10 +59,11 @@ int main( void ) {
             //cout << small_sieve[i] << "    ";
         }
     }
-
     cout << endl;
 
+    unsigned long long int *prime_list = new unsigned long long int [small_sieve_counter];
 
+    
     // Input Arrays and variables
     int *input_list        = new int [vector_size]; 
     int *prime_list        = new int [vector_size]; 
