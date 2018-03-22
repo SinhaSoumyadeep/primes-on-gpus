@@ -63,7 +63,14 @@ int main( void ) {
 
     unsigned long long int *prime_list = new unsigned long long int [small_sieve_counter];
 
-    
+    unsigned long long int inner_counter = 0;
+    for (unsigned long long int i = 2; i <= pl_end_number; i++) {
+        if (small_sieve[i] == true) {
+            prime_list[inner_counter] = i;
+            inner_counter++;
+        }
+    }
+
 
     // Input Arrays and variables
     int *input_list        = new int [vector_size]; 
