@@ -40,6 +40,8 @@ int main( void ) {
         small_sieve[i] = true;
     }
 
+    cudaEventRecord(start,0);
+    
     for (unsigned long long int i = 2; i <= int(sqrt(pl_end_number))+1; i++) {
         for (unsigned long long int j = i+1; j <= pl_end_number; j++) {
             if (j % i == 0) {
@@ -49,12 +51,17 @@ int main( void ) {
         }        
     }
 
-    cout << "Primes till 100\n";
+    cudaEventRecord(stop,0);
+    cudaEventSynchronize(stop);
+    cudaEventElapsedTime(&time, start, stop);
+    printf("\tPrime Numbers Computation Time on CPU: %.2f ms\n", time);
+
+ //   cout << "Primes till 100\n";
 
     unsigned long long int small_sieve_counter = 0;
     for (unsigned long long int i = 2; i <= pl_end_number; i++) {
         if (small_sieve[i] == true) {
-            cout << i << " ";
+            //cout << i << " ";
             small_sieve_counter++;
             //cout << small_sieve[i] << "    ";
         }
