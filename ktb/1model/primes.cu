@@ -35,8 +35,9 @@ int main( void ) {
         pl_end_number[i] = true;
     }
 
+    unsigned long long int base_number=-9999;
     for (unsigned long long int i = 0; i < sqrt(pl_end_number); i++) {
-        
+        base_number
     }
 
     // Input Arrays and variables
