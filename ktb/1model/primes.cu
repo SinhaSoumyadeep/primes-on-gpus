@@ -32,17 +32,12 @@ int main( void ) {
     bool *small_sieve = new bool [pl_end_number];
 
     for (unsigned long long int i = 0; i < pl_end_number; i++) {
-        pl_end_number[i] = true;
+        small_sieve[i] = true;
     }
 
-    for (unsigned long long int i = 2; i <= sqrt(pl_end_number); i++) {
-        for (unsigned long long int j = sqrt(pl_end_number)+1; j <= pl_end_number; j++) {
-            if (i % j == 0) {
-                pl_end_number[j] = false;
-            }
-        }
-            
-    }
+for (unsigned long long int i = 2;i <= pl_end_number; i++) {
+    
+}
 
     // Input Arrays and variables
     int *input_list        = new int [vector_size]; 
