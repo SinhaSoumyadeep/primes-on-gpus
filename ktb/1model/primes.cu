@@ -13,6 +13,11 @@ __global__ void prime( int *a, int *b, int *c ) {
     }
 }
 
+
+
+// ********************** MAIN FUNCTION **********************
+
+
 int main( void ) { 
 
     cudaSetDevice(0);
