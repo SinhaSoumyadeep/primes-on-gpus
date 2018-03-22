@@ -2,7 +2,8 @@
 #include <stdlib.h>
 
 #define block_size   32
-#define vector_size  1000000000
+#define pl_end_number 100
+
 
 __global__ void prime( int *a, int *b, int *c ) {
     int tid = (blockIdx.x*blockDim.x) + threadIdx.x;    // this thread handles the data at its thread id
@@ -14,8 +15,6 @@ __global__ void prime( int *a, int *b, int *c ) {
 
 int main( void ) { 
 
-    // Set device that we will use for our cuda code
-    // It will be either 0 or 1
     cudaSetDevice(0);
 
     // Time Variables
@@ -25,8 +24,8 @@ int main( void ) {
     cudaEventCreate (&stop);
 
     // Input Arrays and variables
-    int *a        = new int [vector_size]; 
-    int *b        = new int [vector_size]; 
+    int *input_list        = new int [vector_size]; 
+    int *prime_list        = new int [vector_size]; 
     int *c_cpu    = new int [vector_size]; 
     int *c_gpu    = new int [vector_size];
 
