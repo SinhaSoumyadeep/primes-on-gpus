@@ -4,7 +4,7 @@
 #define block_size   32
 #define vector_size  1000000000
 
-__global__ void add( int *a, int *b, int *c ) {
+__global__ void prime( int *a, int *b, int *c ) {
     int tid = (blockIdx.x*blockDim.x) + threadIdx.x;    // this thread handles the data at its thread id
 
     if (tid < vector_size){
