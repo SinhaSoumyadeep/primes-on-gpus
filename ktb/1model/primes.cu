@@ -63,11 +63,7 @@ int main( void ) {
     int *dev_b;
     int *dev_c;
 
-    // fill the arrays 'a' and 'b' on the CPU
-    for (int i = 0; i < vector_size; i++) {
-        a[i] = rand()%10;
-        b[i] = rand()%10;
-    }
+
 
     //
     // CPU Calculation
@@ -77,9 +73,9 @@ int main( void ) {
     cudaEventRecord(start,0);
 
     // Calculate C in the CPU
-    for (int i = 0; i < vector_size; i++) {
-        c_cpu[i] = a[i] + b[i];
-    }
+    // for (int i = 0; i < vector_size; i++) {
+    //     c_cpu[i] = a[i] + b[i];
+    // }
 
     cudaEventRecord(stop,0);
     cudaEventSynchronize(stop);
