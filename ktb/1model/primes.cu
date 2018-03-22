@@ -131,14 +131,14 @@ int main( void ) {
     // }
 
     // free the memory allocated on the GPU
-    cudaFree( dev_a );
-    cudaFree( dev_b );
-    cudaFree( dev_c );
+    // cudaFree( dev_a );
+    // cudaFree( dev_b );
+    // cudaFree( dev_c );
 
-    free(a);
-    free(b);
-    free(c_cpu);
-    free(c_gpu);
+    // free(a);
+    // free(b);
+    // free(c_cpu);
+    // free(c_gpu);
 
     return 0;
 }
