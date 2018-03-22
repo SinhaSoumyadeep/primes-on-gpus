@@ -51,9 +51,11 @@ int main( void ) {
 
     cout << "Primes till 100\n";
 
+    unsigned long long int small_sieve_counter = 0;
     for (unsigned long long int i = 2; i <= pl_end_number; i++) {
         if (small_sieve[i] == true) {
             cout << i << " ";
+            small_sieve_counter++;
             //cout << small_sieve[i] << "    ";
         }
     }
