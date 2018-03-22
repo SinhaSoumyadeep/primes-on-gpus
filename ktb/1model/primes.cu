@@ -54,7 +54,7 @@ int main( void ) {
     for (unsigned long long int i = 2; i <= pl_end_number; i++) {
         if (small_sieve[i] == true) {
             cout << i << " ";
-            cout << small_sieve[i] "    ";
+            cout << small_sieve[i] << "    ";
         }
     }
 
