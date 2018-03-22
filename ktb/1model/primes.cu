@@ -49,7 +49,13 @@ int main( void ) {
         }        
     }
 
+    cout << "Primes till 100\n";
 
+    for (unsigned long long int i = 2; i <= pl_end_number) {
+        cout << i << " ";
+    }
+
+    cout << endl;
 
 
     // Input Arrays and variables
