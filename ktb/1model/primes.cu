@@ -28,7 +28,8 @@ int main( void ) {
     cudaEventCreate (&start);
     cudaEventCreate (&stop);
 
-    
+    bool *small_sieve = new bool [pl_end_number];
+
     // Input Arrays and variables
     int *input_list        = new int [vector_size]; 
     int *prime_list        = new int [vector_size]; 
