@@ -35,7 +35,7 @@ int main( void ) {
         small_sieve[i] = true;
     }
 
-    for (unsigned long long int i = 2;i <= pl_end_number; i++) {
+    for (unsigned long long int i = 2; i <= pl_end_number; i++) {
         
     }
 
