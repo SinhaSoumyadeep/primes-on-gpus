@@ -35,6 +35,7 @@ int main( void ) {
     cudaEventCreate (&stop);
 
     bool *small_sieve = new bool [pl_end_number];
+    int bool_size = sizeof(bool);
 
     for (unsigned long long int i = 0; i < pl_end_number; i++) {
         small_sieve[i] = true;
@@ -81,37 +82,15 @@ int main( void ) {
     
 
 
-    // Input Arrays and variables
-    int *input_list        = new int [vector_size]; 
-    int *c_cpu    = new int [vector_size]; 
-    int *c_gpu    = new int [vector_size];
-
     // Pointers in GPU memory
     int *dev_il;
     int *dev_pl;
 
 
-    //
-    // CPU Calculation
-    //////////////////
-
-  //  printf("Running sequential job.\n");
-    cudaEventRecord(start,0);
-
-    // Calculate C in the CPU
-    // for (int i = 0; i < vector_size; i++) {
-    //     c_cpu[i] = a[i] + b[i];
-    // }
-
-    cudaEventRecord(stop,0);
-    cudaEventSynchronize(stop);
-    cudaEventElapsedTime(&time, start, stop);
- //   printf("\tSequential Job Time: %.2f ms\n", time);
 
     // allocate the memory on the GPU
-    cudaMalloc( (void**)&dev_a,  vector_size * sizeof(int) );
-    cudaMalloc( (void**)&dev_b,  vector_size * sizeof(int) );
-    cudaMalloc( (void**)&dev_c,  vector_size * sizeof(int) );
+    cudaMalloc( (void**)&dev_il,  vector_size * sizeof(int) );
+    cudaMalloc( (void**)&dev_pl,  vector_size * sizeof(int) );
 
     // copy the arrays 'a' and 'b' to the GPU
     // cudaMemcpy( dev_a, a, vector_size * sizeof(int),
