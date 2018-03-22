@@ -21,6 +21,8 @@ __global__ void prime( int *a, int *b, int *c ) {
 
 int main( void ) { 
 
+    cout << "Program Start" << endl;
+
     cudaSetDevice(0);
 
     // Time Variables
@@ -39,6 +41,7 @@ int main( void ) {
         for (unsigned long long int j = i+1; j <= pl_end_number; j++) {
             if (j % i == 0) {
                 small_sieve[j] == false;
+                cout << j << " is Composite, as divisible by " << i << endl;
             }
         }        
     }
@@ -67,7 +70,7 @@ int main( void ) {
     // CPU Calculation
     //////////////////
 
-    printf("Running sequential job.\n");
+  //  printf("Running sequential job.\n");
     cudaEventRecord(start,0);
 
     // Calculate C in the CPU
@@ -78,7 +81,7 @@ int main( void ) {
     cudaEventRecord(stop,0);
     cudaEventSynchronize(stop);
     cudaEventElapsedTime(&time, start, stop);
-    printf("\tSequential Job Time: %.2f ms\n", time);
+ //   printf("\tSequential Job Time: %.2f ms\n", time);
 
     // allocate the memory on the GPU
     cudaMalloc( (void**)&dev_a,  vector_size * sizeof(int) );
@@ -95,7 +98,7 @@ int main( void ) {
     // GPU Calculation
     ////////////////////////
 
-    printf("Running parallel job.\n");
+ //   printf("Running parallel job.\n");
 
     int grid_size = (vector_size-1)/block_size;
     grid_size++;
@@ -107,7 +110,7 @@ int main( void ) {
     cudaEventSynchronize(stop);
 
     cudaEventElapsedTime(&time, start, stop);
-    printf("\tParallel Job Time: %.2f ms\n", time);
+ //   printf("\tParallel Job Time: %.2f ms\n", time);
 
     // copy the array 'c' back from the GPU to the CPU
     cudaMemcpy( c_gpu, dev_c, vector_size * sizeof(int), 
@@ -118,14 +121,14 @@ int main( void ) {
     for (int i = 0; i < vector_size; i++) {
         if (c_cpu[i] != c_gpu[i]){
             error = 1;
-            printf( "Error starting element %d, %d != %d\n", i, c_gpu[i], c_cpu[i] );    
+            // printf( "Error starting element %d, %d != %d\n", i, c_gpu[i], c_cpu[i] );    
         }
         if (error) break; 
     }
 
-    if (error == 0){
-        printf ("Correct result. No errors were found.\n");
-    }
+    // if (error == 0){
+    //     printf ("Correct result. No errors were found.\n");
+    // }
 
     // free the memory allocated on the GPU
     cudaFree( dev_a );
