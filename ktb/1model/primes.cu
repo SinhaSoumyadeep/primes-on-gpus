@@ -28,6 +28,7 @@ int main( void ) {
     cudaEventCreate (&start);
     cudaEventCreate (&stop);
 
+    
     // Input Arrays and variables
     int *input_list        = new int [vector_size]; 
     int *prime_list        = new int [vector_size]; 
