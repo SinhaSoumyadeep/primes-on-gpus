@@ -91,9 +91,9 @@ int main( void ) {
 
     unsigned long long int il_size = pl_end_number*pl_end_number;
 
-    bool *input_list = new bool [pl_end_number*pl_end_number];
+    bool *input_list = new bool [il_size];
 
-    for (unsigned long long int i =0; i < pl_end_number*pl_end_number; i++) {
+    for (unsigned long long int i =0; i < il_size; i++) {
         input_list[i] = true;
     }
 
