@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <iostream.h>
 
 #define block_size   32
 #define pl_end_number 100
