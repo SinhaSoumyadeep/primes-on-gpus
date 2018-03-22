@@ -6,16 +6,11 @@
 __global__ void add(int *a, int *b,int * c)
 {
 	int col=10;	
-	int i=0;
-	int j=0;	
+	int i= blockIdx.y*blockDim.y+threadIdx.y;
+	int j=blockIdx.x*blockDim.x+threadIdx.x;	
 
-	for(i=0;i<10;i++){
-		for(j=0;j<10;j++){
 
-			*(c + i * col +j)= *(a + i + col + j) + *(b + i + col + j);			
-
-		}
-	}
+			*(c + i * col +j)= *(a + i * col + j) + *(b + i * col + j);			
 
 }
 

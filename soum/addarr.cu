@@ -4,11 +4,9 @@
 
 __global__ void add(int *a, int *b, int *c)
 {
-	int i=0;
-	for(i=0;i<10;i++)
-	{
+	int i= blockIdx.x*blockDim.x+threadIdx.x;
+	
 		c[i]= a[i]+b[i];
-	}
 
 }
 
