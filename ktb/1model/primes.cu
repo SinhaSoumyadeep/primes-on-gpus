@@ -44,7 +44,7 @@ int main( void ) {
         for (unsigned long long int j = i+1; j <= pl_end_number; j++) {
             if (j % i == 0) {
                 small_sieve[j] = false;
-                cout << j << " is Composite, as divisible by " << i << endl;
+                //cout << j << " is Composite, as divisible by " << i << endl;
             }
         }        
     }
