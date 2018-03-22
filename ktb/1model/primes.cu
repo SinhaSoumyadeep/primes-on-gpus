@@ -64,9 +64,9 @@ int main( void ) {
     unsigned long long int *prime_list = new unsigned long long int [small_sieve_counter];
 
     
+
     // Input Arrays and variables
     int *input_list        = new int [vector_size]; 
-    int *prime_list        = new int [vector_size]; 
     int *c_cpu    = new int [vector_size]; 
     int *c_gpu    = new int [vector_size];
 
