@@ -35,6 +35,10 @@ int main( void ) {
         
     }
 
+    for (unsigned long long int i = 0; i < sqrt(pl_end_number); i++) {
+        
+    }
+
     // Input Arrays and variables
     int *input_list        = new int [vector_size]; 
     int *prime_list        = new int [vector_size]; 
