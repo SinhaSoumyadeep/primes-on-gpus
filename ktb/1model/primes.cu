@@ -87,10 +87,8 @@ int main( void ) {
     int *c_gpu    = new int [vector_size];
 
     // Pointers in GPU memory
-    int *dev_a;
-    int *dev_b;
-    int *dev_c;
-
+    int *dev_il;
+    int *dev_pl;
 
 
     //
