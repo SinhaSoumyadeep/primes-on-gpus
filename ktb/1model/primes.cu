@@ -4,7 +4,7 @@
 
 #define block_size   32
 #define pl_end_number 100
-
+#define vector_size 1000
 
 __global__ void prime( int *a, int *b, int *c ) {
     int tid = (blockIdx.x*blockDim.x) + threadIdx.x;    // this thread handles the data at its thread id
