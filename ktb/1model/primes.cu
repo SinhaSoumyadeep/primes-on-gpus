@@ -43,7 +43,7 @@ int main( void ) {
     for (unsigned long long int i = 2; i <= int(sqrt(pl_end_number))+1; i++) {
         for (unsigned long long int j = i+1; j <= pl_end_number; j++) {
             if (j % i == 0) {
-                small_sieve[j] == false;
+                small_sieve[j] = false;
                 cout << j << " is Composite, as divisible by " << i << endl;
             }
         }        
@@ -54,7 +54,7 @@ int main( void ) {
     for (unsigned long long int i = 2; i <= pl_end_number; i++) {
         if (small_sieve[i] == true) {
             cout << i << " ";
-            cout << small_sieve[i] << "    ";
+            //cout << small_sieve[i] << "    ";
         }
     }
 
