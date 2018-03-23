@@ -24,6 +24,7 @@ __global__ void prime( int *a, int *b, int *c ) {
 // ********************** MAIN FUNCTION **********************
 
 unsigned long long int pl_end_number = 1000;
+unsigned long long int end_val = 1000;
 
 
 int main(int argc, char *argv[]) { 
@@ -88,6 +89,8 @@ int main(int argc, char *argv[]) {
     bool *small_sieve = new bool [pl_end_number];
     int bool_size = sizeof(bool);
 
+
+    
 
     for (unsigned long long int i = 0; i < pl_end_number; i++) {
         small_sieve[i] = true;
