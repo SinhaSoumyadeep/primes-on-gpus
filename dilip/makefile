@@ -16,3 +16,7 @@ check: mat_mult.o
 
 pbasic : prime_basic.o 
 	./prime_basic.o
+
+read: reader.o
+	gcc reader.c -o reader.o
+	./reader.o
