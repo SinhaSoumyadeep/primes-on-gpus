@@ -3,8 +3,8 @@
 # Created by KAUSTUBH SHIVDIKAR
 
 TARGET=simulator.bin
-DAT_GEN=dat_gen.bin
-CC=g++
+
+NVCC=NVCC
 CFLAGS= -O3 -std=c++0x
 LDFLAGS=
 
