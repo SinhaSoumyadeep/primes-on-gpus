@@ -4,7 +4,7 @@
 
 TARGET=simulator.bin
 
-NVCC=NVCC
+NVCC=nvcc
 FLAGS=-O0
 LDFLAGS=
 
