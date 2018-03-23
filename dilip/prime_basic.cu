@@ -17,7 +17,7 @@
 void printList(int* ilist, int len){
     printf("\n(START, length-> %d)\n", len);
     for(int index=0; index<len ; index++){
-        printf(" %d",ilist[index]);
+        printf("%d ",ilist[index]);
     }
     printf("\nEND \n");
 }
@@ -51,6 +51,7 @@ __global__ void calcPrime(int* primelist, int* inputlist,unsigned  int plen, uns
     if(num<lastno){
         for(int start = 0; start< ilen; start++){
             if(inputlist[start] % num == 0){
+                //printf("CROSSING %d --- %d \n",num, inputlist[start]);
                 inputlist[start] = -1;
             }
         }
@@ -72,10 +73,9 @@ int main( void ) {
     int firstLimit = LIMIT;
     printf("firstLimit %d \n", firstLimit);
 
-    int* firstLimitArray;
     int firstLimitLen = firstLimit-1;
     printf("firstLimitLen %d \n", firstLimitLen);
-    cudaMallocHost( (void**)&firstLimitArray,  firstLimitLen*INTSIZE);
+    int* firstLimitArray = (int*) malloc(firstLimitLen*INTSIZE);
 
     for(int x=2; x<= firstLimit; x++){
         //printf(" %d %d \t",x-2,x);
@@ -98,27 +98,17 @@ int main( void ) {
     cudaEventRecord(stop,0);
     cudaEventSynchronize(stop);
     cudaEventElapsedTime(&time, start, stop);
+    //printList(firstLimitArray, firstLimitLen);
     printf("\nSerial Job Time: %.2f ms\n", time);
 
     //printList(firstLimitArray, firstLimitLen);
     int pcount = countPrime(firstLimitArray, firstLimitLen);
     printf("first round primes %d",pcount);
 
-    int* primelist ;
     int plen = pcount;
-    cudaMallocHost( (void**)&primelist,  pcount*INTSIZE);
+    int* primelist = (int*) malloc(pcount*INTSIZE);
 
     addPrimes(primelist, firstLimitArray, firstLimitLen);
-    /*
-    int pindex = 0;
-    for(int val=0; val<firstLimitLen; val++){
-        if(firstLimitArray[val]!=-1){
-            primelist[pindex] = firstLimitArray[val];
-            pindex++;
-        }
-    }
-    printf("\n pindex -> %d", pindex);
-    */
 
     int CUR_MAX = firstLimit;
 
@@ -126,9 +116,8 @@ int main( void ) {
     int endNo = CUR_MAX * CUR_MAX; 
 
     int range = endNo - CUR_MAX;
-    printf(" \n range %d",range);
-    int* inputlist ;
-    cudaMallocHost((void**)&inputlist,range*INTSIZE);
+    printf("\n range %d",range);
+    int* inputlist = (int*) malloc(range*INTSIZE);
 
     for(int index = 0; index < range; index++){
         inputlist[index] = index + startNo;
@@ -150,19 +139,52 @@ int main( void ) {
     //
     // GPU Calculation
     ////////////////////////
-    unsigned int gridSize =  (plen + BLOCK_SIZE - 1)/ BLOCK_SIZE; 
-    dim3 grids(gridSize,1);
-    dim3 blocks(BLOCK_SIZE, 1);
-
+    unsigned int gridSize =  ((plen + BLOCK_SIZE - 1)/ BLOCK_SIZE) + 1; 
     cudaEventRecord(start,0);
-    calcPrime<<<grids, blocks>>>(dev_plist, dev_ilist, plen, range);
+    calcPrime<<<gridSize, BLOCK_SIZE>>>(dev_plist, dev_ilist, plen, range);
 
     cudaEventRecord(stop,0);
     cudaEventSynchronize(stop);
     cudaEventElapsedTime(&time, start, stop);
 
-    cudaMemcpy( inputlist, dev_ilist, range*INTSIZE, cudaMemcpyHostToDevice );
+    cudaMemcpy( inputlist, dev_ilist, range*INTSIZE, cudaMemcpyDeviceToHost);
     printf("\nParallel Job Time: %.2f ms\n", time);
-    printList(inputlist,range);
+    //printList(inputlist,range);
+
+    printf("\n plen %d ",plen);
+    FILE* fout = fopen("pdata.txt","w");
+    //fprintf(fout,"%d",plen);
+    fwrite(&plen, INTSIZE, 1, fout);
+    fwrite(primelist, INTSIZE, plen, fout );
+    printList(primelist,plen);
+
+    int ilistPrimeCount = countPrime(inputlist,range);
+    printf("ilistPrimeCount %d",ilistPrimeCount);
+    int* ilistprimes = (int*) malloc(ilistPrimeCount*INTSIZE);
+
+    addPrimes(ilistprimes, inputlist, range);
+    //fprintf(fout,"%d",ilistPrimeCount);
+    fwrite(&ilistPrimeCount, INTSIZE, 1, fout);
+    fwrite(ilistprimes, INTSIZE, ilistPrimeCount, fout );
+    printList(ilistprimes,ilistPrimeCount);
+
+    // APPEND LOGIC
+    int totalPrimes = plen + ilistPrimeCount;
+    printf("\n%d totalPrimes ",totalPrimes);
+    int* primeNewArray = (int*) malloc(totalPrimes*INTSIZE);
+    memcpy(primeNewArray,primelist,plen*INTSIZE);
+    memcpy(primeNewArray+plen, ilistprimes, ilistPrimeCount*INTSIZE);
+    printList(primeNewArray, totalPrimes);
+
+    /* this caused segfault but above one does not
+    int* primeListNow = (int*)realloc(primelist, totalPrimes);
+    printList(primeListNow, totalPrimes);
+    //memcpy(primeListNow+plen, ilistprimes,ilistPrimeCount*INTSIZE);
+    memcpy(primeListNow+plen, ilistprimes,ilistPrimeCount*INTSIZE);
+    printList(primeListNow, totalPrimes);
+    */
+
+    fclose(fout);
+
     return 0;
 }
