@@ -8,7 +8,6 @@
 using namespace std;
 
 #define block_size   32
-#define pl_end_number 1000
 #define vector_size 1000
 
 __global__ void prime( int *a, int *b, int *c ) {
@@ -23,7 +22,7 @@ __global__ void prime( int *a, int *b, int *c ) {
 
 // ********************** MAIN FUNCTION **********************
 
-unsigned long long int end_val = 1000;
+unsigned long long int pl_end_number = 1000;
 
 
 int main( void ) { 
@@ -53,6 +52,7 @@ int main( void ) {
         case 2:
             long input_1;
             input_1 = atol(argv[1]); // First input
+            end_val = (unsigned long long int)input_1;
 
             break;
         case 1:
