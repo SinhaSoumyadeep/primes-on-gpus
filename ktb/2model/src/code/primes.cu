@@ -73,9 +73,8 @@ int main(int argc, char *argv[]) {
 
 
 
-
+    // Select GPU
     cudaSetDevice(0);
-
 
     // Time Variables
     cudaEvent_t start, stop;
