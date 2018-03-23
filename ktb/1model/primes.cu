@@ -6,7 +6,7 @@
 using namespace std;
 
 #define block_size   32
-#define pl_end_number 10000000
+#define pl_end_number 1000000
 #define vector_size 1000
 
 __global__ void prime( int *a, int *b, int *c ) {
@@ -97,7 +97,7 @@ int main( void ) {
         input_list[i] = true;
     }
 
-
+    
     // allocate the memory on the GPU
     cudaMalloc( (void**)&dev_il,  vector_size * bool_size );
     cudaMalloc( (void**)&dev_pl,  small_sieve_counter * bool_size );
@@ -128,18 +128,18 @@ int main( void ) {
  //   printf("\tParallel Job Time: %.2f ms\n", time);
 
     // copy the array 'c' back from the GPU to the CPU
-    cudaMemcpy( c_gpu, dev_c, vector_size * sizeof(int), 
-            cudaMemcpyDeviceToHost );
+    // cudaMemcpy( c_gpu, dev_c, vector_size * sizeof(int), 
+    //         cudaMemcpyDeviceToHost );
 
     // compare the results
-    int error = 0;
-    for (int i = 0; i < vector_size; i++) {
-        if (c_cpu[i] != c_gpu[i]){
-            error = 1;
-            // printf( "Error starting element %d, %d != %d\n", i, c_gpu[i], c_cpu[i] );    
-        }
-        if (error) break; 
-    }
+    // int error = 0;
+    // for (int i = 0; i < vector_size; i++) {
+    //     if (c_cpu[i] != c_gpu[i]){
+    //         error = 1;
+    //         // printf( "Error starting element %d, %d != %d\n", i, c_gpu[i], c_cpu[i] );    
+    //     }
+    //     if (error) break; 
+    // }
 
     // if (error == 0){
     //     printf ("Correct result. No errors were found.\n");
