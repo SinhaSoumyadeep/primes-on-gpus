@@ -24,6 +24,7 @@ __global__ void prime( int *a, int *b, int *c ) {
 
 int main( void ) { 
 
+    
     cout << "Program Start" << endl;
 
     cudaSetDevice(0);
