@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
         case 2:
             long input_1;
             input_1 = atol(argv[1]); // First input
-            end_val = (unsigned long long int)input_1;
+            pl_end_number = (unsigned long long int)input_1;
 
             break;
         case 1:
