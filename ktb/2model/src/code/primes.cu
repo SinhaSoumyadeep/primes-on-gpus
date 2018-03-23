@@ -84,6 +84,7 @@ int main(int argc, char *argv[]) {
     cudaEventCreate (&stop);
 
 
+    // Create Small Sieve
     bool *small_sieve = new bool [pl_end_number];
     int bool_size = sizeof(bool);
 
