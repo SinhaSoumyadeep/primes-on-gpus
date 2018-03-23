@@ -113,14 +113,14 @@ int main(int argc, char *argv[]) {
     cudaEventElapsedTime(&time, start, stop);
     printf("CPU Time: %.2f ms\n", time);
 
- //   cout << "Primes till 100\n";
 
+    // Count Total Primes
     unsigned long long int small_sieve_counter = 0;
     for (unsigned long long int i = 2; i <= pl_end_number; i++) {
         if (small_sieve[i] == true) {
+            // To display prime numbers
             //cout << i << " ";
             small_sieve_counter++;
-            //cout << small_sieve[i] << "    ";
         }
     }
     cout << endl;
