@@ -5,7 +5,7 @@
 TARGET=simulator.bin
 
 NVCC=nvcc
-FLAGS=-O0
+FLAGS=-O0 -std=c++11
 LDFLAGS=
 
 ROOT_DIR=$(PWD)
