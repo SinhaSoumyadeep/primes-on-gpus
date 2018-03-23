@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include <iostream>
+#include <functions.h>
+#include <debugger.h>
 
 using namespace std;
 
