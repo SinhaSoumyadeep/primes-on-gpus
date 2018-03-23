@@ -200,24 +200,11 @@ int main(int argc, char *argv[]) {
     }
     cout << endl;
              
-    // compare the results
-    // int error = 0;
-    // for (int i = 0; i < vector_size; i++) {
-    //     if (c_cpu[i] != c_gpu[i]){
-    //         error = 1;
-    //         // printf( "Error starting element %d, %d != %d\n", i, c_gpu[i], c_cpu[i] );    
-    //     }
-    //     if (error) break; 
-    // }
+    
 
-    // if (error == 0){
-    //     printf ("Correct result. No errors were found.\n");
-    // }
-
-    // free the memory allocated on the GPU
-    // cudaFree( dev_a );
-    // cudaFree( dev_b );
-    // cudaFree( dev_c );
+    // Free the memory allocated on the GPU
+    cudaFree( dev_il );
+    cudaFree( dev_pl );
 
     // free(a);
     // free(b);
