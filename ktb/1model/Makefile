@@ -4,7 +4,7 @@ TESTS=primes
 FLAGS=
 
 
-all: clean $(TESTS)
+all: $(TESTS)
 
 default: all
 
