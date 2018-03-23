@@ -25,7 +25,7 @@ __global__ void prime( int *a, int *b, int *c ) {
 unsigned long long int pl_end_number = 1000;
 
 
-int main( void ) { 
+int main(int argc, char *argv[]) { 
 
     
 
