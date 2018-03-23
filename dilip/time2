@@ -1,0 +1,23 @@
+nvcc prime_basic.cu  -o prime_basic.o
+./prime_basic.o
+firstLimit 10 
+firstLimitLen 9 
+
+Serial Job Time: 0.00 ms
+
+
+Upto 100 , Parallel Job Time: 0.15 ms
+
+25 totalPrimes for Upto 100
+
+Upto 10000 , Parallel Job Time: 6.36 ms
+
+1229 totalPrimes for Upto 10000
+
+Upto 1000000 , Parallel Job Time: 655.72 ms
+
+79559 totalPrimes for Upto 1000000
+
+Upto 100000000 , Parallel Job Time: 137794.38 ms
+
+5839785 totalPrimes for Upto 100000000
