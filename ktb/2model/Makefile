@@ -24,7 +24,7 @@ all: $(OBJ)
 	cp $(BIN_DIR)/$(TARGET) $(ROOT_DIR)
 
 $(OBJ_DIR)/%.o: $(CODE_DIR)/%.cu
-	$(CC) -I$(HEADER_DIR) $(CFLAGS) -c $<
+	$(NVCC) -I$(HEADER_DIR) $(CFLAGS) -c $<
 	mv $(@F) $(OBJ_DIR)
 
 clean:
