@@ -23,7 +23,7 @@ all: $(OBJ)
 	$(NVCC) $(FLAGS) $(LDFLAGS) -o $(BIN_DIR)/$(TARGET) $(OBJ)
 	cp $(BIN_DIR)/$(TARGET) $(ROOT_DIR)
 
-$(OBJ_DIR)/%.o: $(CODE_DIR)/%.cpp
+$(OBJ_DIR)/%.o: $(CODE_DIR)/%.cu
 	$(CC) -I$(HEADER_DIR) $(CFLAGS) -c $<
 	mv $(@F) $(OBJ_DIR)
 
