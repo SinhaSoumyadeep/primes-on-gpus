@@ -2,7 +2,7 @@
 
 # Created by KAUSTUBH SHIVDIKAR
 
-TARGET=simulator.bin
+TARGET=primes.bin
 
 NVCC=nvcc
 FLAGS=-O0 -std=c++11
