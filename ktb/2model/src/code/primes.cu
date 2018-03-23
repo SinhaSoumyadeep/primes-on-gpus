@@ -144,7 +144,7 @@ int main(int argc, char *argv[]) {
     int *dev_il;
     int *dev_pl;
 
-    // Create Input list
+    // Create Input list on CPU
     unsigned long long int il_size = pl_end_number*pl_end_number;
 
     bool *input_list = new bool [il_size];
