@@ -5,7 +5,7 @@
 TARGET=simulator.bin
 
 NVCC=NVCC
-CFLAGS=-O0
+FLAGS=-O0
 LDFLAGS=
 
 ROOT_DIR=$(PWD)
@@ -15,12 +15,12 @@ INC_DIR=$(ROOT_DIR)/src/inc
 LIB_DIR=$(ROOT_DIR)/src/lib
 OBJ_DIR=$(ROOT_DIR)/src/obj
 BIN_DIR=$(ROOT_DIR)/src/bin
-OBJ=$(OBJ_DIR)/main.o $(OBJ_DIR)/functions.o $(OBJ_DIR)/debugger.o
-DAT_OBJ=$(OBJ_DIR)/dat_gen.o $(OBJ_DIR)/functions.o $(OBJ_DIR)/debugger.o
+OBJ=$(OBJ_DIR)/primes.o $(OBJ_DIR)/functions.o $(OBJ_DIR)/debugger.o
 
 
-all: $(OBJ) $(DAT_OBJ)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/$(TARGET) $(OBJ)
+
+all: $(OBJ)
+	$(NVCC) $(FLAGS) $(LDFLAGS) -o $(BIN_DIR)/$(TARGET) $(OBJ)
 	cp $(BIN_DIR)/$(TARGET) $(ROOT_DIR)
 
 $(OBJ_DIR)/%.o: $(CODE_DIR)/%.cpp
