@@ -8,7 +8,7 @@
 using namespace std;
 
 #define block_size   32
-#define pl_end_number 1000000
+#define pl_end_number 1000
 #define vector_size 1000
 
 __global__ void prime( int *a, int *b, int *c ) {
@@ -31,14 +31,17 @@ int main( void ) {
 
     cudaSetDevice(0);
 
+
     // Time Variables
     cudaEvent_t start, stop;
     float time;
     cudaEventCreate (&start);
     cudaEventCreate (&stop);
 
+
     bool *small_sieve = new bool [pl_end_number];
     int bool_size = sizeof(bool);
+
 
     for (unsigned long long int i = 0; i < pl_end_number; i++) {
         small_sieve[i] = true;
