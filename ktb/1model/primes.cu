@@ -6,7 +6,7 @@
 using namespace std;
 
 #define block_size   32
-#define pl_end_number 1000
+#define pl_end_number 1000000
 #define vector_size 1000
 
 __global__ void prime( int *a, int *b, int *c ) {
