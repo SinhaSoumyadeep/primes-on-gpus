@@ -179,8 +179,16 @@ int main(int argc, char *argv[]) {
     cudaEventElapsedTime(&time, start, stop);
     printf("GPU Time: %.2f ms\n", time);
 
-    // copy the array 'c' back from the GPU to the CPU
-    // cudaMemcpy( c_gpu, dev_c, vector_size * sizeof(int), 
+        // Create Output list on CPU
+        unsigned long long int il_size = pl_end_number*pl_end_number;
+        bool *input_list = new bool [il_size];
+        for (unsigned long long int i =0; i < il_size; i++) {
+            input_list[i] = true;
+        }
+    
+
+    // copy the array Input List back from the GPU to the CPU
+     cudaMemcpy( c_gpu, dev_il, vector_size * sizeof(int), 
     //         cudaMemcpyDeviceToHost );
 
     // compare the results
