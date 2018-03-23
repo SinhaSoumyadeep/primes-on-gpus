@@ -138,12 +138,6 @@ int main(int argc, char *argv[]) {
     }
 
     
-
-
-    // Pointers in GPU memory
-    int *dev_il;
-    int *dev_pl;
-
     // Create Input list on CPU
     unsigned long long int il_size = pl_end_number*pl_end_number;
     bool *input_list = new bool [il_size];
@@ -151,6 +145,10 @@ int main(int argc, char *argv[]) {
         input_list[i] = true;
     }
 
+    // Pointers in GPU memory
+    int *dev_il;
+    int *dev_pl;
+    
 
     // Allocate the memory on the GPU
     //cudaMalloc( (void**)&dev_il,  vector_size * bool_size );
