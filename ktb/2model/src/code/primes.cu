@@ -180,11 +180,8 @@ int main(int argc, char *argv[]) {
     printf("GPU Time: %.2f ms\n", time);
 
         // Create Output list on CPU
-        unsigned long long int il_size = pl_end_number*pl_end_number;
-        bool *input_list = new bool [il_size];
-        for (unsigned long long int i =0; i < il_size; i++) {
-            input_list[i] = true;
-        }
+        bool *output_list = new bool [il_size];
+        
     
 
     // copy the array Input List back from the GPU to the CPU
