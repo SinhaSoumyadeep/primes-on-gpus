@@ -190,12 +190,11 @@ int main(int argc, char *argv[]) {
 
 
     // Check Returned Primes
-    unsigned long long int small_sieve_counter = 0;
-    for (unsigned long long int i = 2; i <= pl_end_number; i++) {
-        if (small_sieve[i] == true) {
+    for (unsigned long long int i = pl_end_number; i < pl_end_number*pl_end_number; i++) {
+        if (output_list[i] == true) {
             // To display prime numbers
-            //cout << i << " ";
-            small_sieve_counter++;
+            cout << i << " ";
+            //small_sieve_counter++;
         }
     }
     cout << endl;
