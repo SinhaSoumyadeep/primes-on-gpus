@@ -185,7 +185,7 @@ int main(int argc, char *argv[]) {
     
 
     // copy the array Input List back from the GPU to the CPU
-     cudaMemcpy( c_gpu, dev_il, vector_size * sizeof(int), 
+     cudaMemcpy( output_list, dev_il, vector_size * sizeof(int), 
     //         cudaMemcpyDeviceToHost );
 
     // compare the results
