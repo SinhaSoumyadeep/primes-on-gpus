@@ -9,12 +9,19 @@ using namespace std;
 
 #define block_size   32
 #define vector_size 1000
+#define DEBUG 1
 
-__global__ void prime( int *a, int *b, int *c ) {
+__global__ void prime( bool *il, unsigned long long int *pl ) {
     int tid = (blockIdx.x*blockDim.x) + threadIdx.x;    // this thread handles the data at its thread id
 
-    if (tid < vector_size){
-        c[tid] = a[tid] + b[tid];                   // add vectors together                
+    if (tid <= sizeof(pl)/sizeof(unsigned long long int)) {
+        unsigned long long int tpno = pl[tid];
+        // TODO
+            for (unsigned long long int k=;k<sizeof(pl)/sizeof(bool);k++) {
+                if (k) {
+                    c[tid] = a[tid] + b[tid];                   // add vectors together                
+            }
+        }
     }
 }
 
@@ -23,14 +30,16 @@ __global__ void prime( int *a, int *b, int *c ) {
 // ********************** MAIN FUNCTION **********************
 
 unsigned long long int pl_end_number = 1000;
+//unsigned long long int end_val = 1000000;
 
 
-int main( void ) { 
+int main(int argc, char *argv[]) { 
 
     
 
-
-    cout << "\n\n\n\n\n\n\n\n\n\n\e[1;32mProgram Start\e[0m\n";
+    green_start();
+    cout << "\n\n\n\n\n\n\n\n\n\nProgram Start\n";
+    color_reset();
     
     // Accepting input from Console
     switch (argc) { // For getting input from console
@@ -52,14 +61,16 @@ int main( void ) {
         case 2:
             long input_1;
             input_1 = atol(argv[1]); // First input
-            end_val = (unsigned long long int)input_1;
+            pl_end_number = (unsigned long long int)input_1;
 
             break;
         case 1:
             // Keep this empty
             break;
         default:
+            red_start();
             cout << "FATAL ERROR: Wrong Number of Inputs" << endl; // If incorrect number of inputs are used.
+            color_reset();
             return 1;
     }
 
@@ -70,8 +81,8 @@ int main( void ) {
 
 
 
-    cudaSetDevice(0);
-
+    // Select GPU
+    cudaSetDevice(1);
 
     // Time Variables
     cudaEvent_t start, stop;
@@ -80,14 +91,17 @@ int main( void ) {
     cudaEventCreate (&stop);
 
 
+    // Create Small Sieve
     bool *small_sieve = new bool [pl_end_number];
-    int bool_size = sizeof(bool);
 
 
+    
+    // Initialize Small Sieve
     for (unsigned long long int i = 0; i < pl_end_number; i++) {
         small_sieve[i] = true;
     }
 
+    // Compute Small Sieve on CPU
     cudaEventRecord(start,0);
     
     for (unsigned long long int i = 2; i <= int(sqrt(pl_end_number))+1; i++) {
@@ -102,22 +116,24 @@ int main( void ) {
     cudaEventRecord(stop,0);
     cudaEventSynchronize(stop);
     cudaEventElapsedTime(&time, start, stop);
-    printf("\tPrime Numbers Computation Time on CPU: %.2f ms\n", time);
+    printf("CPU Time: %.2f ms\n", time);
 
- //   cout << "Primes till 100\n";
 
+    // Count Total Primes
     unsigned long long int small_sieve_counter = 0;
     for (unsigned long long int i = 2; i <= pl_end_number; i++) {
         if (small_sieve[i] == true) {
+            // To display prime numbers
             //cout << i << " ";
             small_sieve_counter++;
-            //cout << small_sieve[i] << "    ";
         }
     }
     cout << endl;
 
+
     unsigned long long int *prime_list = new unsigned long long int [small_sieve_counter];
 
+    // Storing numbers from the sieve to an array.
     unsigned long long int inner_counter = 0;
     for (unsigned long long int i = 2; i <= pl_end_number; i++) {
         if (small_sieve[i] == true) {
@@ -127,33 +143,28 @@ int main( void ) {
     }
 
     
-
-
-    // Pointers in GPU memory
-    int *dev_il;
-    int *dev_pl;
-
-    // Create Input list
-    unsigned long long int start_number = pl_end_number+1;
-
+    // Create Input list on CPU
     unsigned long long int il_size = pl_end_number*pl_end_number;
-
     bool *input_list = new bool [il_size];
-
     for (unsigned long long int i =0; i < il_size; i++) {
         input_list[i] = true;
     }
 
+    // Pointers in GPU memory
+    bool *dev_il;
+    unsigned long long int *dev_pl;
     
-    // allocate the memory on the GPU
-    //cudaMalloc( (void**)&dev_il,  vector_size * bool_size );
-    //cudaMalloc( (void**)&dev_pl,  small_sieve_counter * bool_size );
 
-    // copy the arrays 'a' and 'b' to the GPU
-    // cudaMemcpy( dev_a, a, vector_size * sizeof(int),
-    //         cudaMemcpyHostToDevice );
-    // cudaMemcpy( dev_b, b, vector_size * sizeof(int),
-    //         cudaMemcpyHostToDevice );
+    // Allocate the memory on the GPU
+    cudaMalloc( (void**)&dev_il,  il_size * sizeof(bool) );
+    cudaMalloc( (void**)&dev_pl,  small_sieve_counter * sizeof(unsigned long long int) );
+
+
+    // Copy the arrays 'a' and 'b' to the GPU
+     cudaMemcpy( dev_il, input_list, il_size * sizeof(bool),
+             cudaMemcpyHostToDevice );
+     cudaMemcpy( dev_pl, prime_list, small_sieve_counter * sizeof(unsigned long long int),
+             cudaMemcpyHostToDevice );
 
 
     //
@@ -162,40 +173,43 @@ int main( void ) {
 
  //   printf("Running parallel job.\n");
 
-    //int grid_size = (vector_size-1)/block_size;
-    //grid_size++;
+    int grid_size = (small_sieve_counter-1)/block_size;
+    grid_size++;
 
-    //cudaEventRecord(start,0);
-    //prime<<<grid_size,block_size>>>( dev_a, dev_b, dev_c);
+    cudaEventRecord(start,0);
+    prime<<<grid_size,block_size>>>(dev_il, dev_pl);
 
-    //cudaEventRecord(stop,0);
-    //cudaEventSynchronize(stop);
+    cudaEventRecord(stop,0);
+    cudaEventSynchronize(stop);
 
-    //cudaEventElapsedTime(&time, start, stop);
- //   printf("\tParallel Job Time: %.2f ms\n", time);
+    cudaEventElapsedTime(&time, start, stop);
+    printf("GPU Time: %.2f ms\n", time);
 
-    // copy the array 'c' back from the GPU to the CPU
-    // cudaMemcpy( c_gpu, dev_c, vector_size * sizeof(int), 
-    //         cudaMemcpyDeviceToHost );
+        // Create Output list on CPU
+        bool *output_list = new bool [il_size];
+        
+    
 
-    // compare the results
-    // int error = 0;
-    // for (int i = 0; i < vector_size; i++) {
-    //     if (c_cpu[i] != c_gpu[i]){
-    //         error = 1;
-    //         // printf( "Error starting element %d, %d != %d\n", i, c_gpu[i], c_cpu[i] );    
-    //     }
-    //     if (error) break; 
-    // }
+    // copy the array Input List back from the GPU to the CPU
+     cudaMemcpy( output_list, dev_il, il_size * sizeof(bool), 
+             cudaMemcpyDeviceToHost );
 
-    // if (error == 0){
-    //     printf ("Correct result. No errors were found.\n");
-    // }
 
-    // free the memory allocated on the GPU
-    // cudaFree( dev_a );
-    // cudaFree( dev_b );
-    // cudaFree( dev_c );
+    // Check Returned Primes
+    for (unsigned long long int i = pl_end_number; i < pl_end_number*pl_end_number; i++) {
+        if (output_list[i] == true) {
+            // To display prime numbers
+            cout << i << " ";
+            //small_sieve_counter++;
+        }
+    }
+    cout << endl;
+             
+    
+
+    // Free the memory allocated on the GPU
+    cudaFree( dev_il );
+    cudaFree( dev_pl );
 
     // free(a);
     // free(b);
