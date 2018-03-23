@@ -29,8 +29,9 @@ int main(int argc, char *argv[]) {
 
     
 
-
-    cout << "\n\n\n\n\n\n\n\n\n\n\e[1;32mProgram Start\e[0m\n";
+    green_start();
+    cout << "\n\n\n\n\n\n\n\n\n\nProgram Start\n";
+    color_reset();
     
     // Accepting input from Console
     switch (argc) { // For getting input from console
