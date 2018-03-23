@@ -96,6 +96,7 @@ int main(int argc, char *argv[]) {
         small_sieve[i] = true;
     }
 
+    // Compute Small Sieve on CPU
     cudaEventRecord(start,0);
     
     for (unsigned long long int i = 2; i <= int(sqrt(pl_end_number))+1; i++) {
