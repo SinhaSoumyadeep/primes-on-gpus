@@ -60,7 +60,9 @@ int main(int argc, char *argv[]) {
             // Keep this empty
             break;
         default:
+            red_start();
             cout << "FATAL ERROR: Wrong Number of Inputs" << endl; // If incorrect number of inputs are used.
+            color_reset();
             return 1;
     }
 
