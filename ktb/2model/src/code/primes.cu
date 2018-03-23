@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
 
 
     
-
+    // Initialize Small Sieve
     for (unsigned long long int i = 0; i < pl_end_number; i++) {
         small_sieve[i] = true;
     }
