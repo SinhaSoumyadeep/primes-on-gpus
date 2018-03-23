@@ -153,16 +153,12 @@ int main(int argc, char *argv[]) {
     cudaMalloc( (void**)&dev_il,  il_size * sizeof(bool) );
     cudaMalloc( (void**)&dev_pl,  small_sieve_counter * sizeof(unsigned long long int) );
 
-    
-    // allocate the memory on the GPU
-    //cudaMalloc( (void**)&dev_il,  vector_size * bool_size );
-    //cudaMalloc( (void**)&dev_pl,  small_sieve_counter * bool_size );
 
-    // copy the arrays 'a' and 'b' to the GPU
-    // cudaMemcpy( dev_a, a, vector_size * sizeof(int),
-    //         cudaMemcpyHostToDevice );
-    // cudaMemcpy( dev_b, b, vector_size * sizeof(int),
-    //         cudaMemcpyHostToDevice );
+    // Copy the arrays 'a' and 'b' to the GPU
+     cudaMemcpy( dev_il, input_list, il_size * sizeof(bool),
+             cudaMemcpyHostToDevice );
+     cudaMemcpy( dev_pl, prime_list, small_sieve_counter * sizeof(unsigned long long int),
+             cudaMemcpyHostToDevice );
 
 
     //
