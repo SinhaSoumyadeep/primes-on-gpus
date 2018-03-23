@@ -87,7 +87,6 @@ int main(int argc, char *argv[]) {
 
     // Create Small Sieve
     bool *small_sieve = new bool [pl_end_number];
-    int bool_size = sizeof(bool);
 
 
     
@@ -146,13 +145,13 @@ int main(int argc, char *argv[]) {
     }
 
     // Pointers in GPU memory
-    int *dev_il;
-    int *dev_pl;
+    bool *dev_il;
+    unsigned long long int *dev_pl;
     
 
     // Allocate the memory on the GPU
-    //cudaMalloc( (void**)&dev_il,  vector_size * bool_size );
-    //cudaMalloc( (void**)&dev_pl,  small_sieve_counter * bool_size );
+    cudaMalloc( (void**)&dev_il,  il_size * sizeof(bool) );
+    cudaMalloc( (void**)&dev_pl,  small_sieve_counter * sizeof(unsigned long long int) );
 
     
     // allocate the memory on the GPU
