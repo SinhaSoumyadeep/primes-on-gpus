@@ -73,6 +73,7 @@ int main(int argc, char *argv[]) {
 
 
 
+
     // Select GPU
     cudaSetDevice(0);
 
