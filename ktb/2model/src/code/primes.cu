@@ -188,6 +188,18 @@ int main(int argc, char *argv[]) {
      cudaMemcpy( output_list, dev_il, il_size * sizeof(bool), 
              cudaMemcpyDeviceToHost );
 
+
+    // Check Returned Primes
+    unsigned long long int small_sieve_counter = 0;
+    for (unsigned long long int i = 2; i <= pl_end_number; i++) {
+        if (small_sieve[i] == true) {
+            // To display prime numbers
+            //cout << i << " ";
+            small_sieve_counter++;
+        }
+    }
+    cout << endl;
+             
     // compare the results
     // int error = 0;
     // for (int i = 0; i < vector_size; i++) {
