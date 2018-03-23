@@ -105,8 +105,8 @@ int main( void ) {
 
     
     // allocate the memory on the GPU
-    cudaMalloc( (void**)&dev_il,  vector_size * bool_size );
-    cudaMalloc( (void**)&dev_pl,  small_sieve_counter * bool_size );
+    //cudaMalloc( (void**)&dev_il,  vector_size * bool_size );
+    //cudaMalloc( (void**)&dev_pl,  small_sieve_counter * bool_size );
 
     // copy the arrays 'a' and 'b' to the GPU
     // cudaMemcpy( dev_a, a, vector_size * sizeof(int),
@@ -121,16 +121,16 @@ int main( void ) {
 
  //   printf("Running parallel job.\n");
 
-    int grid_size = (vector_size-1)/block_size;
-    grid_size++;
+    //int grid_size = (vector_size-1)/block_size;
+    //grid_size++;
 
-    cudaEventRecord(start,0);
+    //cudaEventRecord(start,0);
     //prime<<<grid_size,block_size>>>( dev_a, dev_b, dev_c);
 
-    cudaEventRecord(stop,0);
-    cudaEventSynchronize(stop);
+    //cudaEventRecord(stop,0);
+    //cudaEventSynchronize(stop);
 
-    cudaEventElapsedTime(&time, start, stop);
+    //cudaEventElapsedTime(&time, start, stop);
  //   printf("\tParallel Job Time: %.2f ms\n", time);
 
     // copy the array 'c' back from the GPU to the CPU
