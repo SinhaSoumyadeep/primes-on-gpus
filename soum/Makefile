@@ -1,3 +1,3 @@
 compile:
-	nvcc prime.cu -o prime
+	nvcc newPrime.cu -o prime
 	./prime
