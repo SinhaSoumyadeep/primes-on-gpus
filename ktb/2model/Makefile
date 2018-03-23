@@ -5,7 +5,7 @@
 TARGET=primes.bin
 
 NVCC=nvcc
-FLAGS=-O0 -std=c++11
+FLAGS=-O0 -std=c++11 -Xptxas=-v
 LDFLAGS=
 
 ROOT_DIR=$(PWD)
