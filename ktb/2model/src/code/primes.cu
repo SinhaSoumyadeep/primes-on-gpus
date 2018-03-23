@@ -11,7 +11,7 @@ using namespace std;
 #define vector_size 1000
 #define DEBUG 1
 
-__global__ void prime( int *a, int *b, int *c ) {
+__global__ void prime( int *a, int *b ) {
     int tid = (blockIdx.x*blockDim.x) + threadIdx.x;    // this thread handles the data at its thread id
 
     if (tid < vector_size){
@@ -167,17 +167,17 @@ int main(int argc, char *argv[]) {
 
  //   printf("Running parallel job.\n");
 
-    //int grid_size = (vector_size-1)/block_size;
-    //grid_size++;
+    int grid_size = (small_sieve_counter-1)/block_size;
+    grid_size++;
 
-    //cudaEventRecord(start,0);
-    //prime<<<grid_size,block_size>>>( dev_a, dev_b, dev_c);
+    cudaEventRecord(start,0);
+    prime<<<grid_size,block_size>>>(dev_il, dev_pl);
 
-    //cudaEventRecord(stop,0);
-    //cudaEventSynchronize(stop);
+    cudaEventRecord(stop,0);
+    cudaEventSynchronize(stop);
 
-    //cudaEventElapsedTime(&time, start, stop);
- //   printf("\tParallel Job Time: %.2f ms\n", time);
+    cudaEventElapsedTime(&time, start, stop);
+    printf("GPU Time: %.2f ms\n", time);
 
     // copy the array 'c' back from the GPU to the CPU
     // cudaMemcpy( c_gpu, dev_c, vector_size * sizeof(int), 
