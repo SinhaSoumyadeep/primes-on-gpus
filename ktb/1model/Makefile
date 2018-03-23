@@ -1,9 +1,7 @@
 #Sample Makefile
-CC=gcc
-WERR=-Werror
-TESTS=ram cache
-CFLAGS=-g -O0 -std=gnu99 # $(WERR)
-
+NVCC=nvcc
+TESTS=primes
+FLAGS=
 
 
 all: clean $(TESTS)
@@ -13,21 +11,11 @@ default: all
 clean:
 	rm -rf ./*.o $(TESTS)
 
-%: %.c
-	$(CC) $(CFLAGS) $< -o $@
+%: %.cu
+	$(NVCC) $(CFLAGS) $< -o $@
 
-run: all ram cache tlb
-
-
-rram: all
-	./ram
-
-
-rcache: all
-	./cache
-
-
-
+run: all $(TESTS)
+	./$(TESTS)
 
 
 dist:
