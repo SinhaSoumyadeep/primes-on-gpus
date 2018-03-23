@@ -97,7 +97,6 @@ int main( void ) {
         input_list[i] = true;
     }
 
-
     
     // allocate the memory on the GPU
     cudaMalloc( (void**)&dev_il,  vector_size * bool_size );
