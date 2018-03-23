@@ -8,8 +8,8 @@ __global__ void prime_generator(int *input,int *prime_list,int *total_input,int 
 
 	int i= blockIdx.x * blockDim.x + threadIdx.x;
 	int primeno= prime_list[i];
-	
-	for(int k=seed[0];k<total_input[0];k++)
+	int total=seed[0]*seed[0];
+	for(int k=seed[0];k<total;k++)
 	{
 		if(k%primeno==0)
 		{
@@ -26,9 +26,9 @@ __global__ void prime_generator(int *input,int *prime_list,int *total_input,int 
 
 int main()
 {
-	int total_input=1e6;
+	int total_input=1000;
 	int *input;
-	int n= 1000 ;// seed prime list.
+	int n= 10 ;// seed prime list.
 	int *primelist;
 	input=(int *)malloc(total_input*sizeof(int));
 	primelist=(int *)malloc(total_input*sizeof(int));
@@ -93,9 +93,9 @@ prime_generator<<<1,1000>>>(d_input,d_prime_list,d_total_input,d_seed);
 
 cudaMemcpy(h_pl,d_prime_list,total_input*sizeof(int),cudaMemcpyDeviceToHost);
 cudaMemcpy(input,d_input,total_input*sizeof(int),cudaMemcpyDeviceToHost);
+//printf("------------>> %d\n",i);
 
-
-for(int p=2;p<total_input;p++)
+for(int p=n;p<total_input;p++)
 {
  	if(input[p]==1)
 	continue;
@@ -119,5 +119,3 @@ for(int p=0;p<total_input;p++)
 	return 0;
  
  }
-
-
