@@ -145,15 +145,19 @@ int main(int argc, char *argv[]) {
     int *dev_pl;
 
     // Create Input list
-    unsigned long long int start_number = pl_end_number+1;
-
     unsigned long long int il_size = pl_end_number*pl_end_number;
 
     bool *input_list = new bool [il_size];
 
+    // Create Input List on CPU
     for (unsigned long long int i =0; i < il_size; i++) {
         input_list[i] = true;
     }
+
+
+    // Allocate the memory on the GPU
+    //cudaMalloc( (void**)&dev_il,  vector_size * bool_size );
+    //cudaMalloc( (void**)&dev_pl,  small_sieve_counter * bool_size );
 
     
     // allocate the memory on the GPU
