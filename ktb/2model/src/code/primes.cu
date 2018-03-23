@@ -111,7 +111,7 @@ int main(int argc, char *argv[]) {
     cudaEventRecord(stop,0);
     cudaEventSynchronize(stop);
     cudaEventElapsedTime(&time, start, stop);
-    printf("\tPrime Numbers Computation Time on CPU: %.2f ms\n", time);
+    printf("CPU Time: %.2f ms\n", time);
 
  //   cout << "Primes till 100\n";
 
