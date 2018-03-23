@@ -11,11 +11,17 @@ using namespace std;
 #define vector_size 1000
 #define DEBUG 1
 
-__global__ void prime( int *a, int *b ) {
+__global__ void prime( bool *il, unsigned long long int *pl ) {
     int tid = (blockIdx.x*blockDim.x) + threadIdx.x;    // this thread handles the data at its thread id
 
-    if (tid < vector_size){
-        c[tid] = a[tid] + b[tid];                   // add vectors together                
+    if (tid <= sizeof(pl)/sizeof(unsigned long long int)) {
+        unsigned long long int tpno = pl[tid];
+        // TODO
+            for (unsigned long long int k=;k<sizeof(pl)/sizeof(bool);k++) {
+                if (k) {
+                    c[tid] = a[tid] + b[tid];                   // add vectors together                
+            }
+        }
     }
 }
 
