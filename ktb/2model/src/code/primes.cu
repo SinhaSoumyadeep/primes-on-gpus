@@ -250,6 +250,9 @@ int main(int argc, char *argv[]) {
     printf("GPU Time: %.2f ms\n", time);
 
         // Create Output list on CPU
+        if (DEBUG >=1) {
+            cout << "Allocating OUTPUT_LIST" << endl;
+        }
         bool *output_list = new bool [il_size];
         
 
