@@ -24,10 +24,10 @@ __global__ void prime( bool *il,
     }
 
     printf(".");
-    if (tid <= sizeof(pl)/sizeof(unsigned long long int)) {
+    if (tid <= dev_prime_size) {
         unsigned long long int tpno = pl[tid];
         printf("\tTID: %d", tid);
-            for (unsigned long long int k=0;k<sizeof(pl)/sizeof(bool);k++) {
+            for (unsigned long long int k=pl_end_number;k<dev_input_size;k++) {
                 if (k % tpno == 0) {
                     il[k] = false;                   // add vectors together                
             }
@@ -39,7 +39,7 @@ __global__ void prime( bool *il,
 
 // ********************** MAIN FUNCTION **********************
 
-unsigned long long int pl_end_number = 1000;
+__global__ unsigned long long int pl_end_number = 1000;
 //unsigned long long int end_val = 1000000;
 
 
