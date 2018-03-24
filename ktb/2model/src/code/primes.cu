@@ -11,11 +11,16 @@ using namespace std;
 #define vector_size 1000
 #define DEBUG 1
 
-__global__ void prime( bool *il, unsigned long long int *pl ) {
+__global__ void prime( bool *il, 
+    unsigned long long int *pl, 
+    unsigned long long int *dev_input_size, 
+    unsigned long long int *dev_prime_size ) {
     int tid = (blockIdx.x*blockDim.x) + threadIdx.x;    // this thread handles the data at its thread id
 
     if (tid == 0) {
-        printf("Input List Size on GPU: %llu\n", il_size);
+        printf("Input List Size on GPU: %llu\n", dev_input_size);
+        printf("Prime List Size on GPU: %llu\n", dev_prime_size);
+
     }
 
     printf(".");
@@ -207,7 +212,7 @@ int main(int argc, char *argv[]) {
     // ********************** KERNEL LAUNCH **********************
 
     cudaEventRecord(start,0);
-    prime<<<grid_size,block_size>>>(dev_il, dev_pl);
+    prime<<<grid_size,block_size>>>(dev_il, dev_pl, dev_input_size, dev_prime_size);
 
     cudaEventRecord(stop,0);
     cudaEventSynchronize(stop);
