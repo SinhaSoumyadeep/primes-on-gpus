@@ -63,20 +63,20 @@ int main(int argc, char *argv[]) {
     // Accepting input from Console
     switch (argc) { // For getting input from console
         case 6:
-            long input_5;
-            input_5 = atol(argv[5]); //Fifth Input
-            //num_threads = input_5;
+            //long input_5;
+            //input_5 = atol(argv[5]); //Fifth Input
+            
         case 5:
-            long input_4;
-            input_4 = atol(argv[4]); //Fourth Input
-            //in_parallel = input_4;
+            //long input_4;
+            //input_4 = atol(argv[4]); //Fourth Input
+            
         case 4:
-            long input_3;
-            input_3 = atol(argv[3]); // Third Input
-            //display_bit = input_3;
+            //long input_3;
+            //input_3 = atol(argv[3]); // Third Input
+            
         case 3:
-            long input_2;
-            input_2 = atol(argv[2]); // Second Input
+            //long input_2;
+            //input_2 = atol(argv[2]); // Second Input
         case 2:
             long input_1;
             input_1 = atol(argv[1]); // First input
