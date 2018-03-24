@@ -268,6 +268,8 @@ int main(int argc, char *argv[]) {
     // free(c_cpu);
     // free(c_gpu);
 
+    cudaProfilerStop();
+
     return 0;
 }
 
