@@ -31,9 +31,7 @@ __global__ void prime( bool *il,
     if (tid <= dev_prime_size) {
         unsigned long long int tpno = pl[tid];
         printf("\tTID: %d", tid);
-            for (unsigned long long int k=dev_pl_end_number;
-                k<dev_input_size;
-                k++) {
+            for (unsigned long long int k=dev_pl_end_number; k<dev_input_size; k++) {
                 if (k % tpno == 0) {
                     il[k] = false;                   // add vectors together                
             }
