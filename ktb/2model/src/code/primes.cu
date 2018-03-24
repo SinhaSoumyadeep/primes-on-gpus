@@ -10,6 +10,9 @@ using namespace std;
 #define block_size   32
 #define DEBUG 1
 
+
+// ********************** KERNEL DEFINITION **********************
+
 __global__ void prime( bool *il, 
     unsigned long long int *pl, 
     unsigned long long int *dev_input_size, 
