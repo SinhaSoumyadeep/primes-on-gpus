@@ -186,16 +186,19 @@ int main(int argc, char *argv[]) {
     cudaMalloc( (void**)&dev_input_size,  sizeof(unsigned long long int) );
     cudaMalloc( (void**)&dev_prime_size,  sizeof(unsigned long long int) );
     cudaMalloc( (void**)&dev_prime_size,  sizeof(unsigned long long int) );
+    cudaMalloc( (void**)&dev_pl_end_number,  sizeof(unsigned long long int) );
 
 
     // Copy the arrays 'a' and 'b' to the GPU
-     cudaMemcpy( dev_il, input_list, il_size * sizeof(bool),
+    cudaMemcpy( dev_il, input_list, il_size * sizeof(bool),
              cudaMemcpyHostToDevice );
-     cudaMemcpy( dev_pl, prime_list, small_sieve_counter * sizeof(unsigned long long int),
+    cudaMemcpy( dev_pl, prime_list, small_sieve_counter * sizeof(unsigned long long int),
              cudaMemcpyHostToDevice );
-     cudaMemcpy( dev_prime_size, small_sieve_counter, small_sieve_counter * sizeof(unsigned long long int),
+    cudaMemcpy( dev_prime_size, small_sieve_counter, sizeof(unsigned long long int),
              cudaMemcpyHostToDevice );
-    cudaMemcpy( dev_input_size, il_size, small_sieve_counter * sizeof(unsigned long long int),
+    cudaMemcpy( dev_input_size, il_size, sizeof(unsigned long long int),
+             cudaMemcpyHostToDevice );
+    cudaMemcpy( dev_pl_end_number, pl_end_number, sizeof(unsigned long long int),
              cudaMemcpyHostToDevice );
 
 
