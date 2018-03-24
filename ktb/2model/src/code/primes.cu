@@ -268,11 +268,11 @@ int main(int argc, char *argv[]) {
     
 
     // Free the memory allocated on the GPU
-    cudaFree( dev_il );
-    cudaFree( dev_pl );
-    cudaFree( dev_prime_size );
-    cudaFree( dev_input_size );
-    cudaFree( dev_pl_end_number );
+    //cudaFree( dev_il );
+    //cudaFree( dev_pl );
+    //cudaFree( dev_prime_size );
+    //cudaFree( dev_input_size );
+    //cudaFree( dev_pl_end_number );
     
 
     // free(a);
