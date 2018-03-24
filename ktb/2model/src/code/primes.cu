@@ -255,7 +255,9 @@ int main(int argc, char *argv[]) {
         cout << "Kernel Computation Complete" << endl;
     }
     cudaEventElapsedTime(&time, start, stop);
+    yellow_start();
     printf("GPU Time: %.2f ms\n", time);
+    color_reset();
 
         // Create Output list on CPU
         if (DEBUG >=1) {
