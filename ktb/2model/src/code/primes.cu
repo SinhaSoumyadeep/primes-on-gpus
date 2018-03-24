@@ -16,10 +16,9 @@ __global__ void prime( bool *il, unsigned long long int *pl ) {
 
     if (tid <= sizeof(pl)/sizeof(unsigned long long int)) {
         unsigned long long int tpno = pl[tid];
-        // TODO
             for (unsigned long long int k=;k<sizeof(pl)/sizeof(bool);k++) {
-                if (k) {
-                    c[tid] = a[tid] + b[tid];                   // add vectors together                
+                if (k % tpno == 0) {
+                    il[k] = false;                   // add vectors together                
             }
         }
     }
