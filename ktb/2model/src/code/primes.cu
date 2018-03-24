@@ -10,7 +10,7 @@ using namespace std;
 
 #define block_size   32
 #define DEBUG 1
-
+#define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
 
 // ********************** KERNEL DEFINITION **********************
 
