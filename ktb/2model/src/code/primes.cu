@@ -33,7 +33,6 @@ __global__ void prime( bool *il,
 
     }
 
-    printf(".");
     if (tid <= dev_prime_size) {
         long long int tpno = pl[tid];
         printf("\tTID: %d", tid);
