@@ -4,6 +4,7 @@
 #include <iostream>
 #include <functions.h>
 #include <debugger.h>
+#include <cuda_profiler_api.h>
 
 using namespace std;
 
@@ -53,7 +54,7 @@ long long int total_primes=0;
 int main(int argc, char *argv[]) { 
 
 
-    cuProfilerStart();
+    cudaProfilerStart();
 
     green_start();
     cout << "\n\n\n\n\n\n\n\n\n\nProgram Start\n";
