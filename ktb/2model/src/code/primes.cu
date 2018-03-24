@@ -225,6 +225,10 @@ int main(int argc, char *argv[]) {
     // ********************** KERNEL LAUNCH **********************
     cudaProfilerStart();
 
+    if (DEBUG >=1) {
+        cout << "Launching Kernel" << endl;
+    }
+
     cudaEventRecord(start,0);
     prime<<<grid_size,block_size>>>(dev_il, dev_pl, dev_input_size, dev_prime_size, dev_pl_end_number);
 
