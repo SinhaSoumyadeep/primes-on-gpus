@@ -173,6 +173,9 @@ int main(int argc, char *argv[]) {
     
     // Create Input list on CPU
     long long int il_size = pl_end_number*pl_end_number;
+    if (DEBUG >=1) {
+        cout << "Allocating INPUT_LIST" << endl;
+    }
     bool *input_list = new bool [il_size];
     for (long long int i =0; i < il_size; i++) {
         input_list[i] = true;
