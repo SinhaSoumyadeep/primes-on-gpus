@@ -242,6 +242,7 @@ int main(int argc, char *argv[]) {
 
     // Check Returned Primes
     long long int ret_primes=0;
+    long long int total_primes0;
     for (long long int i = pl_end_number; i < pl_end_number*pl_end_number; i++) {
         if (output_list[i] == true) {
             // To display prime numbers
@@ -250,6 +251,7 @@ int main(int argc, char *argv[]) {
             //small_sieve_counter++;
         }
     }
+
     cout << "Returned Primes: "<< ret_primes;
     cout << endl;
              
