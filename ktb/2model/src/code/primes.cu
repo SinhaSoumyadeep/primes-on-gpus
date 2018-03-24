@@ -245,6 +245,7 @@ int main(int argc, char *argv[]) {
     // ********************** KERNEL LAUNCH **********************
     gpuErrchk( cudaProfilerStart() );
 
+    gpuErrchk( cudaPeekAtLastError() );
     if (DEBUG >=1) {
         cout << "Launching Kernel" << endl;
     }
