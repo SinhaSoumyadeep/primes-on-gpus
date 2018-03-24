@@ -131,6 +131,9 @@ int main(int argc, char *argv[]) {
     }
     cout << endl;
 
+    if (DEBUG >= 1) {
+        cout << "Total Primes in Small Sieve: " << small_sieve_counter << endl;
+    }
 
     unsigned long long int *prime_list = new unsigned long long int [small_sieve_counter];
 
