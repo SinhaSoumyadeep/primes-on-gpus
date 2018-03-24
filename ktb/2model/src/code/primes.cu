@@ -110,13 +110,13 @@ int main(int argc, char *argv[]) {
 
 
     // Select GPU
-    cudaSetDevice(1);
+    gpuErrchk(cudaSetDevice(1));
 
     // Time Variables
     cudaEvent_t start, stop;
     float time;
-    cudaEventCreate (&start);
-    cudaEventCreate (&stop);
+    gpuErrchk(cudaEventCreate (&start));
+    gpuErrchk(cudaEventCreate (&stop));
 
 
     // Create Small 
@@ -144,9 +144,9 @@ int main(int argc, char *argv[]) {
         }        
     }
 
-    cudaEventRecord(stop,0);
+    gpuErrchk( cudaEventRecord(stop,0));
     gpuErrchk( cudaEventSynchronize(stop));
-    cudaEventElapsedTime(&time, start, stop);
+    gpuErrchk( cudaEventElapsedTime(&time, start, stop));
     printf("CPU Time: %.2f ms\n", time);
 
 
