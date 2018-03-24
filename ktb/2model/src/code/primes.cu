@@ -14,10 +14,10 @@ using namespace std;
 // ********************** KERNEL DEFINITION **********************
 
 __global__ void prime( bool *il, 
-    unsigned long long int *pl, 
-    unsigned long long int *dev_input_size, 
-    unsigned long long int *dev_prime_size, 
-    unsigned long long int *dev_pl_end_number ) {
+    long long int *pl, 
+    long long int *dev_input_size, 
+    long long int *dev_prime_size, 
+    long long int *dev_pl_end_number ) {
     
         int tid = (blockIdx.x*blockDim.x) + threadIdx.x;    // this thread handles the data at its thread id
 
@@ -29,9 +29,9 @@ __global__ void prime( bool *il,
 
     printf(".");
     if (tid <= dev_prime_size) {
-        unsigned long long int tpno = pl[tid];
+        long long int tpno = pl[tid];
         printf("\tTID: %d", tid);
-            for (unsigned long long int k=dev_pl_end_number; k<dev_input_size; k++) {
+            for (long long int k=dev_pl_end_number; k<dev_input_size; k++) {
                 if (k % tpno == 0) {
                     il[k] = false;                   // add vectors together                
             }
@@ -43,9 +43,9 @@ __global__ void prime( bool *il,
 
 
 // Global Variables.
-unsigned long long int pl_end_number = 1000;
+long long int pl_end_number = 1000;
 
-//unsigned long long int end_val = 1000000;
+//long long int end_val = 1000000;
 
 
 // ********************** MAIN FUNCTION **********************
@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
         case 2:
             long input_1;
             input_1 = atol(argv[1]); // First input
-            pl_end_number = (unsigned long long int)input_1;
+            pl_end_number = (long long int)input_1;
 
             break;
         case 1:
@@ -114,15 +114,15 @@ int main(int argc, char *argv[]) {
 
     
     // Initialize Small Sieve
-    for (unsigned long long int i = 0; i < pl_end_number; i++) {
+    for (long long int i = 0; i < pl_end_number; i++) {
         small_sieve[i] = true;
     }
 
     // Compute Small Sieve on CPU
     cudaEventRecord(start,0);
     
-    for (unsigned long long int i = 2; i <= int(sqrt(pl_end_number))+1; i++) {
-        for (unsigned long long int j = i+1; j <= pl_end_number; j++) {
+    for (long long int i = 2; i <= int(sqrt(pl_end_number))+1; i++) {
+        for (long long int j = i+1; j <= pl_end_number; j++) {
             if (j % i == 0) {
                 small_sieve[j] = false;
                 //cout << j << " is Composite, as divisible by " << i << endl;
@@ -137,8 +137,8 @@ int main(int argc, char *argv[]) {
 
 
     // Count Total Primes
-    unsigned long long int small_sieve_counter = 0;
-    for (unsigned long long int i = 2; i <= pl_end_number; i++) {
+    long long int small_sieve_counter = 0;
+    for (long long int i = 2; i <= pl_end_number; i++) {
         if (small_sieve[i] == true) {
             // To display prime numbers
             //cout << i << " ";
@@ -151,11 +151,11 @@ int main(int argc, char *argv[]) {
         cout << "Total Primes in Small Sieve: " << small_sieve_counter << endl;
     }
 
-    unsigned long long int *prime_list = new unsigned long long int [small_sieve_counter];
+    long long int *prime_list = new long long int [small_sieve_counter];
 
     // Storing numbers from the sieve to an array.
-    unsigned long long int inner_counter = 0;
-    for (unsigned long long int i = 2; i <= pl_end_number; i++) {
+    long long int inner_counter = 0;
+    for (long long int i = 2; i <= pl_end_number; i++) {
         if (small_sieve[i] == true) {
             prime_list[inner_counter] = i;
             inner_counter++;
@@ -164,9 +164,9 @@ int main(int argc, char *argv[]) {
 
     
     // Create Input list on CPU
-    unsigned long long int il_size = pl_end_number*pl_end_number;
+    long long int il_size = pl_end_number*pl_end_number;
     bool *input_list = new bool [il_size];
-    for (unsigned long long int i =0; i < il_size; i++) {
+    for (long long int i =0; i < il_size; i++) {
         input_list[i] = true;
     }
 
@@ -176,31 +176,31 @@ int main(int argc, char *argv[]) {
 
     // Pointers in GPU memory
     bool *dev_il;
-    unsigned long long int *dev_pl;
-    unsigned long long int *dev_input_size;
-    unsigned long long int *dev_prime_size;
-    unsigned long long int *dev_pl_end_number;   
+    long long int *dev_pl;
+    long long int *dev_input_size;
+    long long int *dev_prime_size;
+    long long int *dev_pl_end_number;   
     
 
     // Allocate the memory on the GPU
     cudaMalloc( (void**)&dev_il,  il_size * sizeof(bool) );
-    cudaMalloc( (void**)&dev_pl,  small_sieve_counter * sizeof(unsigned long long int) );
-    cudaMalloc( (void**)&dev_input_size,  sizeof(unsigned long long int) );
-    cudaMalloc( (void**)&dev_prime_size,  sizeof(unsigned long long int) );
-    cudaMalloc( (void**)&dev_prime_size,  sizeof(unsigned long long int) );
-    cudaMalloc( (void**)&dev_pl_end_number,  sizeof(unsigned long long int) );
+    cudaMalloc( (void**)&dev_pl,  small_sieve_counter * sizeof(long long int) );
+    cudaMalloc( (void**)&dev_input_size,  sizeof(long long int) );
+    cudaMalloc( (void**)&dev_prime_size,  sizeof(long long int) );
+    cudaMalloc( (void**)&dev_prime_size,  sizeof(long long int) );
+    cudaMalloc( (void**)&dev_pl_end_number,  sizeof(long long int) );
 
 
     // Copy the arrays 'a' and 'b' to the GPU
     cudaMemcpy( dev_il, input_list, il_size * sizeof(bool),
              cudaMemcpyHostToDevice );
-    cudaMemcpy( dev_pl, prime_list, small_sieve_counter * sizeof(unsigned long long int),
+    cudaMemcpy( dev_pl, prime_list, small_sieve_counter * sizeof(long long int),
              cudaMemcpyHostToDevice );
-    cudaMemcpy( dev_prime_size, small_sieve_counter, sizeof(unsigned long long int),
+    cudaMemcpy( dev_prime_size, small_sieve_counter, sizeof(long long int),
              cudaMemcpyHostToDevice );
-    cudaMemcpy( dev_input_size, il_size, sizeof(unsigned long long int),
+    cudaMemcpy( dev_input_size, il_size, sizeof(long long int),
              cudaMemcpyHostToDevice );
-    cudaMemcpy( dev_pl_end_number, pl_end_number, sizeof(unsigned long long int),
+    cudaMemcpy( dev_pl_end_number, pl_end_number, sizeof(long long int),
              cudaMemcpyHostToDevice );
 
 
@@ -241,8 +241,8 @@ int main(int argc, char *argv[]) {
 
 
     // Check Returned Primes
-    unsigned long long int ret_primes=0;
-    for (unsigned long long int i = pl_end_number; i < pl_end_number*pl_end_number; i++) {
+    long long int ret_primes=0;
+    for (long long int i = pl_end_number; i < pl_end_number*pl_end_number; i++) {
         if (output_list[i] == true) {
             // To display prime numbers
             //cout << i << " ";
