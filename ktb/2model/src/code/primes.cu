@@ -19,7 +19,7 @@ __global__ void prime( bool *il,
     long long int *dev_prime_size, 
     long long int *dev_pl_end_number ) {
     
-        int tid = (blockIdx.x*blockDim.x) + threadIdx.x;    // this thread handles the data at its thread id
+        long long int tid = (blockIdx.x*blockDim.x) + threadIdx.x;    // this thread handles the data at its thread id
 
     if (tid == 0) {
         printf("Input List Size on GPU: %llu\n", dev_input_size);
