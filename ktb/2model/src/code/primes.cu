@@ -11,6 +11,14 @@ using namespace std;
 #define block_size   32
 #define DEBUG 1
 #define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
+inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
+{
+   if (code != cudaSuccess) 
+   {
+      fprintf(stderr,"GPUassert: %s %s %d\n", cudaGetErrorString(code), file, line);
+      if (abort) exit(code);
+   }
+}
 
 // ********************** KERNEL DEFINITION **********************
 
@@ -194,12 +202,12 @@ int main(int argc, char *argv[]) {
     
 
     // Allocate the memory on the GPU
-    cudaMalloc( (void**)&dev_il,  il_size * sizeof(bool) );
-    cudaMalloc( (void**)&dev_pl,  small_sieve_counter * sizeof(long long int) );
-    cudaMalloc( (void**)&dev_input_size,  sizeof(long long int) );
-    cudaMalloc( (void**)&dev_prime_size,  sizeof(long long int) );
-    cudaMalloc( (void**)&dev_prime_size,  sizeof(long long int) );
-    cudaMalloc( (void**)&dev_pl_end_number,  sizeof(long long int) );
+    gpuErrchk( cudaMalloc( (void**)&dev_il,  il_size * sizeof(bool) ) );
+    gpuErrchk( cudaMalloc( (void**)&dev_pl,  small_sieve_counter * sizeof(long long int) ) );
+    gpuErrchk( cudaMalloc( (void**)&dev_input_size,  sizeof(long long int) ));
+    gpuErrchk( cudaMalloc( (void**)&dev_prime_size,  sizeof(long long int) ));
+    gpuErrchk( cudaMalloc( (void**)&dev_prime_size,  sizeof(long long int) ));
+    gpuErrchk( cudaMalloc( (void**)&dev_pl_end_number,  sizeof(long long int) ));
 
 
     // Copy the arrays 'a' and 'b' to the GPU
