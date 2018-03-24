@@ -54,8 +54,7 @@ long long int total_primes=0;
 int main(int argc, char *argv[]) { 
 
 
-    cudaProfilerStart();
-
+ 
     green_start();
     cout << "\n\n\n\n\n\n\n\n\n\nProgram Start\n";
     color_reset();
@@ -224,6 +223,7 @@ int main(int argc, char *argv[]) {
 
 
     // ********************** KERNEL LAUNCH **********************
+    cudaProfilerStart();
 
     cudaEventRecord(start,0);
     prime<<<grid_size,block_size>>>(dev_il, dev_pl, dev_input_size, dev_prime_size, dev_pl_end_number);
@@ -241,7 +241,7 @@ int main(int argc, char *argv[]) {
     // copy the array Input List back from the GPU to the CPU
      cudaMemcpy( output_list, dev_il, il_size * sizeof(bool), 
              cudaMemcpyDeviceToHost );
-
+    cudaProfilerStop();
 
     // Check Returned Primes
     long long int ret_primes=0;
@@ -264,13 +264,17 @@ int main(int argc, char *argv[]) {
     // Free the memory allocated on the GPU
     cudaFree( dev_il );
     cudaFree( dev_pl );
+    cudaFree( dev_prime_size );
+    cudaFree( dev_input_size );
+    cudaFree( dev_pl_end_number );
+    
 
     // free(a);
     // free(b);
     // free(c_cpu);
     // free(c_gpu);
 
-    cudaProfilerStop();
+
 
     return 0;
 }
