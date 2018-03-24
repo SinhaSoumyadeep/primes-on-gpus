@@ -245,14 +245,13 @@ int main(int argc, char *argv[]) {
     // ********************** KERNEL LAUNCH **********************
     gpuErrchk( cudaProfilerStart() );
 
-    gpuErrchk( cudaPeekAtLastError() );
     if (DEBUG >=1) {
         cout << "Launching Kernel" << endl;
     }
 
     gpuErrchk(cudaEventRecord(start,0));
     prime<<<grid_size,block_size>>>(dev_il, dev_pl, dev_input_size, dev_prime_size, dev_pl_end_number);
-
+    gpuErrchk( cudaPeekAtLastError() );
     gpuErrchk(cudaEventRecord(stop,0));
     gpuErrchk(cudaEventSynchronize(stop));
     if (DEBUG >=1) {
