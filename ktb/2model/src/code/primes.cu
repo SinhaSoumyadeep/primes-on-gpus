@@ -177,7 +177,7 @@ int main(int argc, char *argv[]) {
     unsigned long long int *dev_pl;
     unsigned long long int *dev_input_size;
     unsigned long long int *dev_prime_size;
-    
+    unsigned long long int *dev_pl_end_number;   
     
 
     // Allocate the memory on the GPU
