@@ -221,7 +221,7 @@ int main(int argc, char *argv[]) {
     // ********************** KERNEL LAUNCH **********************
 
     cudaEventRecord(start,0);
-    prime<<<grid_size,block_size>>>(dev_il, dev_pl, dev_input_size, dev_prime_size);
+    prime<<<grid_size,block_size>>>(dev_il, dev_pl, dev_input_size, dev_prime_size, dev_pl_end_number);
 
     cudaEventRecord(stop,0);
     cudaEventSynchronize(stop);
