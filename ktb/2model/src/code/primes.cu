@@ -14,6 +14,7 @@ using namespace std;
 __global__ void prime( bool *il, unsigned long long int *pl ) {
     int tid = (blockIdx.x*blockDim.x) + threadIdx.x;    // this thread handles the data at its thread id
 
+    printf(".");
     if (tid <= sizeof(pl)/sizeof(unsigned long long int)) {
         unsigned long long int tpno = pl[tid];
         printf("\tTID: %d", tid);
