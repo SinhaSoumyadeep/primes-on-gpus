@@ -10,6 +10,7 @@ using namespace std;
 
 #define block_size   32
 #define DEBUG 1
+#define GPU 0
 #define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
 inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
 {
@@ -110,7 +111,7 @@ int main(int argc, char *argv[]) {
 
 
     // Select GPU
-    gpuErrchk(cudaSetDevice(1));
+    gpuErrchk(cudaSetDevice(GPU));
 
     // Time Variables
     cudaEvent_t start, stop;
