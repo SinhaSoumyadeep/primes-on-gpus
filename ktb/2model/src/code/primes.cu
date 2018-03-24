@@ -154,8 +154,9 @@ int main(int argc, char *argv[]) {
         input_list[i] = true;
     }
 
+    printf("Input List Size on CPU: %llu\n", il_size);
 
-    
+
 
     // Pointers in GPU memory
     bool *dev_il;
@@ -176,6 +177,10 @@ int main(int argc, char *argv[]) {
      cudaMemcpy( dev_il, input_list, il_size * sizeof(bool),
              cudaMemcpyHostToDevice );
      cudaMemcpy( dev_pl, prime_list, small_sieve_counter * sizeof(unsigned long long int),
+             cudaMemcpyHostToDevice );
+     cudaMemcpy( dev_prime_size, small_sieve_counter, small_sieve_counter * sizeof(unsigned long long int),
+             cudaMemcpyHostToDevice );
+    cudaMemcpy( dev_input_size, il_size, small_sieve_counter * sizeof(unsigned long long int),
              cudaMemcpyHostToDevice );
 
 
