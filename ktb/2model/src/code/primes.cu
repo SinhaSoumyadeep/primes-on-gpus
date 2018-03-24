@@ -253,8 +253,8 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    total_primes = ret_primes + 
-    cout << "Returned Primes: "<< ret_primes;
+    total_primes += ret_primes; 
+    cout << "Total Primes: "<< total_primes;
     cout << endl;
              
     
