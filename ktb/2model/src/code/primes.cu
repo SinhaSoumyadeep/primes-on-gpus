@@ -39,13 +39,14 @@ __global__ void prime( bool *il,
 
 
 
-// ********************** MAIN FUNCTION **********************
 
 // Global Variables.
 unsigned long long int pl_end_number = 1000;
 
 //unsigned long long int end_val = 1000000;
 
+
+// ********************** MAIN FUNCTION **********************
 
 int main(int argc, char *argv[]) { 
 
