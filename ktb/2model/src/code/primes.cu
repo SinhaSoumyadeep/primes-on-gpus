@@ -282,8 +282,10 @@ int main(int argc, char *argv[]) {
     }
 
     total_primes += ret_primes; 
+    green_start();
     cout << "Total Primes: "<< total_primes;
     cout << endl;
+    color_reset();
              
     
 
