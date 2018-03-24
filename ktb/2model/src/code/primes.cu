@@ -19,8 +19,8 @@ __global__ void prime( bool *il,
     long long int *dev_prime_size_ptr, 
     long long int *dev_pl_end_number_ptr ) {
     
-        long long int dev_input_size = *dev_input_size;
-        long long int dev_prime_size = *dev_prime_size; 
+        long long int dev_input_size = *dev_input_size_ptr;
+        long long int dev_prime_size = *dev_prime_size_ptr; 
         long long int dev_pl_end_number = *dev_pl_end_number_ptr;
 
 
