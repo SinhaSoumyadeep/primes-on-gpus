@@ -176,6 +176,12 @@ int main(int argc, char *argv[]) {
     int grid_size = (small_sieve_counter-1)/block_size;
     grid_size++;
 
+    if (DEBUG >=1) {
+        cout << "Grid Size: " << grid_size << endl;
+        cout << "Block Size: " << block_size << endl;
+        
+    }
+
     cudaEventRecord(start,0);
     prime<<<grid_size,block_size>>>(dev_il, dev_pl);
 
