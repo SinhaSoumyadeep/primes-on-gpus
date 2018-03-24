@@ -16,8 +16,10 @@ using namespace std;
 __global__ void prime( bool *il, 
     unsigned long long int *pl, 
     unsigned long long int *dev_input_size, 
-    unsigned long long int *dev_prime_size ) {
-    int tid = (blockIdx.x*blockDim.x) + threadIdx.x;    // this thread handles the data at its thread id
+    unsigned long long int *dev_prime_size, 
+    unsigned long long int *dev_pl_end_number ) {
+    
+        int tid = (blockIdx.x*blockDim.x) + threadIdx.x;    // this thread handles the data at its thread id
 
     if (tid == 0) {
         printf("Input List Size on GPU: %llu\n", dev_input_size);
@@ -29,7 +31,9 @@ __global__ void prime( bool *il,
     if (tid <= dev_prime_size) {
         unsigned long long int tpno = pl[tid];
         printf("\tTID: %d", tid);
-            for (unsigned long long int k=pl_end_number;k<dev_input_size;k++) {
+            for (unsigned long long int k=dev_pl_end_number;
+                k<dev_input_size;
+                k++) {
                 if (k % tpno == 0) {
                     il[k] = false;                   // add vectors together                
             }
