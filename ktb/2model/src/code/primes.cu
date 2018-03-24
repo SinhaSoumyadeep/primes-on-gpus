@@ -15,7 +15,9 @@ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=t
 {
    if (code != cudaSuccess) 
    {
+       red_start();
       fprintf(stderr,"GPUassert: %s %s %d\n", cudaGetErrorString(code), file, line);
+      color_reset(0);
       if (abort) exit(code);
    }
 }
@@ -143,7 +145,7 @@ int main(int argc, char *argv[]) {
     }
 
     cudaEventRecord(stop,0);
-    cudaEventSynchronize(stop);
+    gpuErrchk( cudaEventSynchronize(stop));
     cudaEventElapsedTime(&time, start, stop);
     printf("CPU Time: %.2f ms\n", time);
 
