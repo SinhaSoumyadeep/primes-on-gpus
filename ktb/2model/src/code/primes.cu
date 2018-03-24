@@ -242,7 +242,7 @@ int main(int argc, char *argv[]) {
 
     // Check Returned Primes
     long long int ret_primes=0;
-    long long int total_primes0;
+    long long int total_primes=0;
     for (long long int i = pl_end_number; i < pl_end_number*pl_end_number; i++) {
         if (output_list[i] == true) {
             // To display prime numbers
