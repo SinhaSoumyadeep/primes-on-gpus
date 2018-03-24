@@ -53,7 +53,7 @@ long long int total_primes=0;
 int main(int argc, char *argv[]) { 
 
 
-    cudaProfilerStart();
+    cuProfilerStart();
 
     green_start();
     cout << "\n\n\n\n\n\n\n\n\n\nProgram Start\n";
