@@ -109,7 +109,10 @@ int main(int argc, char *argv[]) {
     cudaEventCreate (&stop);
 
 
-    // Create Small Sieve
+    // Create Small 
+    if (DEBUG >=1) {
+        cout << "Allocating SMALL_SIEVE" << endl;
+    }
     bool *small_sieve = new bool [pl_end_number];
 
 
@@ -153,6 +156,9 @@ int main(int argc, char *argv[]) {
         cout << "Total Primes in Small Sieve: " << small_sieve_counter << endl;
     }
 
+    if (DEBUG >=1) {
+        cout << "Allocating PRIME_LIST" << endl;
+    }
     long long int *prime_list = new long long int [small_sieve_counter];
 
     // Storing numbers from the sieve to an array.
