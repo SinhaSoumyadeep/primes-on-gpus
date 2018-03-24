@@ -27,11 +27,6 @@ __global__ void prime( bool *il,
 
         long long int tid = (blockIdx.x*blockDim.x) + threadIdx.x;    // this thread handles the data at its thread id
 
-    if (tid == 0) {
-        printf("Input List Size on GPU: %llu\n", dev_input_size);
-        printf("Prime List Size on GPU: %llu\n", dev_prime_size);
-
-    }
 
     if (tid <= dev_prime_size) {
         long long int tpno = pl[tid];
