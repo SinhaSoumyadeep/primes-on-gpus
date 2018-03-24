@@ -14,6 +14,10 @@ using namespace std;
 __global__ void prime( bool *il, unsigned long long int *pl ) {
     int tid = (blockIdx.x*blockDim.x) + threadIdx.x;    // this thread handles the data at its thread id
 
+    if (tid == 0) {
+        printf("Input List Size on GPU: %llu\n", il_size);
+    }
+
     printf(".");
     if (tid <= sizeof(pl)/sizeof(unsigned long long int)) {
         unsigned long long int tpno = pl[tid];
@@ -198,6 +202,9 @@ int main(int argc, char *argv[]) {
         cout << "Block Size: " << block_size << endl;
         
     }
+
+
+    // ********************** KERNEL LAUNCH **********************
 
     cudaEventRecord(start,0);
     prime<<<grid_size,block_size>>>(dev_il, dev_pl);
