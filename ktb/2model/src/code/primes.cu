@@ -154,14 +154,22 @@ int main(int argc, char *argv[]) {
         input_list[i] = true;
     }
 
+
+    
+
     // Pointers in GPU memory
     bool *dev_il;
     unsigned long long int *dev_pl;
+    unsigned long long int *dev_input_size;
+    unsigned long long int *dev_prime_size;
+    
     
 
     // Allocate the memory on the GPU
     cudaMalloc( (void**)&dev_il,  il_size * sizeof(bool) );
     cudaMalloc( (void**)&dev_pl,  small_sieve_counter * sizeof(unsigned long long int) );
+    cudaMalloc( (void**)&dev_input_size,  sizeof(unsigned long long int) );
+    cudaMalloc( (void**)&dev_prime_size,  sizeof(unsigned long long int) );
 
 
     // Copy the arrays 'a' and 'b' to the GPU
