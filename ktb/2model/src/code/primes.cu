@@ -187,7 +187,6 @@ int main(int argc, char *argv[]) {
         // Create Output list on CPU
         bool *output_list = new bool [il_size];
         
-    
 
     // copy the array Input List back from the GPU to the CPU
      cudaMemcpy( output_list, dev_il, il_size * sizeof(bool), 
