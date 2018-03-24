@@ -234,7 +234,9 @@ int main(int argc, char *argv[]) {
 
     cudaEventRecord(stop,0);
     cudaEventSynchronize(stop);
-
+    if (DEBUG >=1) {
+        cout << "Kernel Computation Complete" << endl;
+    }
     cudaEventElapsedTime(&time, start, stop);
     printf("GPU Time: %.2f ms\n", time);
 
