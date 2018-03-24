@@ -242,21 +242,21 @@ int main(int argc, char *argv[]) {
 
 
     // ********************** KERNEL LAUNCH **********************
-    cudaProfilerStart();
+    gpuErrchk( cudaProfilerStart() );
 
     if (DEBUG >=1) {
         cout << "Launching Kernel" << endl;
     }
 
-    cudaEventRecord(start,0);
+    gpuErrchk(cudaEventRecord(start,0));
     prime<<<grid_size,block_size>>>(dev_il, dev_pl, dev_input_size, dev_prime_size, dev_pl_end_number);
 
-    cudaEventRecord(stop,0);
-    cudaEventSynchronize(stop);
+    gpuErrchk(cudaEventRecord(stop,0));
+    gpuErrchk(cudaEventSynchronize(stop));
     if (DEBUG >=1) {
         cout << "Kernel Computation Complete" << endl;
     }
-    cudaEventElapsedTime(&time, start, stop);
+    gpuErrchk(cudaEventElapsedTime(&time, start, stop));
     yellow_start();
     printf("GPU Time: %.2f ms\n", time);
     color_reset();
@@ -269,9 +269,9 @@ int main(int argc, char *argv[]) {
         
 
     // copy the array Input List back from the GPU to the CPU
-     cudaMemcpy( output_list, dev_il, il_size * sizeof(bool), 
+    gpuErrchk(cudaMemcpy( output_list, dev_il, il_size * sizeof(bool)), 
              cudaMemcpyDeviceToHost );
-    cudaProfilerStop();
+    gpuErrchk(cudaProfilerStop());
 
     // Check Returned Primes
     long long int ret_primes=0;
