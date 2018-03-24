@@ -8,7 +8,6 @@
 using namespace std;
 
 #define block_size   32
-#define vector_size 1000
 #define DEBUG 1
 
 __global__ void prime( bool *il, 
@@ -39,7 +38,9 @@ __global__ void prime( bool *il,
 
 // ********************** MAIN FUNCTION **********************
 
-__global__ unsigned long long int pl_end_number = 1000;
+// Global Variables.
+unsigned long long int pl_end_number = 1000;
+
 //unsigned long long int end_val = 1000000;
 
 
@@ -179,6 +180,7 @@ int main(int argc, char *argv[]) {
     cudaMalloc( (void**)&dev_il,  il_size * sizeof(bool) );
     cudaMalloc( (void**)&dev_pl,  small_sieve_counter * sizeof(unsigned long long int) );
     cudaMalloc( (void**)&dev_input_size,  sizeof(unsigned long long int) );
+    cudaMalloc( (void**)&dev_prime_size,  sizeof(unsigned long long int) );
     cudaMalloc( (void**)&dev_prime_size,  sizeof(unsigned long long int) );
 
 
