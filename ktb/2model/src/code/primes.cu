@@ -269,8 +269,8 @@ int main(int argc, char *argv[]) {
         
 
     // copy the array Input List back from the GPU to the CPU
-    gpuErrchk(cudaMemcpy( output_list, dev_il, il_size * sizeof(bool)), 
-             cudaMemcpyDeviceToHost );
+    gpuErrchk(cudaMemcpy( output_list, dev_il, il_size * sizeof(bool), 
+             cudaMemcpyDeviceToHost ));
     gpuErrchk(cudaProfilerStop());
 
     // Check Returned Primes
