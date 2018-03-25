@@ -5,7 +5,8 @@
 #include<cuda.h>
 
 #define INPUT_SIZE 100000000
-#define PRIME_RANGE 10000000
+#define PRIME_RANGE 100000000
+#define BLOCK_SIZE 32
 typedef unsigned long long int uint64_c;
 
 
@@ -22,7 +23,31 @@ uint64_c appending_prime(uint64_c*, uint64_c*, uint64_c, uint64_c, uint64_c);
 //KERNAL CODE GOES HERE!!
 
 
+__global__ void prime_generator(uint64_c* device_input_list, uint64_c* device_prime_list, uint64_c* device_start_of_range,uint64_c* device_end_of_range, uint64_c* device_number_of_primes)
+{
+//	printf("------- INSIDE KERNEL ---------%llu-------%llu------\n",device_start_of_range[0],device_end_of_range[0]);
 
+	int p= blockIdx.x * blockDim.x + threadIdx.x;
+	int primeno= device_prime_list[p];
+       for(uint64_c i=device_start_of_range[0];i<device_end_of_range[0];i++)
+        {
+
+
+                
+                        if(i % primeno==0)
+                        {
+                                device_input_list[i]=1;
+                                
+                               
+                        }
+
+
+
+        }
+
+
+
+}
 
 
 //KERNAL CODE ENDS HERE!!!
@@ -30,7 +55,7 @@ uint64_c appending_prime(uint64_c*, uint64_c*, uint64_c, uint64_c, uint64_c);
 
 int main()
 {
-
+	cudaSetDevice(1);
 // This code is just to generate the seed prime numbers
         int input_size=100;
         int *input;
@@ -83,7 +108,7 @@ int main()
 
         if(cudaMalloc((void** )&device_input_list,total_input_size * sizeof(uint64_c))!=cudaSuccess)
         {
-                printf("ERROR: CANNOT ALLOCATE MEMORY IN GPU FOR INPUT LIST\n");
+                printf("ERROR: CANNOT ALLOCATE MEMORY IN GPU FOR INPUT LIST ------>> :) \n");
                 exit(0);
         }
 
@@ -124,33 +149,25 @@ int main()
         //allocating memory in gpu completed.
 
 
-        //copying input list and prime list from host to device.
-
-        if(cudaMemcpy(device_input_list,input_list,total_input_size * sizeof(uint64_c),cudaMemcpyHostToDevice)!=cudaSuccess)
-        {
-                printf("ERROR: CANNOT COPY INPUT LIST FROM HOST TO DEVICE\n");
-                cudaFree(device_input_list);
-                cudaFree(device_prime_list);
-                cudaFree(device_previous_range);
-                cudaFree(device_max_prime_range);
-                cudaFree(device_number_of_primes);
-                exit(0);
-        } 
-
-        if(cudaMemcpy(device_prime_list,prime_list,prime_range * sizeof(uint64_c),cudaMemcpyHostToDevice)!=cudaSuccess)
-        {
-                printf("ERROR: CANNOT COPY PRIME LIST FROM HOST TO DEVICE\n");
-                cudaFree(device_input_list);
-                cudaFree(device_prime_list);
-                cudaFree(device_previous_range);
-                cudaFree(device_max_prime_range);
-                cudaFree(device_number_of_primes);
-                exit(0);
-        } 
-
-        //copying input list and prime list from host to device completed.
+        
+        
 
                 while(n<PRIME_RANGE){
+
+                        //copying input list and prime list from host to device.
+
+                        if(cudaMemcpy(device_prime_list,prime_list,prime_range * sizeof(uint64_c),cudaMemcpyHostToDevice)!=cudaSuccess)
+                        {
+                                printf("ERROR: CANNOT COPY PRIME LIST FROM HOST TO DEVICE\n");
+                                cudaFree(device_input_list);
+                                cudaFree(device_prime_list);
+                                cudaFree(device_previous_range);
+                                cudaFree(device_max_prime_range);
+                                cudaFree(device_number_of_primes);
+                                exit(0);
+                        } 
+
+                        //copying input list and prime list from host to device completed.
 
                         //copying number of primes generated.
                         if(cudaMemcpy(device_number_of_primes,&number_of_primes,sizeof(uint64_c),cudaMemcpyHostToDevice)!=cudaSuccess)
@@ -168,7 +185,7 @@ int main()
                         //copying previous range from host to device.
                         if(cudaMemcpy(device_previous_range,&previous_range,sizeof(uint64_c),cudaMemcpyHostToDevice)!=cudaSuccess)
                         {
-                                printf("ERROR: CANNOT COPY PRIME LIST FROM HOST TO DEVICE\n");
+                                printf("ERROR: CANNOT COPY PREVIOUS RANGE FROM HOST TO DEVICE\n");
                                 cudaFree(device_input_list);
                                 cudaFree(device_prime_list);
                                 cudaFree(device_previous_range);
@@ -198,14 +215,45 @@ int main()
 
                                 printf("CALCULATE PRIME NUMBERS BETWEEN %llu - %llu\n", previous_range,max_prime_range);
                                 memsetting_range_of_input(input_list,max_prime_range);
-                                calculatePrime(input_list, prime_list, previous_range, max_prime_range, number_of_primes);
+	                        if(cudaMemcpy(device_input_list,input_list,total_input_size * sizeof(uint64_c),cudaMemcpyHostToDevice)!=cudaSuccess)
+        	                {
+                	                printf("ERROR: CANNOT COPY INPUT LIST FROM HOST TO DEVICE\n");
+                        	        cudaFree(device_input_list);
+                             		cudaFree(device_prime_list);
+                                	cudaFree(device_previous_range);
+                                	cudaFree(device_max_prime_range);
+                                	cudaFree(device_number_of_primes);
+                                	exit(0);
+                        	} 
+
+                             //   calculatePrime(input_list, prime_list, previous_range, max_prime_range, number_of_primes);
+
+                                prime_generator<<<BLOCK_SIZE,256>>>(device_input_list, device_prime_list, device_previous_range, device_max_prime_range, device_number_of_primes);
+				cudaError_t err = cudaGetLastError();
+				if (err != cudaSuccess) 
+   			        printf("Error: %s\n", cudaGetErrorString(err));
+
+				
+                                //copying input list from device to host
+                                if(cudaMemcpy(input_list,device_input_list,total_input_size * sizeof(uint64_c),cudaMemcpyDeviceToHost)!=cudaSuccess)
+                                {
+                                        printf("ERROR: CANNOT COPY INPUT LIST FROM DEVICE TO HOST\n");
+                                        cudaFree(device_input_list);
+                                        cudaFree(device_prime_list);
+                                        cudaFree(device_previous_range);
+                                        cudaFree(device_max_prime_range);
+                                        cudaFree(device_number_of_primes);
+                                        exit(0);
+                                } 
+				
                                 number_of_primes = appending_prime(input_list, prime_list, previous_range, max_prime_range, number_of_primes);
 
                         }
                         else
                         {
 
-                                if(cudaMemcpy(device_max_prime_range,&prime_range,sizeof(uint64_c),cudaMemcpyHostToDevice)!=cudaSuccess)
+                         	printf("IN ELSE PART.\n");  
+			      if(cudaMemcpy(device_max_prime_range,&prime_range,sizeof(uint64_c),cudaMemcpyHostToDevice)!=cudaSuccess)
                                 {
                                         printf("ERROR: CANNOT COPY MAX PRIME RANGE FROM HOST TO DEVICE\n");
                                         cudaFree(device_input_list);
@@ -217,7 +265,37 @@ int main()
                                 } 
                                 printf("CALCULATE PRIME NUMBERS BETWEEN %llu - %llu\n", previous_range,prime_range);
                                 memsetting_range_of_input(input_list,prime_range);
-                                calculatePrime(input_list, prime_list, previous_range, prime_range, number_of_primes);
+
+	                        if(cudaMemcpy(device_input_list,input_list,total_input_size * sizeof(uint64_c),cudaMemcpyHostToDevice)!=cudaSuccess)
+	                        {
+        	                        printf("ERROR: CANNOT COPY INPUT LIST FROM HOST TO DEVICE\n");
+                	                cudaFree(device_input_list);
+                        	        cudaFree(device_prime_list);
+                                	cudaFree(device_previous_range);
+                                	cudaFree(device_max_prime_range);
+                                	cudaFree(device_number_of_primes);
+                                	exit(0);
+                        	} 
+			//	printf("CHECKING TIME REQUIRED\n");
+
+                            //    calculatePrime(input_list, prime_list, previous_range, prime_range, number_of_primes);
+                                prime_generator<<<BLOCK_SIZE,256>>>(device_input_list, device_prime_list, device_previous_range, device_max_prime_range, device_number_of_primes);
+				cudaError_t err = cudaGetLastError();
+				if (err != cudaSuccess) 
+    				printf("Error: %s\n", cudaGetErrorString(err));
+
+                                //copying input list from device to host
+                               if(cudaMemcpy(input_list,device_input_list,total_input_size * sizeof(uint64_c),cudaMemcpyDeviceToHost)!=cudaSuccess)
+                                {
+                                        printf("ERROR: CANNOT COPY INPUT LIST FROM DEVICE TO HOST\n");
+                                        cudaFree(device_input_list);
+                                        cudaFree(device_prime_list);
+                                        cudaFree(device_previous_range);
+                                        cudaFree(device_max_prime_range);
+                                        cudaFree(device_number_of_primes);
+                                        exit(0);
+                                } 
+
                                 number_of_primes = appending_prime(input_list, prime_list, previous_range, prime_range, number_of_primes);
                         }
                         printf("\n\n\n");
@@ -361,5 +439,4 @@ int i=0;
    return i;
 
 }
-
 
