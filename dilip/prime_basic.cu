@@ -113,12 +113,14 @@ int main( void ) {
     addPrimes(primelist, firstLimitArray, firstLimitLen);
 
     while(firstLimit <= LIMIT){
+        //printf("\nfirstLimit %llu",firstLimit);
         uint64_cu CUR_MAX = firstLimit;
 
         uint64_cu startNo = CUR_MAX+1;
         uint64_cu endNo = CUR_MAX * CUR_MAX; 
 
         uint64_cu range = endNo - CUR_MAX;
+        printf("\n######################## startNo %llu , endNo %llu  ########################", startNo, endNo);
         //printf("\nrange %llu\n",range);
         uint64_cu* inputlist = (uint64_cu*) malloc(range*INTSIZE);
 
@@ -163,7 +165,7 @@ int main( void ) {
 
         // 2) WRITE primes from INPUTLIST
         uint64_cu ilistPrimeCount = countPrime(inputlist,range);
-        //printf("ilistPrimeCount %llu",ilistPrimeCount);
+        printf("ilistPrimeCount %llu \n",ilistPrimeCount);
         uint64_cu* ilistprimes = (uint64_cu*) malloc(ilistPrimeCount*INTSIZE);
         addPrimes(ilistprimes, inputlist, range);
         //fprintf(fout,"%d",ilistPrimeCount);
@@ -181,7 +183,9 @@ int main( void ) {
 
         primelist = primeNewArray;
         plen = totalPrimes;
-        firstLimit *= 10;
+        firstLimit = endNo;
+        fflush(stdout);
+        fflush(fout);
     }
 
     fclose(fout);
