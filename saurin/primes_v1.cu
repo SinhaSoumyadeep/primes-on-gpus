@@ -9,12 +9,8 @@ __global__ void calcPrimes(int *d_IL, int *d_PL, int numOfPrimes, int lenInputLi
 
 int main() {
 	int *IL = NULL, *PL = NULL, *tempPL = NULL;
-	int *d_IL, *d_PL;
+	int *d_IL = NULL, *d_PL = NULL;
 	//int count = 0;
-
-	// Space for host copies:
-	IL = (int*) malloc(LEN_IL * sizeof(int));
-	PL = (int*) malloc(LEN_INITIAL_PRIMES * sizeof(int));
 
 	int numOfInitialPrimes = generateInitialPrimes(tempPL, &PL, LEN_INITIAL_PRIMES);
 
@@ -24,6 +20,10 @@ int main() {
 		printf("%d  ", PL[i]);
 	}
 	printf("\n\nCount of initial primes = %d\n\n", numOfInitialPrimes);
+
+	// Space for host copies:
+	IL = (int*) malloc(LEN_IL * sizeof(int));
+	//PL = (int*) malloc(LEN_INITIAL_PRIMES * sizeof(int));		   		// Allocated in the generate function instead
 
 
 	int size_IL = LEN_IL * sizeof(int);
@@ -40,10 +40,10 @@ int main() {
 
 	// Copying the data to the device (GPU):
 	cudaMemcpy(d_IL, IL, size_IL, cudaMemcpyHostToDevice);
-	cudaMemcpy(d_PL, PL, size_PL, cudaMemcpyHostToDevice);			/// NEEDS CORRECTION, 'PL' has length of 'LEN_INITIAL_PRIMES' and not 'size_PL'
+	cudaMemcpy(d_PL, PL, size_PL, cudaMemcpyHostToDevice);			
 
 	// Launching the kernel:
-	calcPrimes<<<(numOfInitialPrimes/THREADS_PER_BLOCK) + 1, THREADS_PER_BLOCK>>> (d_IL, d_PL, numOfInitialPrimes, LEN_IL);  // CHECK if it should be 'numOfInitialPrimes' or 'LEN_INITIAL_PRIMES'
+	calcPrimes<<<(numOfInitialPrimes/THREADS_PER_BLOCK) + 1, THREADS_PER_BLOCK>>> (d_IL, d_PL, numOfInitialPrimes, LEN_IL);
 
 	// Space allocated to store the modified form of input array, with marking for prime and non-prime:
 	int *result = (int*) malloc(size_IL);
@@ -53,7 +53,7 @@ int main() {
 
 	// Extract indexes of primes in 'result' to get the actual new prime numbers:
 	printf("New Primes List:\n");
-	int *newPrimes = (int*)malloc(LEN_IL / 4 * sizeof(int));
+	int *newPrimes = (int*)malloc(LEN_IL / 4 * sizeof(int));			// Arbitrary size; which is '1/4th' of numbers list size
 	int newPrimesCount = 0;
 	for(int i=LEN_INITIAL_PRIMES; i<LEN_IL; i++) {
 		int num = result[i];
@@ -66,40 +66,20 @@ int main() {
 	printf("\nNumber of new primes found = %d\n\n", newPrimesCount);
 
 
-
-	/* Output the existing primes:										// SECTION NEEDS CHANGES
-	printf("\nExisting (old) Primes List:\n");
-	for(int i=0; i<numOfInitialPrimes; i++) {
-		printf("%d\t", PL[i]);
-	}
-	printf("\n");
-	*/
-
-/*
-	// Output the new calculated primes: (1 -> Prime)					// SECTION NEEDS CHANGES
-	printf("New Primes List:\n");
-	for(int i=PL[numOfInitialPrimes-1]+1; i < LEN_IL; i++) {
-		if(result[i] == 1) {
-			printf("%d\t", i);
-			count++;
-		}
-	}
-	printf("\n");
-	printf("Number of new primes found = %d\n\n", count);
-*/
 	// Free memory:
+	cudaFree(d_IL);
+	cudaFree(d_PL);
 	free(IL);
 	free(PL);
 	free(result);
-	cudaFree(d_IL);
-	cudaFree(d_PL);
+	free(newPrimes);
 
 	return 0;
 }
 
 
-
-// Returns: Count of primes
+// Generate initial prime numbers in the CPU:
+// Returns: Number of primes found from 1 to 'LEN_INITIAL_PRIMES' 
 int generateInitialPrimes(int *intialTempArray, int **PL, int initialPrimesRange) {
 	int primesCount = 0;
 	//int intialTempArray[initialPrimesRange];
@@ -125,11 +105,14 @@ int generateInitialPrimes(int *intialTempArray, int **PL, int initialPrimesRange
 			primesCount++;
 		}
 	}
+
+	free(intialTempArray);
 	return primesCount;
 }
 
 
-	
+
+// GPU Kernel (Parallel Processing):
 __global__ void calcPrimes(int *d_IL, int *d_PL, int numOfPrimes, int lenInputList) {
 	int index = threadIdx.x + blockIdx.x * blockDim.x;
 	if(index < numOfPrimes) {
