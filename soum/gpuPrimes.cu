@@ -5,7 +5,7 @@
 #include<cuda.h>
 
 #define INPUT_SIZE 100000000
-#define PRIME_RANGE 10000000
+#define PRIME_RANGE 100000000
 #define BLOCK_SIZE 32
 typedef unsigned long long int uint64_c;
 
@@ -55,7 +55,7 @@ __global__ void prime_generator(uint64_c* device_input_list, uint64_c* device_pr
 
 int main()
 {
-
+	cudaSetDevice(1);
 // This code is just to generate the seed prime numbers
         int input_size=100;
         int *input;
@@ -108,7 +108,7 @@ int main()
 
         if(cudaMalloc((void** )&device_input_list,total_input_size * sizeof(uint64_c))!=cudaSuccess)
         {
-                printf("ERROR: CANNOT ALLOCATE MEMORY IN GPU FOR INPUT LIST\n");
+                printf("ERROR: CANNOT ALLOCATE MEMORY IN GPU FOR INPUT LIST ------>> :) \n");
                 exit(0);
         }
 
@@ -439,5 +439,4 @@ int i=0;
    return i;
 
 }
-
 
