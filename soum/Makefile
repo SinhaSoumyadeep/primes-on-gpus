@@ -1,3 +1,3 @@
 compile:
-	nvcc prime.cu -o prime
+	nvcc gpuPrimes.cu -o prime
 	./prime

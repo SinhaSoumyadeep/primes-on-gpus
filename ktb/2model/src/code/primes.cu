@@ -4,22 +4,48 @@
 #include <iostream>
 #include <functions.h>
 #include <debugger.h>
+#include <cuda_profiler_api.h>
 
 using namespace std;
 
 #define block_size   32
-#define vector_size 1000
 #define DEBUG 1
+#define GPU 0
+#define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
+inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
+{
+   if (code != cudaSuccess) 
+   {
 
-__global__ void prime( bool *il, unsigned long long int *pl ) {
-    int tid = (blockIdx.x*blockDim.x) + threadIdx.x;    // this thread handles the data at its thread id
+    fprintf(stderr,"\e[1;31mGPUassert: %s %s %d \e[0m\n", cudaGetErrorString(code), file, line);
 
-    if (tid <= sizeof(pl)/sizeof(unsigned long long int)) {
-        unsigned long long int tpno = pl[tid];
-        // TODO
-            for (unsigned long long int k=;k<sizeof(pl)/sizeof(bool);k++) {
-                if (k) {
-                    c[tid] = a[tid] + b[tid];                   // add vectors together                
+      if (abort) exit(code);
+   }
+}
+
+// ********************** KERNEL DEFINITION **********************
+
+__global__ void prime( bool *il, 
+    long long int *pl, 
+    long long int *dev_input_size_ptr, 
+    long long int *dev_prime_size_ptr, 
+    long long int *dev_pl_end_number_ptr ) {
+    
+        long long int dev_input_size = *dev_input_size_ptr;
+        long long int dev_prime_size = *dev_prime_size_ptr; 
+        long long int dev_pl_end_number = *dev_pl_end_number_ptr;
+
+
+
+        long long int tid = (blockIdx.x*blockDim.x) + threadIdx.x;    // this thread handles the data at its thread id
+
+
+    if (tid <= dev_prime_size) {
+        long long int tpno = pl[tid];
+        //printf("\tTID: %d", tid);
+            for (long long int k=dev_pl_end_number; k<dev_input_size; k++) {
+                if (k % tpno == 0) {
+                    il[k] = false;                   // add vectors together                
             }
         }
     }
@@ -27,16 +53,19 @@ __global__ void prime( bool *il, unsigned long long int *pl ) {
 
 
 
+
+// Global Variables.
+long long int pl_end_number = 1000;
+long long int total_primes=0;
+//long long int end_val = 1000000;
+
+
 // ********************** MAIN FUNCTION **********************
-
-unsigned long long int pl_end_number = 1000;
-//unsigned long long int end_val = 1000000;
-
 
 int main(int argc, char *argv[]) { 
 
-    
 
+ 
     green_start();
     cout << "\n\n\n\n\n\n\n\n\n\nProgram Start\n";
     color_reset();
@@ -44,24 +73,24 @@ int main(int argc, char *argv[]) {
     // Accepting input from Console
     switch (argc) { // For getting input from console
         case 6:
-            long input_5;
-            input_5 = atol(argv[5]); //Fifth Input
-            //num_threads = input_5;
+            //long input_5;
+            //input_5 = atol(argv[5]); //Fifth Input
+            
         case 5:
-            long input_4;
-            input_4 = atol(argv[4]); //Fourth Input
-            //in_parallel = input_4;
+            //long input_4;
+            //input_4 = atol(argv[4]); //Fourth Input
+            
         case 4:
-            long input_3;
-            input_3 = atol(argv[3]); // Third Input
-            //display_bit = input_3;
+            //long input_3;
+            //input_3 = atol(argv[3]); // Third Input
+            
         case 3:
-            long input_2;
-            input_2 = atol(argv[2]); // Second Input
+            //long input_2;
+            //input_2 = atol(argv[2]); // Second Input
         case 2:
             long input_1;
             input_1 = atol(argv[1]); // First input
-            pl_end_number = (unsigned long long int)input_1;
+            pl_end_number = (long long int)input_1;
 
             break;
         case 1:
@@ -82,30 +111,33 @@ int main(int argc, char *argv[]) {
 
 
     // Select GPU
-    cudaSetDevice(1);
+    gpuErrchk(cudaSetDevice(GPU));
 
     // Time Variables
     cudaEvent_t start, stop;
     float time;
-    cudaEventCreate (&start);
-    cudaEventCreate (&stop);
+    gpuErrchk(cudaEventCreate (&start));
+    gpuErrchk(cudaEventCreate (&stop));
 
 
-    // Create Small Sieve
+    // Create Small 
+    if (DEBUG >=1) {
+        cout << "Allocating SMALL_SIEVE" << endl;
+    }
     bool *small_sieve = new bool [pl_end_number];
 
 
     
     // Initialize Small Sieve
-    for (unsigned long long int i = 0; i < pl_end_number; i++) {
+    for (long long int i = 0; i < pl_end_number; i++) {
         small_sieve[i] = true;
     }
 
     // Compute Small Sieve on CPU
     cudaEventRecord(start,0);
     
-    for (unsigned long long int i = 2; i <= int(sqrt(pl_end_number))+1; i++) {
-        for (unsigned long long int j = i+1; j <= pl_end_number; j++) {
+    for (long long int i = 2; i <= int(sqrt(pl_end_number))+1; i++) {
+        for (long long int j = i+1; j <= pl_end_number; j++) {
             if (j % i == 0) {
                 small_sieve[j] = false;
                 //cout << j << " is Composite, as divisible by " << i << endl;
@@ -113,15 +145,15 @@ int main(int argc, char *argv[]) {
         }        
     }
 
-    cudaEventRecord(stop,0);
-    cudaEventSynchronize(stop);
-    cudaEventElapsedTime(&time, start, stop);
+    gpuErrchk( cudaEventRecord(stop,0));
+    gpuErrchk( cudaEventSynchronize(stop));
+    gpuErrchk( cudaEventElapsedTime(&time, start, stop));
     printf("CPU Time: %.2f ms\n", time);
 
 
     // Count Total Primes
-    unsigned long long int small_sieve_counter = 0;
-    for (unsigned long long int i = 2; i <= pl_end_number; i++) {
+    long long int small_sieve_counter = 0;
+    for (long long int i = 2; i <= pl_end_number; i++) {
         if (small_sieve[i] == true) {
             // To display prime numbers
             //cout << i << " ";
@@ -130,12 +162,19 @@ int main(int argc, char *argv[]) {
     }
     cout << endl;
 
+    total_primes += small_sieve_counter;
+    if (DEBUG >= 1) {
+        cout << "Total Primes in Small Sieve: " << small_sieve_counter << endl;
+    }
 
-    unsigned long long int *prime_list = new unsigned long long int [small_sieve_counter];
+    if (DEBUG >=1) {
+        cout << "Allocating PRIME_LIST" << endl;
+    }
+    long long int *prime_list = new long long int [small_sieve_counter];
 
     // Storing numbers from the sieve to an array.
-    unsigned long long int inner_counter = 0;
-    for (unsigned long long int i = 2; i <= pl_end_number; i++) {
+    long long int inner_counter = 0;
+    for (long long int i = 2; i <= pl_end_number; i++) {
         if (small_sieve[i] == true) {
             prime_list[inner_counter] = i;
             inner_counter++;
@@ -144,27 +183,47 @@ int main(int argc, char *argv[]) {
 
     
     // Create Input list on CPU
-    unsigned long long int il_size = pl_end_number*pl_end_number;
+    long long int il_size = pl_end_number*pl_end_number;
+    if (DEBUG >=1) {
+        cout << "Allocating INPUT_LIST" << endl;
+    }
     bool *input_list = new bool [il_size];
-    for (unsigned long long int i =0; i < il_size; i++) {
+    for (long long int i =0; i < il_size; i++) {
         input_list[i] = true;
     }
 
+    printf("Input List Size on CPU: %llu\n", il_size);
+
+
+
     // Pointers in GPU memory
     bool *dev_il;
-    unsigned long long int *dev_pl;
+    long long int *dev_pl;
+    long long int *dev_input_size;
+    long long int *dev_prime_size;
+    long long int *dev_pl_end_number;   
     
 
     // Allocate the memory on the GPU
-    cudaMalloc( (void**)&dev_il,  il_size * sizeof(bool) );
-    cudaMalloc( (void**)&dev_pl,  small_sieve_counter * sizeof(unsigned long long int) );
+    gpuErrchk( cudaMalloc( (void**)&dev_il,  il_size * sizeof(bool) ) );
+    gpuErrchk( cudaMalloc( (void**)&dev_pl,  small_sieve_counter * sizeof(long long int) ) );
+    gpuErrchk( cudaMalloc( (void**)&dev_input_size,  sizeof(long long int) ));
+    gpuErrchk( cudaMalloc( (void**)&dev_prime_size,  sizeof(long long int) ));
+    gpuErrchk( cudaMalloc( (void**)&dev_prime_size,  sizeof(long long int) ));
+    gpuErrchk( cudaMalloc( (void**)&dev_pl_end_number,  sizeof(long long int) ));
 
 
     // Copy the arrays 'a' and 'b' to the GPU
-     cudaMemcpy( dev_il, input_list, il_size * sizeof(bool),
-             cudaMemcpyHostToDevice );
-     cudaMemcpy( dev_pl, prime_list, small_sieve_counter * sizeof(unsigned long long int),
-             cudaMemcpyHostToDevice );
+            gpuErrchk( cudaMemcpy( dev_il, input_list, il_size * sizeof(bool),
+             cudaMemcpyHostToDevice ));
+            gpuErrchk( cudaMemcpy( dev_pl, prime_list, small_sieve_counter * sizeof(long long int),
+             cudaMemcpyHostToDevice ));
+            gpuErrchk( cudaMemcpy( dev_prime_size, &small_sieve_counter, sizeof(long long int),
+             cudaMemcpyHostToDevice ));
+             gpuErrchk( cudaMemcpy( dev_input_size, &il_size, sizeof(long long int),
+             cudaMemcpyHostToDevice ));
+             gpuErrchk( cudaMemcpy( dev_pl_end_number, &pl_end_number, sizeof(long long int),
+             cudaMemcpyHostToDevice ));
 
 
     //
@@ -176,46 +235,81 @@ int main(int argc, char *argv[]) {
     int grid_size = (small_sieve_counter-1)/block_size;
     grid_size++;
 
-    cudaEventRecord(start,0);
-    prime<<<grid_size,block_size>>>(dev_il, dev_pl);
+    if (DEBUG >=1) {
+        cout << "Grid Size: " << grid_size << endl;
+        cout << "Block Size: " << block_size << endl;
+        
+    }
 
-    cudaEventRecord(stop,0);
-    cudaEventSynchronize(stop);
 
-    cudaEventElapsedTime(&time, start, stop);
+    // ********************** KERNEL LAUNCH **********************
+    gpuErrchk( cudaProfilerStart() );
+
+    if (DEBUG >=1) {
+        cout << "Launching Kernel" << endl;
+    }
+
+    gpuErrchk(cudaEventRecord(start,0));
+    prime<<<grid_size,block_size>>>(dev_il, dev_pl, dev_input_size, dev_prime_size, dev_pl_end_number);
+    gpuErrchk( cudaPeekAtLastError() );
+    gpuErrchk(cudaEventRecord(stop,0));
+    gpuErrchk(cudaEventSynchronize(stop));
+    if (DEBUG >=1) {
+        cout << "Kernel Computation Complete" << endl;
+    }
+    gpuErrchk(cudaEventElapsedTime(&time, start, stop));
+    yellow_start();
     printf("GPU Time: %.2f ms\n", time);
+    color_reset();
 
         // Create Output list on CPU
+        if (DEBUG >=1) {
+            cout << "Allocating OUTPUT_LIST" << endl;
+        }
         bool *output_list = new bool [il_size];
         
-    
 
     // copy the array Input List back from the GPU to the CPU
-     cudaMemcpy( output_list, dev_il, il_size * sizeof(bool), 
-             cudaMemcpyDeviceToHost );
-
+    gpuErrchk(cudaMemcpy( output_list, dev_il, il_size * sizeof(bool), 
+             cudaMemcpyDeviceToHost ));
+    gpuErrchk(cudaProfilerStop());
 
     // Check Returned Primes
-    for (unsigned long long int i = pl_end_number; i < pl_end_number*pl_end_number; i++) {
+    long long int ret_primes=0;
+    
+    for (long long int i = pl_end_number; i < pl_end_number*pl_end_number; i++) {
         if (output_list[i] == true) {
             // To display prime numbers
-            cout << i << " ";
+            //cout << i << " ";
+            ret_primes++;
             //small_sieve_counter++;
         }
     }
+
+    total_primes += ret_primes; 
+    green_start();
+    cout << "Total Primes: "<< total_primes;
     cout << endl;
+    color_reset();
              
     
 
     // Free the memory allocated on the GPU
     cudaFree( dev_il );
     cudaFree( dev_pl );
+    cudaFree( dev_prime_size );
+    cudaFree( dev_input_size );
+    cudaFree( dev_pl_end_number );
+    
 
-    // free(a);
-    // free(b);
-    // free(c_cpu);
-    // free(c_gpu);
+     free(small_sieve);
+     free(prime_list);
+     free(input_list);
+     free(output_list);
 
+
+
+     cout << endl<< endl<< endl;
     return 0;
 }
 

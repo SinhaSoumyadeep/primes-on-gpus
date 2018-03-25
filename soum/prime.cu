@@ -6,6 +6,7 @@
 __global__ void prime_generator(int *input,int *prime_list,int *total_input,int *seed)
 {
 
+	printf("-------XXXXXX>>> %d\n",seed[0]);
 	int i= blockIdx.x * blockDim.x + threadIdx.x;
 	int primeno= prime_list[i];
 	int total=seed[0]*seed[0];
@@ -14,6 +15,7 @@ __global__ void prime_generator(int *input,int *prime_list,int *total_input,int 
 		if(k%primeno==0)
 		{
 			input[k]=1;
+			
 		
 		}
 	
@@ -26,7 +28,7 @@ __global__ void prime_generator(int *input,int *prime_list,int *total_input,int 
 
 int main()
 {
-	int total_input=1000;
+	int total_input=100000000;
 	int *input;
 	int n= 10 ;// seed prime list.
 	int calculate_upto=pow(n,2);
@@ -83,36 +85,77 @@ cudaMalloc(&d_total_input,sizeof(int));
 cudaMalloc(&d_seed,sizeof(int));
 
 cudaMemcpy(d_total_input,&total_input,sizeof(int),cudaMemcpyHostToDevice);
-cudaMemcpy(d_input,input,total_input*sizeof(int),cudaMemcpyHostToDevice);
+//cudaMemcpy(d_input,input,total_input*sizeof(int),cudaMemcpyHostToDevice);
 
 
+while(n<=total_input){
 
-cudaMemcpy(d_prime_list,primelist,total_input*sizeof(int),cudaMemcpyHostToDevice);
-cudaMemcpy(d_seed,&n,sizeof(int),cudaMemcpyHostToDevice);
+printf("inside loop\n");
+if(cudaMemcpy(d_input,input,total_input*sizeof(int),cudaMemcpyHostToDevice)!=cudaSuccess)
+{
+		printf("not able to copy memory\n");
+}
+if(cudaMemcpy(d_prime_list,primelist,total_input*sizeof(int),cudaMemcpyHostToDevice) != cudaSuccess)
+{
+	printf("not able to copy memory 2\n");
+}
+if(cudaMemcpy(d_seed,&n,sizeof(int),cudaMemcpyHostToDevice) != cudaSuccess)
+{
 
-prime_generator<<<1,4>>>(d_input,d_prime_list,d_total_input,d_seed);
+	printf(" not able to copy memory\n");
+}
 
-cudaMemcpy(h_pl,d_prime_list,total_input*sizeof(int),cudaMemcpyDeviceToHost);
-cudaMemcpy(input,d_input,total_input*sizeof(int),cudaMemcpyDeviceToHost);
-//printf("------------>> %d\n",i);
+prime_generator<<<5,500>>>(d_input,d_prime_list,d_total_input,d_seed);
+
+cudaError_t err = cudaGetLastError();
+if (err != cudaSuccess) 
+    printf("Error: %s\n", cudaGetErrorString(err));
+
+/*
+if(cudaMemcpy(h_pl,d_prime_list,total_input*sizeof(int),cudaMemcpyDeviceToHost)!=cudaSuccess)
+{
+	printf("not able to copy memory!!\n");
+
+}
+*/
+
+if(cudaMemcpy(input,d_input,total_input*sizeof(int),cudaMemcpyDeviceToHost)!=cudaSuccess)
+{
+	printf(" hello not able to copy memory::\n");
+
+}
+printf("------------>> %d\n",i);
 
 for(int p=n;p<total_input;p++)
 {
+
+//	printf("%d ----> %d\n",p,input[p]);
  	if(input[p]==0){
 	primelist[i]=p;
 	i++;
 	}
 }		
-	
 for(int p=0;p<i;p++)
+{
+       printf("%d\n",primelist[p]);
+
+}
+n=n*n;
+printf("################  %d\n",n);
+if(pow(n,2)>=total_input){
+for(int m=n;m<total_input;m++) input[m]=0;
+}
+else
+{
+for(int m=n;m<pow(n,2);m++) input[m]=0;
+}
+
+}
+/*for(int p=0;p<i;p++)
 {
 	printf("%d\n",primelist[p]);
 
-}
-
-
-
-
+}*/
 
 
 

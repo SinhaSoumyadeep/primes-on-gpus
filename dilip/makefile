@@ -20,3 +20,6 @@ pbasic : prime_basic.o
 read: reader.o
 	gcc reader.c -o reader.o
 	./reader.o
+
+ccheck: prime_basic.o
+	cuda-memcheck ./prime_basic.o
