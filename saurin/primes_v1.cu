@@ -1,6 +1,6 @@
-#include<stdio.h>
+#include <stdio.h>
 
-int generateInitialPrimes(int *intialTempArray, int initialPrimesRange);
+int generateInitialPrimes(int *intialTempArray, int **PL, int initialPrimesRange);
 __global__ void calcPrimes(int *d_IL, int *d_PL, int numOfPrimes, int lenInputList);
 
 #define LEN_IL 10000
@@ -8,26 +8,27 @@ __global__ void calcPrimes(int *d_IL, int *d_PL, int numOfPrimes, int lenInputLi
 #define THREADS_PER_BLOCK 32
 
 int main() {
-	int *IL, *PL;
+	int *IL = NULL, *PL = NULL, *tempPL = NULL;
 	int *d_IL, *d_PL;
-	int count = 0;
+	//int count = 0;
 
 	// Space for host copies:
 	IL = (int*) malloc(LEN_IL * sizeof(int));
 	PL = (int*) malloc(LEN_INITIAL_PRIMES * sizeof(int));
 
-	int numOfInitialPrimes = generateInitialPrimes(PL, LEN_INITIAL_PRIMES);
+	int numOfInitialPrimes = generateInitialPrimes(tempPL, &PL, LEN_INITIAL_PRIMES);
+
+	// Print the initial range of primes calculated in the CPU, which will be passed to the GPU:
+	printf("\nThe initial primes calculated are:\n");
+	for(int i=0; i < numOfInitialPrimes; i++) {
+		printf("%d  ", PL[i]);
+	}
+	printf("\n\nCount of initial primes = %d\n\n", numOfInitialPrimes);
+
 
 	int size_IL = LEN_IL * sizeof(int);
 	int size_PL = numOfInitialPrimes * sizeof(int);
 
-	//Initialize Primes list:
-	/*
-	PL[0] = 2;
-	PL[1] = 3;
-	PL[2] = 5;
-	PL[3] = 7;
-	*/
 	// Initialize Input list: 0 -> Not prime:
 	for(int i=0; i<LEN_IL; i++) {
 		IL[i] = 1;
@@ -39,24 +40,43 @@ int main() {
 
 	// Copying the data to the device (GPU):
 	cudaMemcpy(d_IL, IL, size_IL, cudaMemcpyHostToDevice);
-	cudaMemcpy(d_PL, PL, size_PL, cudaMemcpyHostToDevice);
+	cudaMemcpy(d_PL, PL, size_PL, cudaMemcpyHostToDevice);			/// NEEDS CORRECTION, 'PL' has length of 'LEN_INITIAL_PRIMES' and not 'size_PL'
 
 	// Launching the kernel:
-	calcPrimes<<<(numOfInitialPrimes/THREADS_PER_BLOCK) + 1, THREADS_PER_BLOCK>>> (d_IL, d_PL, numOfInitialPrimes, LEN_IL);
+	calcPrimes<<<(numOfInitialPrimes/THREADS_PER_BLOCK) + 1, THREADS_PER_BLOCK>>> (d_IL, d_PL, numOfInitialPrimes, LEN_IL);  // CHECK if it should be 'numOfInitialPrimes' or 'LEN_INITIAL_PRIMES'
 
+	// Space allocated to store the modified form of input array, with marking for prime and non-prime:
 	int *result = (int*) malloc(size_IL);
 
 	// Copy the result back to the host:
 	cudaMemcpy(result, d_IL, size_IL, cudaMemcpyDeviceToHost);
 
-	// Output the existing primes:
+	// Extract indexes of primes in 'result' to get the actual new prime numbers:
+	printf("New Primes List:\n");
+	int *newPrimes = (int*)malloc(LEN_IL / 4 * sizeof(int));
+	int newPrimesCount = 0;
+	for(int i=LEN_INITIAL_PRIMES; i<LEN_IL; i++) {
+		int num = result[i];
+		if(num == 1) {
+			newPrimes[newPrimesCount] = num;
+			newPrimesCount++;
+			printf("%d  ", i);
+		}
+	}
+	printf("\nNumber of new primes found = %d\n\n", newPrimesCount);
+
+
+
+	/* Output the existing primes:										// SECTION NEEDS CHANGES
 	printf("\nExisting (old) Primes List:\n");
 	for(int i=0; i<numOfInitialPrimes; i++) {
 		printf("%d\t", PL[i]);
 	}
 	printf("\n");
+	*/
 
-	// Output the new calculated primes: (1 -> Prime)
+/*
+	// Output the new calculated primes: (1 -> Prime)					// SECTION NEEDS CHANGES
 	printf("New Primes List:\n");
 	for(int i=PL[numOfInitialPrimes-1]+1; i < LEN_IL; i++) {
 		if(result[i] == 1) {
@@ -66,7 +86,7 @@ int main() {
 	}
 	printf("\n");
 	printf("Number of new primes found = %d\n\n", count);
-
+*/
 	// Free memory:
 	free(IL);
 	free(PL);
@@ -80,13 +100,14 @@ int main() {
 
 
 // Returns: Count of primes
-int generateInitialPrimes(int *intialTempArray, int initialPrimesRange) {
+int generateInitialPrimes(int *intialTempArray, int **PL, int initialPrimesRange) {
 	int primesCount = 0;
 	//int intialTempArray[initialPrimesRange];
-	//intialTempArray = (int*) malloc(LEN_INITIAL_PRIMES * sizeof(int));
+	intialTempArray = (int*) malloc(LEN_INITIAL_PRIMES * sizeof(int));
+	*PL = (int*) malloc(LEN_INITIAL_PRIMES / 2 * sizeof(int));				// Taking half size of initial (full) primes array
 	
 	// Initialize array with all 1's:
-	for(int i=0; i<initialPrimesRange; i++) {
+	for(int i=0; i < initialPrimesRange; i++) {
 		intialTempArray[i] = 1;
 	}
 
@@ -97,16 +118,13 @@ int generateInitialPrimes(int *intialTempArray, int initialPrimesRange) {
 		}
 	}
 	
-	// Print the initial primes:
-	printf("\n Initial Primes are: \n");
+	// Store the actual primes in a new array which will be copied later to the device (converting 'prime num indexes' to 'prime numbers') :
 	for(int i=2; i<=initialPrimesRange; i++) {
-		int num = intialTempArray[i];
-		if(num == 1) {
-			printf("%d  ", i);	
+		if(intialTempArray[i] == 1) {
+			(*PL)[primesCount] = i;
 			primesCount++;
 		}
 	}
-	printf("\n\nCount of initial primes = %d\n", primesCount);
 	return primesCount;
 }
 
