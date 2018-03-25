@@ -39,16 +39,21 @@ void addPrimes(uint64_cu* target, uint64_cu* source,uint64_cu sourcelen){
 __global__ void calcPrime(uint64_cu* primelist, uint64_cu* inputlist,uint64_cu plen, uint64_cu ilen ){
 
     uint64_cu ind1 = blockIdx.x * blockDim.x + threadIdx.x;
-    uint64_cu num = primelist[ind1];
-    uint64_cu lastno = inputlist[ilen-1];
+    //uint64_cu num = primelist[ind1-1];
+    //uint64_cu lastno = inputlist[ilen-1];
 
     /*
-    if(num > 99403){
-        printf("calcPrime %lu --- %lu \n",num, lastno);
-    }
-    */
+       if(num > 99403){
+       printf("calcPrime %lu --- %lu \n",num, lastno);
+       }
+     */
 
-    if(num<lastno){
+    //printf("\n threadId %llu , ilen %llu, plen %llu",ind1,ilen, plen);
+
+    if(ind1<plen){
+        uint64_cu num = primelist[ind1];
+        //printf("\ncore num %llu\n",num);
+        //uint64_cu lastno = inputlist[ilen-1];
         for(uint64_cu start = 0; start< ilen; start++){
             if(inputlist[start] == num) continue;
             if(inputlist[start] % num == 0){
@@ -112,8 +117,8 @@ int main( void ) {
 
     addPrimes(primelist, firstLimitArray, firstLimitLen);
 
-    while(firstLimit <= LIMIT){
-        //printf("\nfirstLimit %llu",firstLimit);
+    while(firstLimit < LIMIT*LIMIT){
+        printf("\nfirstLimit %llu",firstLimit);
         uint64_cu CUR_MAX = firstLimit;
 
         uint64_cu startNo = CUR_MAX+1;

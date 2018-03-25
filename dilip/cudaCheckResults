@@ -1,0 +1,21 @@
+cuda-memcheck ./prime_basic.o
+firstLimit 10 
+firstLimitLen 9 
+
+Serial Job Time: 0.00 ms
+
+firstLimit 10
+######################## startNo 11 , endNo 100  ########################
+
+Upto 100 , Parallel Job Time: 0.97 ms
+ilistPrimeCount 21 
+
+25 totalPrimes for Upto 100
+firstLimit 100
+######################## startNo 101 , endNo 10000  ########################
+
+Upto 10000 , Parallel Job Time: 50.01 ms
+ilistPrimeCount 1204 
+
+1229 totalPrimes for Upto 10000========= CUDA-MEMCHECK
+========= ERROR SUMMARY: 0 errors
