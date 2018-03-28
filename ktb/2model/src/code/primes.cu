@@ -127,8 +127,6 @@ int main(int argc, char *argv[]) {
     }
 
 
-    // Select GPU
-    gpuErrchk(cudaSetDevice(GPU));
 
     // Time Variables
     cudaEvent_t start, stop;
@@ -184,6 +182,8 @@ int main(int argc, char *argv[]) {
         cout << "Total Primes in Small Sieve: " << small_sieve_counter << endl;
     }
 
+
+
     if (DEBUG >=2) {
         cout << "Allocating PRIME_LIST" << endl;
     }
@@ -212,6 +212,19 @@ int main(int argc, char *argv[]) {
     if (DEBUG >=1) {
     printf("Input List Size on CPU: %llu\n", il_size);
     }
+
+
+
+
+
+
+
+
+
+
+
+    // Select GPU
+    gpuErrchk(cudaSetDevice(GPU));
 
 
     // Pointers in GPU memory
