@@ -23,6 +23,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <stdlib.h>
+#include <math.h>
+#include <iostream>
 
 using namespace std;
 
