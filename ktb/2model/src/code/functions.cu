@@ -27,3 +27,13 @@ using namespace std;
  */
 
 
+ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
+ {
+    if (code != cudaSuccess) 
+    {
+ 
+     fprintf(stderr,"\e[1;31mGPUassert: %s %s %d \e[0m\n", cudaGetErrorString(code), file, line);
+ 
+       if (abort) exit(code);
+    }
+ }
