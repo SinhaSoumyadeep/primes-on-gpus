@@ -7,7 +7,7 @@ using namespace std;
 
 long find_number_of_gpus() {
 
-    char cmd[100] = "ls -a\0";
+    char cmd[100] = "find /proc/driver/nvidia/gpus -type d | wc -l\0";
 
 
     array<char, 128> buffer;
