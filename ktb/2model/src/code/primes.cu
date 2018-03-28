@@ -53,7 +53,7 @@ void *one_iteration(void *tid) {
 // Global Variables.
 long long int pl_end_number = 1000;
 long long int total_primes=0;
-int number_of_gpus = 1;
+long number_of_gpus = 1;
 //long long int end_val = 1000000;
 
 
