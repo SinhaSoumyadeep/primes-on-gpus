@@ -38,6 +38,14 @@ __global__ void prime( bool *il,
 }
 
 
+// ********************** PTHREAD LAUNCH **********************
+
+void *one_iteration(void *tid) {
+    long thread_id = (long) tid;
+
+}
+
+
 
 
 // Global Variables.
