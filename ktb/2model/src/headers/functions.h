@@ -25,6 +25,7 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <math.h>
+#include <cuda_profiler_api.h>
 
 using namespace std;
 
