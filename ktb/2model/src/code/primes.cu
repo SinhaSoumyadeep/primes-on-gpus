@@ -7,6 +7,7 @@ using namespace std;
 #define DEBUG 1
 #define GPU 0
 #define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
+#define WARNINGS 1
 
 
 // ********************** KERNEL DEFINITION **********************
@@ -114,7 +115,7 @@ int main(int argc, char *argv[]) {
 
     for (long i = 0; i < number_of_gpus; i++) {
         thread_error[i] = pthread_create(&thread[i], NULL, one_iteration, (void *) i);
-        if (thread_error[i]) {
+        if (thread_error[i] && WARNINGS) {
             yellow_start();
             cout << "Warning: Thread " << i << " failed to launch" << endl;
             cout << "GPU: " << i << " is being mishandled." << endl;
