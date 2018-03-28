@@ -97,10 +97,16 @@ int main(int argc, char *argv[]) {
     pthread_t *thread = new pthread_t [number_of_gpus];
     int *thread_error = new int [number_of_gpus];
 
-    for (long i = 0; i < N_GPU; i++) {
+    for (int i = 0; i < number_of_gpus; i++) {
         thread_error[i] = pthread_create(&thread[i], NULL, one_iteration, (void *) i);
+        if (thread_error[i]) {
+            yellow_start();
+            cout << "Warning: Thread " << i << " failed to launch" << endl;
+            cout << "GPU: " << i << " is being mishandled." << endl;
+            color_reset();
+        }
     }
-    for (long i = 0; i < no_of_philos; i++) {
+    for (int i = 0; i < number_of_gpus; i++) {
         thread_error[i] = pthread_join(thread[i], NULL);
     }
 
