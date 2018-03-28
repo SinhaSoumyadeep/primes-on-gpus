@@ -138,7 +138,7 @@ int main(int argc, char *argv[]) {
 
 
     // Create Small 
-    if (DEBUG >=1) {
+    if (DEBUG >=2) {
         cout << "Allocating SMALL_SIEVE" << endl;
     }
     bool *small_sieve = new bool [pl_end_number];
