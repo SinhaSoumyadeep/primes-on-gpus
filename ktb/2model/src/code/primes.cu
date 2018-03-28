@@ -43,7 +43,7 @@ __global__ void prime( bool *il,
 // Global Variables.
 long long int pl_end_number = 1000;
 long long int total_primes=0;
-long number_of_gpus = 1;
+int number_of_gpus = 1;
 //long long int end_val = 1000000;
 
 
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
         case 3:
             long input_2;
             input_2 = atol(argv[2]); // Second Input
-            number_of_gpus = input_2; // Number of GPUs on the NODE.
+            number_of_gpus = (int)input_2; // Number of GPUs on the NODE.
         case 2:
             long input_1;
             input_1 = atol(argv[1]); // First input
@@ -95,7 +95,8 @@ int main(int argc, char *argv[]) {
 
 
 
-    int thread_error[]
+    int *thread_error = new int [number_of_gpus];
+    pthread_t *thread = new pthread_t [number_of_gpus];
 
     for (long i = 0; i < N_GPU; i++) {
         thread_error[i] = pthread_create(&thread[i], NULL, one_iteration, (void *) i);
