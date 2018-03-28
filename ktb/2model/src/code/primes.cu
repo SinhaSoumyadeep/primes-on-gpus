@@ -46,6 +46,8 @@ void *one_iteration(void *tid) {
 
     cout << "I am thread " << thread_id << endl;
 
+    cudaEvent_t start, stop;
+
 
 
 
