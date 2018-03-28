@@ -19,7 +19,9 @@ long find_number_of_gpus() {
             result += buffer.data();
     }
     cout << "GPU FINDER\n\n";
+    cyan_start();
     cout << result << endl;
+    color_reset();
     //return result;
     
 
