@@ -23,7 +23,7 @@ long find_number_of_gpus() {
     cout <<".";
     cout << result << endl;
     cout <<".";
-    int number_of_gpus = atoi(result);
+    int number_of_gpus = stoi(result);
     cout << "Number of GPUs = "<< number_of_gpus << endl;
     color_reset();
     //return result;
