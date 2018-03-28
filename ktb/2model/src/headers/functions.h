@@ -22,6 +22,7 @@
 #include <cstring>
 #include <fcntl.h>
 #include <unistd.h>
+#include <pthread.h>
 
 using namespace std;
 
