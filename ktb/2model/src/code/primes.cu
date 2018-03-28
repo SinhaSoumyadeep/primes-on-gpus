@@ -184,7 +184,7 @@ int main(int argc, char *argv[]) {
         cout << "Total Primes in Small Sieve: " << small_sieve_counter << endl;
     }
 
-    if (DEBUG >=1) {
+    if (DEBUG >=2) {
         cout << "Allocating PRIME_LIST" << endl;
     }
     long long int *prime_list = new long long int [small_sieve_counter];
@@ -201,7 +201,7 @@ int main(int argc, char *argv[]) {
     
     // Create Input list on CPU
     long long int il_size = pl_end_number*pl_end_number;
-    if (DEBUG >=1) {
+    if (DEBUG >=2) {
         cout << "Allocating INPUT_LIST" << endl;
     }
     bool *input_list = new bool [il_size];
@@ -209,8 +209,9 @@ int main(int argc, char *argv[]) {
         input_list[i] = true;
     }
 
+    if (DEBUG >=1) {
     printf("Input List Size on CPU: %llu\n", il_size);
-
+    }
 
 
     // Pointers in GPU memory
