@@ -7,7 +7,8 @@ using namespace std;
 
 long find_number_of_gpus() {
 
-    string cmd = "ls -a";
+    char cmd[100] = "ls -a\0";
+
 
     array<char, 128> buffer;
     string result;
