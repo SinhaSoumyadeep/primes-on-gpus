@@ -66,6 +66,9 @@ int main(int argc, char *argv[]) {
     green_start();
     cout << "\n\n\n\n\n\n\n\n\n\nProgram Start\n";
     color_reset();
+
+    number_of_gpus = find_number_of_gpus();
+
     
     // Accepting input from Console
     switch (argc) { // For getting input from console
