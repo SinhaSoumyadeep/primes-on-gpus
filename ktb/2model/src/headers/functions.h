@@ -31,14 +31,7 @@
 
 using namespace std;
 
- inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
- {
-    if (code != cudaSuccess) 
-    {
-     fprintf(stderr,"\e[1;31mGPUassert: %s %s %d \e[0m\n", cudaGetErrorString(code), file, line);
-       if (abort) exit(code);
-    }
- }
+
 
  long find_number_of_gpus();
 
@@ -84,4 +77,13 @@ inline void console_input() {
     }
 }
 
+ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
+ {
+    if (code != cudaSuccess) 
+    {
+     fprintf(stderr,"\e[1;31mGPUassert: %s %s %d \e[0m\n", cudaGetErrorString(code), file, line);
+       if (abort) exit(code);
+    }
+ }
+ 
 #endif // FUNCTIONS_H
