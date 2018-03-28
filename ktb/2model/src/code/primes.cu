@@ -7,7 +7,7 @@ using namespace std;
 #define DEBUG 1
 #define GPU 0
 #define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
-
+#define N_GPU 2
 
 
 // ********************** KERNEL DEFINITION **********************
