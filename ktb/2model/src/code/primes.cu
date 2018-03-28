@@ -38,7 +38,7 @@ __global__ void prime( bool *il,
 }
 
 
-// ********************** PTHREAD LAUNCH **********************
+// ********************** PTHREAD ITERATION **********************
 
 void *one_iteration(void *tid) {
     long thread_id = (long) tid;
@@ -103,7 +103,6 @@ int main(int argc, char *argv[]) {
 
 
 
-    find_number_of_gpus();
 
     // Pthreads Launch
     pthread_t *thread = new pthread_t [number_of_gpus];
