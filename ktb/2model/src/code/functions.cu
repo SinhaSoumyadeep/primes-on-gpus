@@ -31,5 +31,14 @@ void start_info() {
     green_start();
     cout << "\n\n\n\n\n\n\n\n\n\nProgram Start\n";
     color_reset();
-    
+
+}
+
+
+
+void end_info() {
+    // Statistics about the program goes here
+
+
+    cout << endl<< endl<< endl;
 }
