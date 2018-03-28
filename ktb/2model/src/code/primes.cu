@@ -43,6 +43,8 @@ __global__ void prime( bool *il,
 void *one_iteration(void *tid) {
     long thread_id = (long) tid;
 
+    cout << "I am thread " << tid << endl;
+
 }
 
 
