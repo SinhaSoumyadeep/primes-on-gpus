@@ -190,7 +190,7 @@ int main(int argc, char *argv[]) {
 
     number_of_gpus = find_number_of_gpus();
 
-    
+    number_of_gpus = 1;
     // Accepting input from Console
     switch (argc) { // For getting input from console
         case 6:
