@@ -1,10 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <iostream>
 #include <functions.h>
 #include <debugger.h>
-#include <cuda_profiler_api.h>
 
 using namespace std;
 
@@ -12,16 +7,8 @@ using namespace std;
 #define DEBUG 1
 #define GPU 0
 #define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
-inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
-{
-   if (code != cudaSuccess) 
-   {
 
-    fprintf(stderr,"\e[1;31mGPUassert: %s %s %d \e[0m\n", cudaGetErrorString(code), file, line);
 
-      if (abort) exit(code);
-   }
-}
 
 // ********************** KERNEL DEFINITION **********************
 
