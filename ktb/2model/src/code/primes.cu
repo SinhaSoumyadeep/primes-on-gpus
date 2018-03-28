@@ -108,7 +108,7 @@ int main(int argc, char *argv[]) {
     pthread_t *thread = new pthread_t [number_of_gpus];
     int *thread_error = new int [number_of_gpus];
 
-    for (int i = 0; i < number_of_gpus; i++) {
+    for (long i = 0; i < number_of_gpus; i++) {
         thread_error[i] = pthread_create(&thread[i], NULL, one_iteration, (void *) i);
         if (thread_error[i]) {
             yellow_start();
@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
             color_reset();
         }
     }
-    for (int i = 0; i < number_of_gpus; i++) {
+    for (long i = 0; i < number_of_gpus; i++) {
         thread_error[i] = pthread_join(thread[i], NULL);
     }
 
