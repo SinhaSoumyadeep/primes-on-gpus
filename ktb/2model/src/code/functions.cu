@@ -25,3 +25,11 @@ long find_number_of_gpus() {
 
 }
 
+
+
+void start_info() {
+    green_start();
+    cout << "\n\n\n\n\n\n\n\n\n\nProgram Start\n";
+    color_reset();
+    
+}
