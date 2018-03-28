@@ -272,7 +272,7 @@ int main(int argc, char *argv[]) {
     gpuErrchk( cudaPeekAtLastError() );
     gpuErrchk(cudaEventRecord(stop,0));
     gpuErrchk(cudaEventSynchronize(stop));
-    if (DEBUG >=1) {
+    if (DEBUG >=2) {
         cout << "Kernel Computation Complete" << endl;
     }
     gpuErrchk(cudaEventElapsedTime(&time, start, stop));
@@ -281,7 +281,7 @@ int main(int argc, char *argv[]) {
     color_reset();
 
         // Create Output list on CPU
-        if (DEBUG >=1) {
+        if (DEBUG >=2) {
             cout << "Allocating OUTPUT_LIST" << endl;
         }
         bool *output_list = new bool [il_size];
