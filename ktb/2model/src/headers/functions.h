@@ -6,7 +6,6 @@
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
 
-#define NODE_MAX_JOBS 128 // Equal to MAX Cores
 
 #include <iostream>
 #include <stdio.h>
