@@ -184,11 +184,10 @@ long number_of_gpus = 1;
 
 int main(int argc, char *argv[]) { 
 
+    start_info();
 
  
-    green_start();
-    cout << "\n\n\n\n\n\n\n\n\n\nProgram Start\n";
-    color_reset();
+
 
     number_of_gpus = find_number_of_gpus();
 
@@ -242,10 +241,14 @@ int main(int argc, char *argv[]) {
     gpuErrchk(cudaEventCreate (&stop));
 
 
+
     // Create Small 
     if (DEBUG >=2) {
         cout << "Allocating SMALL_SIEVE" << endl;
     }
+
+
+
     bool *small_sieve = new bool [pl_end_number];
 
 
@@ -345,9 +348,8 @@ int main(int argc, char *argv[]) {
 
 // CODE
 
+    end_info();
 
-
-     cout << endl<< endl<< endl;
     return 0;
 }
 
