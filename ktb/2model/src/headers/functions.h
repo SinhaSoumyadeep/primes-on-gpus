@@ -42,4 +42,7 @@ using namespace std;
     }
  }
 
+ long find_number_of_gpus();
+ 
+
 #endif // FUNCTIONS_H
