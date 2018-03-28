@@ -104,6 +104,7 @@ int main(int argc, char *argv[]) {
 
 
 
+    // Pthreads Launch
     pthread_t *thread = new pthread_t [number_of_gpus];
     int *thread_error = new int [number_of_gpus];
 
