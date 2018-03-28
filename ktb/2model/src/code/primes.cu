@@ -88,6 +88,7 @@ int main(int argc, char *argv[]) {
             long input_2;
             input_2 = atol(argv[2]); // Second Input
             number_of_gpus = (int)input_2; // Number of GPUs on the NODE.
+            // Over-ride with input value.
         case 2:
             long input_1;
             input_1 = atol(argv[1]); // First input
