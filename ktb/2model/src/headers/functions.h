@@ -42,5 +42,6 @@ using namespace std;
 
  long find_number_of_gpus();
 
+void start_info();
 
 #endif // FUNCTIONS_H
