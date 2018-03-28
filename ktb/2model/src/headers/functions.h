@@ -26,6 +26,9 @@
 #include <math.h>
 #include <cuda_profiler_api.h>
 
+#include <memory>
+#include <stdexcept>
+
 using namespace std;
 
  inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
