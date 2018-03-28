@@ -35,14 +35,12 @@ using namespace std;
  {
     if (code != cudaSuccess) 
     {
- 
      fprintf(stderr,"\e[1;31mGPUassert: %s %s %d \e[0m\n", cudaGetErrorString(code), file, line);
- 
        if (abort) exit(code);
     }
  }
 
  long find_number_of_gpus();
- 
+
 
 #endif // FUNCTIONS_H
