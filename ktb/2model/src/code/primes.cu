@@ -103,6 +103,7 @@ int main(int argc, char *argv[]) {
 
 
 
+    find_number_of_gpus();
 
     // Pthreads Launch
     pthread_t *thread = new pthread_t [number_of_gpus];
