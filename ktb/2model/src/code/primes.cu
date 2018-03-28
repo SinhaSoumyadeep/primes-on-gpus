@@ -42,30 +42,34 @@ __global__ void prime( bool *il,
 // ********************** PTHREAD ITERATION **********************
 
 void *one_iteration(void *tid) {
+    // Dont use tid
+    // Use thread_id
     long thread_id = (long) tid;
 
-    cout << "I am thread " << thread_id << endl;
+    if (DEBUG >= 1) {
+        cout << "GPU Handler: " << thread_id << endl;
+    }
 
     cudaEvent_t start, stop;
-
-
+    
 
 
         // Select GPU
-        gpuErrchk(cudaSetDevice(GPU));
+        gpuErrchk(cudaSetDevice(thread_id));
 
 
         // Pointers in GPU memory
-        bool *dev_il;
-        long long int *dev_pl;
-        long long int *dev_input_size;
-        long long int *dev_prime_size;
-        long long int *dev_pl_end_number;   
+        long long int *dev_prime_list;
+        long long int *dev_prime_list_start;
+        long long int *dev_prime_list_end;
+        
+        long long int *dev_input_list_start;
+        long long int *dev_input_list_end;
+        
         
     
         // Allocate the memory on the GPU
-        gpuErrchk( cudaMalloc( (void**)&dev_il,  il_size * sizeof(bool) ) );
-        gpuErrchk( cudaMalloc( (void**)&dev_pl,  small_sieve_counter * sizeof(long long int) ) );
+        gpuErrchk( cudaMalloc( (void**)&dev_prime_list,  small_sieve_counter * sizeof(long long int) ) );
         gpuErrchk( cudaMalloc( (void**)&dev_input_size,  sizeof(long long int) ));
         gpuErrchk( cudaMalloc( (void**)&dev_prime_size,  sizeof(long long int) ));
         gpuErrchk( cudaMalloc( (void**)&dev_prime_size,  sizeof(long long int) ));
@@ -184,6 +188,7 @@ long number_of_gpus = 1;
 
 int main(int argc, char *argv[]) { 
 
+    // INLINE
     start_info();
 
     number_of_gpus = find_number_of_gpus();
@@ -194,6 +199,7 @@ int main(int argc, char *argv[]) {
 
 
     // Accepting input from Console
+    // INLINE
     console_input();
 
 
@@ -280,6 +286,17 @@ int main(int argc, char *argv[]) {
     }
 
     
+
+
+
+    while(end_reached) {
+
+
+
+
+
+
+
     // Create Input list on CPU
     long long int il_size = pl_end_number*pl_end_number;
     if (DEBUG >=2) {
@@ -299,6 +316,9 @@ int main(int argc, char *argv[]) {
     // Pthreads Launch
     pthread_t *thread = new pthread_t [number_of_gpus];
     int *thread_error = new int [number_of_gpus];
+    GpuHandler *handler = new GpuHandler [number_of_gpus];
+
+    initialize_handlers(handler);
 
     for (long i = 0; i < number_of_gpus; i++) {
         thread_error[i] = pthread_create(&thread[i], NULL, one_iteration, (void *) i);
@@ -314,11 +334,15 @@ int main(int argc, char *argv[]) {
     }
 
 
+    // INLINE
+    iteration_info();
 
+}
 
 
 // CODE
 
+    // INLINE
     end_info();
 
     return 0;

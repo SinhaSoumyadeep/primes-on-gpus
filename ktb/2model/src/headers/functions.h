@@ -32,6 +32,12 @@
 using namespace std;
 
 
+struct GpuHandler {
+    long id = -1;
+    unsigned long long int prime_list_counter = -1;
+    
+};
+
 
  long find_number_of_gpus();
 
@@ -85,5 +91,5 @@ inline void console_input() {
        if (abort) exit(code);
     }
  }
- 
+
 #endif // FUNCTIONS_H

@@ -23,11 +23,16 @@ long find_number_of_gpus() {
     // one more than the actual number of GPUs.
     return (number_of_gpus);
 
+    // Function Complete --KTB
 }
 
 
 
 void start_info() {
+    // Will print all the stats about the program like
+    // Number of GPU being used.
+    // End Number being Calculated, and so on.
+
     green_start();
     cout << "\n\n\n\n\n\n\n\n\n\nProgram Start\n";
     color_reset();
@@ -42,3 +47,12 @@ void end_info() {
 
     cout << endl<< endl<< endl;
 }
+
+
+
+void iteration_info() {
+    // Statistics about every iteration of the program goes here
+
+
+}
+
