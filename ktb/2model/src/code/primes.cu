@@ -7,7 +7,6 @@ using namespace std;
 #define DEBUG 1
 #define GPU 0
 #define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
-#define N_GPU 2
 
 
 // ********************** KERNEL DEFINITION **********************
@@ -44,6 +43,7 @@ __global__ void prime( bool *il,
 // Global Variables.
 long long int pl_end_number = 1000;
 long long int total_primes=0;
+long number_of_gpus = 1;
 //long long int end_val = 1000000;
 
 
@@ -72,8 +72,9 @@ int main(int argc, char *argv[]) {
             //input_3 = atol(argv[3]); // Third Input
             
         case 3:
-            //long input_2;
-            //input_2 = atol(argv[2]); // Second Input
+            long input_2;
+            input_2 = atol(argv[2]); // Second Input
+            number_of_gpus = input_2; // Number of GPUs on the NODE.
         case 2:
             long input_1;
             input_1 = atol(argv[1]); // First input
@@ -94,7 +95,14 @@ int main(int argc, char *argv[]) {
 
 
 
+    int thread_error[]
 
+    for (long i = 0; i < N_GPU; i++) {
+        thread_error[i] = pthread_create(&thread[i], NULL, one_iteration, (void *) i);
+    }
+    for (long i = 0; i < no_of_philos; i++) {
+        thread_error[i] = pthread_join(thread[i], NULL);
+    }
 
 
     // Select GPU
