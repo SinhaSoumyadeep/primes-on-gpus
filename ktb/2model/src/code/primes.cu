@@ -41,9 +41,9 @@ __global__ void prime( bool *il,
 // ********************** PTHREAD LAUNCH **********************
 
 void *one_iteration(void *tid) {
-    long thread_id = (long) tid;
+    int thread_id = (int) tid;
 
-    cout << "I am thread " << tid << endl;
+    cout << "I am thread " << thread_id << endl;
 
 }
 
