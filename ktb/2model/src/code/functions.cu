@@ -6,10 +6,10 @@ using namespace std;
 #define WARNINGS 0
 
 long find_number_of_gpus() {
+    // System command to find number of GPUs attached 
+    // find /proc/driver/nvidia/gpus -type d | wc -l
 
     char cmd[100] = "find /proc/driver/nvidia/gpus -type d | wc -l\0";
-
-
     array<char, 128> buffer;
     string result;
     shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
@@ -18,18 +18,8 @@ long find_number_of_gpus() {
         if (fgets(buffer.data(), 128, pipe.get()) != nullptr)
             result += buffer.data();
     }
-    cout << "GPU FINDER\.\.";
-    cyan_start();
-    cout <<".";
-    cout << result << endl;
-    cout <<".";
-    int number_of_gpus = stoi(result);
-    cout << "Number of GPUs = "<< number_of_gpus << endl;
-    color_reset();
-    //return result;
-    
-
-    //    find /proc/driver/nvidia/gpus -type d | wc -l
+    long number_of_gpus = (long)stoi(result);
+    return (number_of_gpus);
 
 }
 
