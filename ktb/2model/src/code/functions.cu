@@ -17,7 +17,9 @@ long find_number_of_gpus() {
         if (fgets(buffer.data(), 128, pipe.get()) != nullptr)
             result += buffer.data();
     }
-    return result;
+    cout << "GPU FINDER\n\n"
+    cout << result << endl;
+    //return result;
     
 
     //    find /proc/driver/nvidia/gpus -type d | wc -l
