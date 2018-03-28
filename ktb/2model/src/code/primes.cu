@@ -186,12 +186,12 @@ int main(int argc, char *argv[]) {
 
     start_info();
 
- 
-
-
     number_of_gpus = find_number_of_gpus();
 
-    number_of_gpus = 1;
+
+    // For debugging, I am hardcoding the numbber of GPUs to 1.
+    number_of_gpus = 1; // Remove this line to run on multiple GPUs.
+
     // Accepting input from Console
     switch (argc) { // For getting input from console
         case 6:
