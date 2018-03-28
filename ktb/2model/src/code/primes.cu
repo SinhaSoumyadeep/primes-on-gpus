@@ -46,6 +46,126 @@ void *one_iteration(void *tid) {
 
     cout << "I am thread " << thread_id << endl;
 
+
+
+
+        // Select GPU
+        gpuErrchk(cudaSetDevice(GPU));
+
+
+        // Pointers in GPU memory
+        bool *dev_il;
+        long long int *dev_pl;
+        long long int *dev_input_size;
+        long long int *dev_prime_size;
+        long long int *dev_pl_end_number;   
+        
+    
+        // Allocate the memory on the GPU
+        gpuErrchk( cudaMalloc( (void**)&dev_il,  il_size * sizeof(bool) ) );
+        gpuErrchk( cudaMalloc( (void**)&dev_pl,  small_sieve_counter * sizeof(long long int) ) );
+        gpuErrchk( cudaMalloc( (void**)&dev_input_size,  sizeof(long long int) ));
+        gpuErrchk( cudaMalloc( (void**)&dev_prime_size,  sizeof(long long int) ));
+        gpuErrchk( cudaMalloc( (void**)&dev_prime_size,  sizeof(long long int) ));
+        gpuErrchk( cudaMalloc( (void**)&dev_pl_end_number,  sizeof(long long int) ));
+    
+    
+        // Copy the arrays 'a' and 'b' to the GPU
+                gpuErrchk( cudaMemcpy( dev_il, input_list, il_size * sizeof(bool),
+                 cudaMemcpyHostToDevice ));
+                gpuErrchk( cudaMemcpy( dev_pl, prime_list, small_sieve_counter * sizeof(long long int),
+                 cudaMemcpyHostToDevice ));
+                gpuErrchk( cudaMemcpy( dev_prime_size, &small_sieve_counter, sizeof(long long int),
+                 cudaMemcpyHostToDevice ));
+                 gpuErrchk( cudaMemcpy( dev_input_size, &il_size, sizeof(long long int),
+                 cudaMemcpyHostToDevice ));
+                 gpuErrchk( cudaMemcpy( dev_pl_end_number, &pl_end_number, sizeof(long long int),
+                 cudaMemcpyHostToDevice ));
+    
+    
+        //
+        // GPU Calculation
+        ////////////////////////
+    
+     //   printf("Running parallel job.\n");
+    
+        int grid_size = (small_sieve_counter-1)/block_size;
+        grid_size++;
+    
+        if (DEBUG >=1) {
+            cout << "Grid Size: " << grid_size << endl;
+            cout << "Block Size: " << block_size << endl;
+            
+        }
+    
+    
+        // ********************** KERNEL LAUNCH **********************
+        gpuErrchk( cudaProfilerStart() );
+    
+        if (DEBUG >=1) {
+            cout << "Launching Kernel" << endl;
+        }
+    
+        gpuErrchk(cudaEventRecord(start,0));
+        prime<<<grid_size,block_size>>>(dev_il, dev_pl, dev_input_size, dev_prime_size, dev_pl_end_number);
+        gpuErrchk( cudaPeekAtLastError() );
+        gpuErrchk(cudaEventRecord(stop,0));
+        gpuErrchk(cudaEventSynchronize(stop));
+        if (DEBUG >=2) {
+            cout << "Kernel Computation Complete" << endl;
+        }
+        gpuErrchk(cudaEventElapsedTime(&time, start, stop));
+        yellow_start();
+        printf("GPU Time: %.2f ms\n", time);
+        color_reset();
+    
+            // Create Output list on CPU
+            if (DEBUG >=2) {
+                cout << "Allocating OUTPUT_LIST" << endl;
+            }
+            bool *output_list = new bool [il_size];
+            
+    
+        // copy the array Input List back from the GPU to the CPU
+        gpuErrchk(cudaMemcpy( output_list, dev_il, il_size * sizeof(bool), 
+                 cudaMemcpyDeviceToHost ));
+        gpuErrchk(cudaProfilerStop());
+    
+        // Check Returned Primes
+        long long int ret_primes=0;
+        
+        for (long long int i = pl_end_number; i < pl_end_number*pl_end_number; i++) {
+            if (output_list[i] == true) {
+                // To display prime numbers
+                //cout << i << " ";
+                ret_primes++;
+                //small_sieve_counter++;
+            }
+        }
+    
+        total_primes += ret_primes; 
+        green_start();
+        cout << "Total Primes: "<< total_primes;
+        cout << endl;
+        color_reset();
+                 
+        
+    
+        // Free the memory allocated on the GPU
+        cudaFree( dev_il );
+        cudaFree( dev_pl );
+        cudaFree( dev_prime_size );
+        cudaFree( dev_input_size );
+        cudaFree( dev_pl_end_number );
+        
+    
+         free(small_sieve);
+         free(prime_list);
+         free(input_list);
+         free(output_list);
+    
+    
+
 }
 
 
@@ -221,122 +341,7 @@ int main(int argc, char *argv[]) {
 
 
 
-
-
-    // Select GPU
-    gpuErrchk(cudaSetDevice(GPU));
-
-
-    // Pointers in GPU memory
-    bool *dev_il;
-    long long int *dev_pl;
-    long long int *dev_input_size;
-    long long int *dev_prime_size;
-    long long int *dev_pl_end_number;   
-    
-
-    // Allocate the memory on the GPU
-    gpuErrchk( cudaMalloc( (void**)&dev_il,  il_size * sizeof(bool) ) );
-    gpuErrchk( cudaMalloc( (void**)&dev_pl,  small_sieve_counter * sizeof(long long int) ) );
-    gpuErrchk( cudaMalloc( (void**)&dev_input_size,  sizeof(long long int) ));
-    gpuErrchk( cudaMalloc( (void**)&dev_prime_size,  sizeof(long long int) ));
-    gpuErrchk( cudaMalloc( (void**)&dev_prime_size,  sizeof(long long int) ));
-    gpuErrchk( cudaMalloc( (void**)&dev_pl_end_number,  sizeof(long long int) ));
-
-
-    // Copy the arrays 'a' and 'b' to the GPU
-            gpuErrchk( cudaMemcpy( dev_il, input_list, il_size * sizeof(bool),
-             cudaMemcpyHostToDevice ));
-            gpuErrchk( cudaMemcpy( dev_pl, prime_list, small_sieve_counter * sizeof(long long int),
-             cudaMemcpyHostToDevice ));
-            gpuErrchk( cudaMemcpy( dev_prime_size, &small_sieve_counter, sizeof(long long int),
-             cudaMemcpyHostToDevice ));
-             gpuErrchk( cudaMemcpy( dev_input_size, &il_size, sizeof(long long int),
-             cudaMemcpyHostToDevice ));
-             gpuErrchk( cudaMemcpy( dev_pl_end_number, &pl_end_number, sizeof(long long int),
-             cudaMemcpyHostToDevice ));
-
-
-    //
-    // GPU Calculation
-    ////////////////////////
-
- //   printf("Running parallel job.\n");
-
-    int grid_size = (small_sieve_counter-1)/block_size;
-    grid_size++;
-
-    if (DEBUG >=1) {
-        cout << "Grid Size: " << grid_size << endl;
-        cout << "Block Size: " << block_size << endl;
-        
-    }
-
-
-    // ********************** KERNEL LAUNCH **********************
-    gpuErrchk( cudaProfilerStart() );
-
-    if (DEBUG >=1) {
-        cout << "Launching Kernel" << endl;
-    }
-
-    gpuErrchk(cudaEventRecord(start,0));
-    prime<<<grid_size,block_size>>>(dev_il, dev_pl, dev_input_size, dev_prime_size, dev_pl_end_number);
-    gpuErrchk( cudaPeekAtLastError() );
-    gpuErrchk(cudaEventRecord(stop,0));
-    gpuErrchk(cudaEventSynchronize(stop));
-    if (DEBUG >=2) {
-        cout << "Kernel Computation Complete" << endl;
-    }
-    gpuErrchk(cudaEventElapsedTime(&time, start, stop));
-    yellow_start();
-    printf("GPU Time: %.2f ms\n", time);
-    color_reset();
-
-        // Create Output list on CPU
-        if (DEBUG >=2) {
-            cout << "Allocating OUTPUT_LIST" << endl;
-        }
-        bool *output_list = new bool [il_size];
-        
-
-    // copy the array Input List back from the GPU to the CPU
-    gpuErrchk(cudaMemcpy( output_list, dev_il, il_size * sizeof(bool), 
-             cudaMemcpyDeviceToHost ));
-    gpuErrchk(cudaProfilerStop());
-
-    // Check Returned Primes
-    long long int ret_primes=0;
-    
-    for (long long int i = pl_end_number; i < pl_end_number*pl_end_number; i++) {
-        if (output_list[i] == true) {
-            // To display prime numbers
-            //cout << i << " ";
-            ret_primes++;
-            //small_sieve_counter++;
-        }
-    }
-
-    total_primes += ret_primes; 
-    green_start();
-    cout << "Total Primes: "<< total_primes;
-    cout << endl;
-    color_reset();
-             
-    
-
-    // Free the memory allocated on the GPU
-    cudaFree( dev_il );
-    cudaFree( dev_pl );
-    cudaFree( dev_prime_size );
-    cudaFree( dev_input_size );
-    cudaFree( dev_pl_end_number );
-    
-
-     free(small_sieve);
-     free(prime_list);
-     free(input_list);
-     free(output_list);
+// CODE
 
 
 
