@@ -208,6 +208,7 @@ int main(int argc, char *argv[]) {
 
 
 
+    calculate_primes_on_cpu();
 
 
 
