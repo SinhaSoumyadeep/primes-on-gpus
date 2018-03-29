@@ -1,18 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "primedisk.h"
 
 typedef unsigned long long int uint64_cu;
 #define INTSIZE sizeof(uint64_cu)
 
-void printList(uint64_cu* ilist, uint64_cu len){
-    printf("\n(START, length-> %llu)\n", len);
-    for(uint64_cu index=0; index<len ; index++){
-        printf("%llu ",ilist[index]);
-    }
-    printf("\nEND \n");
-}
-
 int main( void ) { 
+    readPrimes();
+    /*
     FILE* fin = fopen("pdata.txt","r");
 
     uint64_cu len ;
@@ -33,4 +28,5 @@ int main( void ) {
         printf("\t %llu",nreadArr);
         printList(parr,len);
     }
+    */
 }
