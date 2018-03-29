@@ -1,15 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
-//#include <inttypes.h>
+#include "primedisk.h"
 
 #define EXECCPU 0
 
-#define LIMIT 10000
+#define LIMIT 1000
 
 typedef unsigned long long int uint64_cu;
 #define INTSIZE sizeof(uint64_cu)
 #define BLOCK_SIZE 32 
 
+/*
 void printList(uint64_cu* ilist, uint64_cu len){
     printf("\n(START, length-> %llu)\n", len);
     for(uint64_cu index=0; index<len ; index++){
@@ -17,6 +18,7 @@ void printList(uint64_cu* ilist, uint64_cu len){
     }
     printf("\nEND \n");
 }
+*/
 
 uint64_cu countPrime(uint64_cu* arr, uint64_cu len){
     uint64_cu pcount = 0;
@@ -65,7 +67,7 @@ __global__ void calcPrime(uint64_cu* primelist, uint64_cu* inputlist,uint64_cu p
 }
 
 int main( void ) { 
-    FILE* fout = fopen("pdata.txt","w");
+    openFile();
 
     // Set device that we will use for our cuda code
     // It will be either 0 or 1
@@ -116,6 +118,7 @@ int main( void ) {
     uint64_cu* primelist = (uint64_cu*) malloc(pcount*INTSIZE);
 
     addPrimes(primelist, firstLimitArray, firstLimitLen);
+    writePrimes(primelist,plen,firstLimit);
 
     while(firstLimit < LIMIT*LIMIT){
         printf("\nfirstLimit %llu",firstLimit);
@@ -161,21 +164,12 @@ int main( void ) {
         printf("\n\nUpto %llu , Parallel Job Time: %.2f ms\n",endNo ,time);
         //printList(inputlist,range);
 
-        // 1) WRITE primelist
-        //printf("\nplen %llu ",plen);
-        //fprintf(fout,"%d",plen);
-        fwrite(&plen, INTSIZE, 1, fout);
-        fwrite(primelist, INTSIZE, plen, fout );
-        //printList(primelist,plen);
-
         // 2) WRITE primes from INPUTLIST
         uint64_cu ilistPrimeCount = countPrime(inputlist,range);
         printf("ilistPrimeCount %llu \n",ilistPrimeCount);
         uint64_cu* ilistprimes = (uint64_cu*) malloc(ilistPrimeCount*INTSIZE);
         addPrimes(ilistprimes, inputlist, range);
-        //fprintf(fout,"%d",ilistPrimeCount);
-        fwrite(&ilistPrimeCount, INTSIZE, 1, fout);
-        fwrite(ilistprimes, INTSIZE, ilistPrimeCount, fout );
+        writePrimes(ilistprimes,ilistPrimeCount,endNo);
         //printList(ilistprimes,ilistPrimeCount);
 
         // APPEND LOGIC
@@ -190,10 +184,9 @@ int main( void ) {
         plen = totalPrimes;
         firstLimit = endNo;
         fflush(stdout);
-        fflush(fout);
     }
 
-    fclose(fout);
-
+    closeFile();
+    //readPrimes();
     return 0;
 }
