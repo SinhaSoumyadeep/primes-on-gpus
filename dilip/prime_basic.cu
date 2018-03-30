@@ -10,16 +10,6 @@ typedef unsigned long long int uint64_cu;
 #define INTSIZE sizeof(uint64_cu)
 #define BLOCK_SIZE 32 
 
-/*
-void printList(uint64_cu* ilist, uint64_cu len){
-    printf("\n(START, length-> %llu)\n", len);
-    for(uint64_cu index=0; index<len ; index++){
-        printf("%llu ",ilist[index]);
-    }
-    printf("\nEND \n");
-}
-*/
-
 uint64_cu countPrime(uint64_cu* arr, uint64_cu len){
     uint64_cu pcount = 0;
     for(uint64_cu x=0; x<len; x++){
@@ -67,7 +57,6 @@ __global__ void calcPrime(uint64_cu* primelist, uint64_cu* inputlist,uint64_cu p
 }
 
 int main( void ) { 
-    openFile();
 
     // Set device that we will use for our cuda code
     // It will be either 0 or 1
@@ -186,7 +175,6 @@ int main( void ) {
         fflush(stdout);
     }
 
-    closeFile();
     //readPrimes();
     return 0;
 }
