@@ -4,7 +4,7 @@
 
 #define EXECCPU 0
 
-#define LIMIT 100
+#define LIMIT 10000
 
 typedef unsigned long long int uint64_cu;
 #define INTSIZE sizeof(uint64_cu)
@@ -57,7 +57,7 @@ __global__ void calcPrime(uint64_cu* primelist, uint64_cu* inputlist,uint64_cu p
 }
 
 int main( void ) { 
-    cudaSetDevice(0);
+    cudaSetDevice(1);
     srand(time(NULL));
     // Time Variables
     cudaEvent_t start, stop;
@@ -75,7 +75,7 @@ int main( void ) {
     uint64_cu* primelist = ret.primelist;
     printf("\n\n ret lastMaxNo-> %llu ",ret.lastMaxNo);
     printf("\tlength -> %llu ",ret.length);
-    printList(ret.primelist ,ret.length);
+    //printList(ret.primelist ,ret.length);
 
     printf(" \n\n>>>>>>>>>>>>>> POST FILE READ\n");
     if(ret.length == 0 ){

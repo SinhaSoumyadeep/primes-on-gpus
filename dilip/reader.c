@@ -9,7 +9,7 @@ int main( void ) {
     PrimeHeader ret = readPrimes();
     printf("\n\n ret lastMaxNo-> %llu ",ret.lastMaxNo);
     printf("\tlength -> %llu ",ret.length);
-    printList(ret.primelist ,ret.length);
+    //printList(ret.primelist ,ret.length);
     /*
     FILE* fin = fopen("pdata.txt","r");
 

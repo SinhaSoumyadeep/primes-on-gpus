@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
+#include <string.h>
 
 typedef unsigned long long int uint64_cu;
 #define INTSIZE sizeof(uint64_cu)
@@ -32,14 +34,30 @@ void printList(uint64_cu* ilist, uint64_cu len){
 
 void writePrimes(uint64_cu primes[], uint64_cu length, uint64_cu lastNo){
     FILE * fout1 = fopen(PRIME_FILENAME,"ab+");
+    if(!fout1){
+        fprintf(stderr,"Error opening %s file for writing primes, error-> %s",PRIME_FILENAME,strerror(errno));
+        exit(1);
+    }
 
     PrimeHeader hdr;
     hdr.lastMaxNo = lastNo;
     hdr.length = length;
 
-    fwrite(&hdr, sizeof(PrimeHeader), 1, fout1);
-    fwrite(primes, INTSIZE, length, fout1);
-    fclose(fout1);
+    size_t num = fwrite(&hdr, sizeof(PrimeHeader), 1, fout1);
+    if(num!=1){
+        fprintf(stderr,"Error writing prime header needed 1 , written only %ld",num);
+        exit(1);
+    }
+    num = fwrite(primes, INTSIZE, length, fout1);
+    if(num!=length){
+        fprintf(stderr,"Error writing prime header needed %llu , written only %ld",length,num);
+        exit(1);
+    }
+    num = fclose(fout1);
+    if(num != 0){
+        fprintf(stderr,"Error clossing %s file, error-> %s",PRIME_FILENAME,strerror(errno));
+        exit(1);
+    }
 }
 
 
@@ -65,7 +83,11 @@ PrimeHeader readPrimes(){
         printf("\tlastMaxNo-> %llu ",hdr.lastMaxNo);
         printf("\tlength -> %llu ",hdr.length);
         // skip past primes in current line
-        fseek(fin, (hdr.length *INTSIZE) , SEEK_CUR);
+        int ret = fseek(fin, (hdr.length *INTSIZE) , SEEK_CUR);
+        if(ret==-1){
+            fprintf(stderr,"Error in fseek %s file, error-> %s",PRIME_FILENAME,strerror(errno));
+            exit(1);
+        }
     }
 
     printf("\nAggregatePrimes %llu",aggregatePrimes);
@@ -74,6 +96,10 @@ PrimeHeader readPrimes(){
     printf("\nSECOND PASS: to read all primes\n");
     fseek(fin,0,SEEK_SET);
     uint64_cu* retPtr = (uint64_cu*) malloc(aggregatePrimes * INTSIZE);
+    if(!retPtr){
+        fprintf(stderr,"Error in malloc of %llu primes, error-> %s",aggregatePrimes,strerror(errno));
+        exit(1);
+    }
     offset = 0;
 
     while(!feof(fin)){
@@ -85,7 +111,8 @@ PrimeHeader readPrimes(){
         printf("\tlength -> %llu ",hdr.length);
         uint64_cu nreadArr = fread(retPtr + offset ,INTSIZE,hdr.length,fin);
         if(nreadArr == 0){
-            printf("\nSOMETHING NOT WRITE WITH FILE, %llu primes were expected but 0 found!!",hdr.length);
+            fprintf(stderr,"Error in reading of %llu primes, 0 were read",hdr.length);
+            exit(1);
         }
         printf("\t %llu",nreadArr);
         offset += hdr.length;
@@ -94,6 +121,9 @@ PrimeHeader readPrimes(){
     //printList(retPtr,aggregatePrimes);
     ret.length = aggregatePrimes;
     ret.primelist = retPtr;
-    fclose(fin);
+    size_t num = fclose(fin);
+    if(num != 0){
+        fprintf(stderr,"Error clossing %s file, error-> %s",PRIME_FILENAME,strerror(errno));
+    }
     return ret;
 }
