@@ -1,22 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
-//#include <inttypes.h>
+#include "primedisk.h"
 
 #define EXECCPU 0
 
-#define LIMIT 10000
+#define LIMIT 1000
 
 typedef unsigned long long int uint64_cu;
 #define INTSIZE sizeof(uint64_cu)
 #define BLOCK_SIZE 32 
-
-void printList(uint64_cu* ilist, uint64_cu len){
-    printf("\n(START, length-> %llu)\n", len);
-    for(uint64_cu index=0; index<len ; index++){
-        printf("%llu ",ilist[index]);
-    }
-    printf("\nEND \n");
-}
 
 uint64_cu countPrime(uint64_cu* arr, uint64_cu len){
     uint64_cu pcount = 0;
@@ -39,16 +31,21 @@ void addPrimes(uint64_cu* target, uint64_cu* source,uint64_cu sourcelen){
 __global__ void calcPrime(uint64_cu* primelist, uint64_cu* inputlist,uint64_cu plen, uint64_cu ilen ){
 
     uint64_cu ind1 = blockIdx.x * blockDim.x + threadIdx.x;
-    uint64_cu num = primelist[ind1];
-    uint64_cu lastno = inputlist[ilen-1];
+    //uint64_cu num = primelist[ind1-1];
+    //uint64_cu lastno = inputlist[ilen-1];
 
     /*
-    if(num > 99403){
-        printf("calcPrime %lu --- %lu \n",num, lastno);
-    }
-    */
+       if(num > 99403){
+       printf("calcPrime %lu --- %lu \n",num, lastno);
+       }
+     */
 
-    if(num<lastno){
+    //printf("\n threadId %llu , ilen %llu, plen %llu",ind1,ilen, plen);
+
+    if(ind1<plen){
+        uint64_cu num = primelist[ind1];
+        //printf("\ncore num %llu\n",num);
+        //uint64_cu lastno = inputlist[ilen-1];
         for(uint64_cu start = 0; start< ilen; start++){
             if(inputlist[start] == num) continue;
             if(inputlist[start] % num == 0){
@@ -60,7 +57,6 @@ __global__ void calcPrime(uint64_cu* primelist, uint64_cu* inputlist,uint64_cu p
 }
 
 int main( void ) { 
-    FILE* fout = fopen("pdata.txt","w");
 
     // Set device that we will use for our cuda code
     // It will be either 0 or 1
@@ -111,14 +107,17 @@ int main( void ) {
     uint64_cu* primelist = (uint64_cu*) malloc(pcount*INTSIZE);
 
     addPrimes(primelist, firstLimitArray, firstLimitLen);
+    writePrimes(primelist,plen,firstLimit);
 
-    while(firstLimit <= LIMIT){
+    while(firstLimit < LIMIT*LIMIT){
+        printf("\nfirstLimit %llu",firstLimit);
         uint64_cu CUR_MAX = firstLimit;
 
         uint64_cu startNo = CUR_MAX+1;
         uint64_cu endNo = CUR_MAX * CUR_MAX; 
 
         uint64_cu range = endNo - CUR_MAX;
+        printf("\n######################## startNo %llu , endNo %llu  ########################", startNo, endNo);
         //printf("\nrange %llu\n",range);
         uint64_cu* inputlist = (uint64_cu*) malloc(range*INTSIZE);
 
@@ -154,21 +153,12 @@ int main( void ) {
         printf("\n\nUpto %llu , Parallel Job Time: %.2f ms\n",endNo ,time);
         //printList(inputlist,range);
 
-        // 1) WRITE primelist
-        //printf("\nplen %llu ",plen);
-        //fprintf(fout,"%d",plen);
-        fwrite(&plen, INTSIZE, 1, fout);
-        fwrite(primelist, INTSIZE, plen, fout );
-        //printList(primelist,plen);
-
         // 2) WRITE primes from INPUTLIST
         uint64_cu ilistPrimeCount = countPrime(inputlist,range);
-        //printf("ilistPrimeCount %llu",ilistPrimeCount);
+        printf("ilistPrimeCount %llu \n",ilistPrimeCount);
         uint64_cu* ilistprimes = (uint64_cu*) malloc(ilistPrimeCount*INTSIZE);
         addPrimes(ilistprimes, inputlist, range);
-        //fprintf(fout,"%d",ilistPrimeCount);
-        fwrite(&ilistPrimeCount, INTSIZE, 1, fout);
-        fwrite(ilistprimes, INTSIZE, ilistPrimeCount, fout );
+        writePrimes(ilistprimes,ilistPrimeCount,endNo);
         //printList(ilistprimes,ilistPrimeCount);
 
         // APPEND LOGIC
@@ -181,10 +171,10 @@ int main( void ) {
 
         primelist = primeNewArray;
         plen = totalPrimes;
-        firstLimit *= 10;
+        firstLimit = endNo;
+        fflush(stdout);
     }
 
-    fclose(fout);
-
+    //readPrimes();
     return 0;
 }

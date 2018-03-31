@@ -5,25 +5,54 @@ using namespace std;
 
 #define WARNINGS 0
 
-/*
- struct TheJob {
- long int id = -1; // Will be unique per job
- long int required_cores = -1;
- long int duration = -1;
- long int duration_left = -1;
- bool valid = false;
- };
- 
- struct CompNode {
- long int id = -1;
- long int node_number = -1;
- long int total_cores= -1;
- long int used_cores = -1;
- long int free_cores = -1;
- TheJob NodeJob[NODE_MAX_JOBS]; // All Zero Initially
- long int node_job_queue = 0;
- 
- };
- */
+long find_number_of_gpus() {
+    // System command to find number of GPUs attached 
+    // find /proc/driver/nvidia/gpus -type d | wc -l
 
+    char cmd[100] = "find /proc/driver/nvidia/gpus -type d | wc -l\0";
+    array<char, 128> buffer;
+    string result;
+    shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
+    if (!pipe) throw runtime_error("popen() failed!");
+    while (!feof(pipe.get())) {
+        if (fgets(buffer.data(), 128, pipe.get()) != nullptr)
+            result += buffer.data();
+    }
+    long number_of_gpus = (long)stoi(result);
+    number_of_gpus--; // The systems command returns a value which is
+    // one more than the actual number of GPUs.
+    return (number_of_gpus);
+
+    // Function Complete --KTB
+}
+
+
+
+void start_info() {
+    // Will print all the stats about the program like
+    // Number of GPU being used.
+    // End Number being Calculated, and so on.
+
+    green_start();
+    cout << "\n\n\n\n\n\n\n\n\n\nProgram Start\n";
+    color_reset();
+
+}
+
+
+
+void end_info() {
+    // Statistics about the program goes here
+
+
+    cout << endl<< endl<< endl;
+}
+
+
+
+void iteration_info() {
+    // Statistics about every iteration of the program goes here
+
+
+}
 
