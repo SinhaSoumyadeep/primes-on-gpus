@@ -4,7 +4,7 @@
 
 #define EXECCPU 0
 
-#define LIMIT 1000
+#define LIMIT 100
 
 typedef unsigned long long int uint64_cu;
 #define INTSIZE sizeof(uint64_cu)
@@ -57,10 +57,7 @@ __global__ void calcPrime(uint64_cu* primelist, uint64_cu* inputlist,uint64_cu p
 }
 
 int main( void ) { 
-
-    // Set device that we will use for our cuda code
-    // It will be either 0 or 1
-    cudaSetDevice(1);
+    cudaSetDevice(0);
     srand(time(NULL));
     // Time Variables
     cudaEvent_t start, stop;
@@ -68,46 +65,60 @@ int main( void ) {
     cudaEventCreate (&start);
     cudaEventCreate (&stop);
 
-    uint64_cu firstLimit = 10;
-    printf("firstLimit %llu \n", firstLimit);
 
-    uint64_cu firstLimitLen = firstLimit-1;
-    printf("firstLimitLen %llu \n", firstLimitLen);
-    uint64_cu* firstLimitArray = (uint64_cu*) malloc(firstLimitLen*INTSIZE);
+    // Set device that we will use for our cuda code
+    // It will be either 0 or 1
 
-    for(uint64_cu x=2; x<= firstLimit; x++){
-        //printf(" %d %d \t",x-2,x);
-        firstLimitArray[x-2] = x;
-    }
-    //printList(firstLimitArray, firstLimitLen);
+    PrimeHeader ret = readPrimes();
+    uint64_cu firstLimit = ret.lastMaxNo;
+    uint64_cu plen = ret.length;
+    uint64_cu* primelist = ret.primelist;
+    printf("\n\n ret lastMaxNo-> %llu ",ret.lastMaxNo);
+    printf("\tlength -> %llu ",ret.length);
+    printList(ret.primelist ,ret.length);
 
-    cudaEventRecord(start,0);
+    printf(" \n\n>>>>>>>>>>>>>> POST FILE READ\n");
+    if(ret.length == 0 ){
+        // start from beginning on CPU
+        firstLimit = 10;
+        printf("firstLimit %llu \n", firstLimit);
 
-    for(uint64_cu val = 0; val < firstLimitLen/2; val++){
-        uint64_cu num = firstLimitArray[val];
-        if(num==0) continue;
-        //printf("\n fixing prime %llu ", num);
-        for(uint64_cu index=val+1; index< firstLimitLen; index++){
-            //printf(" %llu, %llu ", num, firstLimitArray[index]);
-            if(firstLimitArray[index]%num== 0 && firstLimitArray[index]!=0)
-                firstLimitArray[index] = 0;
+        uint64_cu firstLimitLen = firstLimit-1;
+        printf("firstLimitLen %llu \n", firstLimitLen);
+        uint64_cu* firstLimitArray = (uint64_cu*) malloc(firstLimitLen*INTSIZE);
+
+        for(uint64_cu x=2; x<= firstLimit; x++){
+            //printf(" %d %d \t",x-2,x);
+            firstLimitArray[x-2] = x;
         }
-    }
-    cudaEventRecord(stop,0);
-    cudaEventSynchronize(stop);
-    cudaEventElapsedTime(&time, start, stop);
-    //printList(firstLimitArray, firstLimitLen);
-    printf("\nSerial Job Time: %.2f ms\n", time);
+        //printList(firstLimitArray, firstLimitLen);
 
-    //printList(firstLimitArray, firstLimitLen);
-    uint64_cu pcount = countPrime(firstLimitArray, firstLimitLen);
-    //printf("first round primes %llu",pcount);
+        cudaEventRecord(start,0);
 
-    uint64_cu plen = pcount;
-    uint64_cu* primelist = (uint64_cu*) malloc(pcount*INTSIZE);
+        for(uint64_cu val = 0; val < firstLimitLen/2; val++){
+            uint64_cu num = firstLimitArray[val];
+            if(num==0) continue;
+            //printf("\n fixing prime %llu ", num);
+            for(uint64_cu index=val+1; index< firstLimitLen; index++){
+                //printf(" %llu, %llu ", num, firstLimitArray[index]);
+                if(firstLimitArray[index]%num== 0 && firstLimitArray[index]!=0)
+                    firstLimitArray[index] = 0;
+            }
+        }
+        cudaEventRecord(stop,0);
+        cudaEventSynchronize(stop);
+        cudaEventElapsedTime(&time, start, stop);
+        //printList(firstLimitArray, firstLimitLen);
+        printf("\nSerial Job Time: %.2f ms\n", time);
+        //printList(firstLimitArray, firstLimitLen);
+        uint64_cu pcount = countPrime(firstLimitArray, firstLimitLen);
+        //printf("first round primes %llu",pcount);
 
-    addPrimes(primelist, firstLimitArray, firstLimitLen);
-    writePrimes(primelist,plen,firstLimit);
+        plen = pcount;
+        primelist = (uint64_cu*) malloc(pcount*INTSIZE);
+        addPrimes(primelist, firstLimitArray, firstLimitLen);
+        writePrimes(primelist,plen,firstLimit);
+    } 
 
     while(firstLimit < LIMIT*LIMIT){
         printf("\nfirstLimit %llu",firstLimit);
@@ -175,6 +186,6 @@ int main( void ) {
         fflush(stdout);
     }
 
-    //readPrimes();
+    printf("\n**** MAIN END ***\n");
     return 0;
 }

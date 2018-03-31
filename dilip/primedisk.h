@@ -9,6 +9,7 @@ const char* PRIME_FILENAME = "diskprime.txt";
 typedef struct PrimeHeader{
     uint64_cu lastMaxNo;
     uint64_cu length;
+    uint64_cu* primelist;
 }PrimeHeader;
 
 void logError(const char* errMesg){
@@ -31,7 +32,6 @@ void printList(uint64_cu* ilist, uint64_cu len){
 
 void writePrimes(uint64_cu primes[], uint64_cu length, uint64_cu lastNo){
     FILE * fout1 = fopen(PRIME_FILENAME,"ab+");
-    //fseek(fout1, 0, SEEK_END);
 
     PrimeHeader hdr;
     hdr.lastMaxNo = lastNo;
@@ -43,12 +43,20 @@ void writePrimes(uint64_cu primes[], uint64_cu length, uint64_cu lastNo){
 }
 
 
-void readPrimes(){
+PrimeHeader readPrimes(){
+    PrimeHeader ret;
     FILE* fin = fopen(PRIME_FILENAME,"rb");
+    if(!fin){
+        ret.lastMaxNo = 0 ;
+        ret.length = 0;
+        ret.primelist = NULL;
+        printf("fin null pointer");
+        return ret;
+    }
     uint64_cu aggregatePrimes = 0 ;
     PrimeHeader hdr;
-    uint64_cu* parr;
     uint64_cu offset = 0;
+    printf("\nFIRST PASS: to find number of total primes\n");
     while(!feof(fin)){
         uint64_cu nread = fread(&hdr, sizeof(PrimeHeader), 1, fin);
         if(nread == 0)break;
@@ -63,7 +71,7 @@ void readPrimes(){
     printf("\nAggregatePrimes %llu",aggregatePrimes);
 
     // now read all primes
-    printf("\n\nnow read all primes\n");
+    printf("\nSECOND PASS: to read all primes\n");
     fseek(fin,0,SEEK_SET);
     uint64_cu* retPtr = (uint64_cu*) malloc(aggregatePrimes * INTSIZE);
     offset = 0;
@@ -72,6 +80,7 @@ void readPrimes(){
         uint64_cu nread = fread(&hdr, sizeof(PrimeHeader), 1, fin);
         if(nread == 0)break;
         printf("\nnread %llu ",nread);
+        ret.lastMaxNo = hdr.lastMaxNo;
         printf("\tlastMaxNo-> %llu ",hdr.lastMaxNo);
         printf("\tlength -> %llu ",hdr.length);
         uint64_cu nreadArr = fread(retPtr + offset ,INTSIZE,hdr.length,fin);
@@ -82,6 +91,9 @@ void readPrimes(){
         offset += hdr.length;
     }
     printf("\n*************  PRINT AGGREGATE PRIMES ****************\n");
-    printList(retPtr,aggregatePrimes);
+    //printList(retPtr,aggregatePrimes);
+    ret.length = aggregatePrimes;
+    ret.primelist = retPtr;
     fclose(fin);
+    return ret;
 }

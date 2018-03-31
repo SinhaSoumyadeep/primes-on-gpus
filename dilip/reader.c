@@ -6,7 +6,10 @@ typedef unsigned long long int uint64_cu;
 #define INTSIZE sizeof(uint64_cu)
 
 int main( void ) { 
-    readPrimes();
+    PrimeHeader ret = readPrimes();
+    printf("\n\n ret lastMaxNo-> %llu ",ret.lastMaxNo);
+    printf("\tlength -> %llu ",ret.length);
+    printList(ret.primelist ,ret.length);
     /*
     FILE* fin = fopen("pdata.txt","r");
 
