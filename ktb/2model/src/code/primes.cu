@@ -25,30 +25,36 @@ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=t
 
 // ********************** KERNEL DEFINITION **********************
 
-__global__ void prime( bool *il, 
-    long long int *pl, 
-    long long int *dev_input_size_ptr, 
-    long long int *dev_prime_size_ptr, 
-    long long int *dev_pl_end_number_ptr ) {
-    
-        long long int dev_input_size = *dev_input_size_ptr;
-        long long int dev_prime_size = *dev_prime_size_ptr; 
-        long long int dev_pl_end_number = *dev_pl_end_number_ptr;
+__global__ void prime_generator(int* d_input_list, uint64_c* d_prime_list, uint64_c* d_startPrimelist,uint64_c* d_total_inputsize,uint64_c* d_number_of_primes)
+{
+
+
+        long long int tid = (blockIdx.x*blockDim.x) + threadIdx.x;
+        if (tid < d_number_of_primes[0]) {
 
 
 
-        long long int tid = (blockIdx.x*blockDim.x) + threadIdx.x;    // this thread handles the data at its thread id
+
+                                uint64_c primes=d_prime_list[tid];
+                      //  printf("%llu\n",primes);
+                        for(uint64_c i=0;i<d_total_inputsize[0];i++)
+                        {
+                                uint64_c bucket= i/(WORD);
+                                uint64_c setbit= i%(WORD);
+                                uint64_c number=d_startPrimelist[0]+i;
+                        //      printf("%llu -----> hash the value %llu to %llu bucket and change the %llu bit\n",number,i,bucket,setbit );
+                        //      printf("**************  %llu --- %llu \n",number,primes);
+                                if(number%primes==0)
+                                {
+                                        d_input_list[bucket]=d_input_list[bucket]| 1U<<setbit;
+                                }
+                        }
 
 
-    if (tid <= dev_prime_size) {
-        long long int tpno = pl[tid];
-        //printf("\tTID: %d", tid);
-            for (long long int k=dev_pl_end_number; k<dev_input_size; k++) {
-                if (k % tpno == 0) {
-                    il[k] = false;                   // add vectors together                
-            }
         }
-    }
+
+
+
 }
 
 
