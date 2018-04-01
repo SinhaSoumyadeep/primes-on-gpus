@@ -158,11 +158,8 @@ int main(int argc, char *argv[]) {
 
 
 
-    //calculate_primes_on_cpu(); //TODO Store code in this function
+    pheader = calculate_primes_on_cpu(pheader); 
 
-
-
-// CPU CODE WAS HERE.
 
     
 
