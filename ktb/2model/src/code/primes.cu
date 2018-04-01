@@ -52,8 +52,8 @@ if (DEBUG >= 1) {
 cudaEvent_t start_kernel[gpu_data.gpus]; 
 cudaEvent_t stop_kernel[gpu_data.gpus];
 float time[gpu_id];
-gpuErrchk( cudaEventCreate (&start_kernel[gpu_id]));
-gpuErrchk( cudaEventCreate (&stop_kernel[gpu_id]));
+gpuErrchk( cudaEventCreate (&start_kernel[gpu_id]) );
+gpuErrchk( cudaEventCreate (&stop_kernel[gpu_id]) );
 
 cudaStream_t stream[gpu_data.gpus];
 for (int i=0;i<gpu_data.gpus;i++) {
