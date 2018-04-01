@@ -107,7 +107,7 @@ void kernelLauncher(int gpu_id) {
     gpuErrchk( cudaMemcpy(d_splitILsize, &splitILsize, sizeof(uint64_cu), cudaMemcpyHostToDevice) );
     gpuErrchk( cudaMemcpy(d_elementsPerSplit, &elementsPerSplit, sizeof(uint64_cu), cudaMemcpyHostToDevice) );
 
-    
+    uint64_cu PL_len = pheader.length;
 
 	// Launch the GPU kernel:
 	prime_generator<<<(PL_len/THREADS_PER_BLOCK) + 1 , THREADS_PER_BLOCK>>>(d_IL, d_PL, d_startPrimelist, d_splitILsize, d_elementsPerSplit);
