@@ -56,6 +56,7 @@ void start_info();
 
 void end_info();
 
+void kernelLauncher(int gpu_id);
 
 
 
