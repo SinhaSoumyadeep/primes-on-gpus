@@ -117,9 +117,6 @@ int main(int argc, char *argv[]) {
 
     pthread_t *thread = new pthread_t [number_of_gpus];
     int *thread_error = new int [number_of_gpus];
-    GpuHandler *handler = new GpuHandler [number_of_gpus];
-
-    //initialize_handlers(handler);
 
     for (long i = 0; i < number_of_gpus; i++) {
         thread_error[i] = pthread_create(&thread[i], NULL, one_iteration, (void *) i);
