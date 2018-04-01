@@ -76,6 +76,7 @@ void end_info();
 
 void kernelLauncher(int gpu_id);
 
+__global__ void prime_generator(int* d_input_list, uint64_cu* d_prime_list, uint64_cu* d_startPrimelist,uint64_cu* d_total_inputsize,uint64_cu* d_number_of_primes);
 
 
 
