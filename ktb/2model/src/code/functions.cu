@@ -1,6 +1,10 @@
 #include "functions.h"
 #include "debugger.h"
 
+extern PrimeHeader pheader;
+extern GpuHandler gpu_data;
+
+
 using namespace std;
 
 #define WARNINGS 0
