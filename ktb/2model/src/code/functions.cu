@@ -183,12 +183,11 @@ for (uint64_cu i = 0; i < pl_end_number; i++) {
     uint64_cu small_sieve_counter = 0;
     for (uint64_cu i = 2; i <= pl_end_number; i++) {
         if (small_sieve[i] == true) {
-            // To display prime numbers
-            //cout << i << " ";
+            //cout << i << " "; // To display prime numbers
             small_sieve_counter++;
         }
     }
-    cout << endl;
+    //cout << endl;
 
     total_primes += small_sieve_counter;
     if (DEBUG >= 1) {
