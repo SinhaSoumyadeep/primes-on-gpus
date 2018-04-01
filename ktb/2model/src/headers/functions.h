@@ -29,8 +29,6 @@
 #include <memory>
 #include <stdexcept>
 
-extern PrimeHeader pheader;
-extern GpuHandler gpu_data;
 
 
 using namespace std;
