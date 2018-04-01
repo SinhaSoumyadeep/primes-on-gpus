@@ -25,17 +25,28 @@
 #include <stdlib.h>
 #include <math.h>
 #include <cuda_profiler_api.h>
+#include <errno.h>
 
 #include <memory>
 #include <stdexcept>
 
 using namespace std;
 
+typedef unsigned long long int uint64_cu;
+
+typedef struct PrimeHeader{
+    uint64_cu lastMaxNo;
+    uint64_cu length;
+    uint64_cu* primelist;
+}PrimeHeader;
+
 
 struct GpuHandler {
-    long id = -1;
-    unsigned long long int prime_list_counter = -1;
-    
+    int gpus;
+    uint64_cu* PL;
+    uint64_cu PL_len;
+    uint64_cu IL_start; 
+    uint64_cu IL_end; 
 };
 
 

@@ -46,12 +46,18 @@ void *one_iteration(void *tid) {
     // Use thread_id
     long thread_id = (long) tid;
 
+
+
     if (DEBUG >= 1) {
         cout << "GPU Handler: " << thread_id << endl;
     }
 
     cudaEvent_t start, stop;
     
+
+
+// Saurin's Code
+
 
 
         // Select GPU
