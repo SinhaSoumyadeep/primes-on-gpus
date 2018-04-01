@@ -8,7 +8,7 @@ using namespace std;
 #define GPU 0
 #define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
 #define WARNINGS 1
-
+#define WORD 64 // Size 
 
 // ********************** KERNEL DEFINITION **********************
 
