@@ -3,13 +3,6 @@
 
 using namespace std;
 
-#define block_size   32
-#define DEBUG 1
-#define GPU 0
-#define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
-#define WARNINGS 1
-#define WORD 64 // Size 
-
 // ********************** KERNEL DEFINITION **********************
 
 __global__ void prime_generator(int* d_input_list, uint64_cu* d_prime_list, uint64_cu* d_startPrimelist,uint64_cu* d_total_inputsize,uint64_cu* d_number_of_primes)
@@ -103,6 +96,7 @@ kernelLauncher(gpu_id);
 uint64_cu pl_end_number = 1000;
 uint64_cu total_primes=0;
 int number_of_gpus = 1;
+
 PrimeHeader pheader;
 GpuHandler gpu_data;
 //long long int end_val = 1000000;
