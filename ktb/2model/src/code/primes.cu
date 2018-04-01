@@ -24,7 +24,7 @@ __global__ void prime_generator(int* d_input_list, uint64_cu* d_prime_list, uint
                         //      printf("**************  %llu --- %llu \n",number,primes);
                                 if(number%primes==0)
                                 {
-                                        printf('%llu is divisible by %llu \n', number,primes);
+                                        printf("%llu is divisible by %llu \n", number,primes);
                                         d_input_list[bucket]=d_input_list[bucket]| 1U<<setbit;
                                 }
                         }
