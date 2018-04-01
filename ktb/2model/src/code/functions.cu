@@ -212,4 +212,6 @@ for (uint64_cu i = 0; i < pl_end_number; i++) {
     pheader.primelist=prime_list;
     pheader.length=small_sieve_counter;
     pheader.lastMaxNo=pl_end_number;
+
+    return (pheader);
 }
