@@ -12,6 +12,7 @@ __global__ void prime_generator(int* d_input_list, uint64_cu* d_prime_list, uint
 
      
         if (tid < d_number_of_primes[0]) {
+            printf("Kaustubh\n");
                                 uint64_cu primes=d_prime_list[tid];
                       //  printf("%llu\n",primes);
                         for(uint64_cu i=0;i<=d_total_inputsize[0];i++) // Added less than eual to here.
