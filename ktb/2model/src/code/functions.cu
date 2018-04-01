@@ -112,7 +112,8 @@ void kernelLauncher(int gpu_id) {
     // Launch the GPU kernel:
     cout << "splitILsize: "<< splitILsize << endl;
     cout << "elementsPerSplit: "<< elementsPerSplit << endl;
-    
+    cout << "c_startPrimelist: "<< c_startPrimelist << endl;
+ 
     
     
     cout << "d_IL: "<< d_IL << endl;
