@@ -194,13 +194,6 @@ for (uint64_cu i = 0; i < pl_end_number; i++) {
         cout << "Total Primes Calculated on CPU: " << small_sieve_counter << endl;
     }
 
-
-
-    if (DEBUG >=2) {
-        cout << "Allocating PRIME_LIST" << endl;
-    }
-
-
     uint64_cu *prime_list = new uint64_cu [small_sieve_counter];
 
     // Storing numbers from the sieve to an array.
