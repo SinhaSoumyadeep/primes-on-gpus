@@ -43,11 +43,7 @@ if (tid < *d_number_of_primes) {
 // ********************** PTHREAD ITERATION **********************
 
 void *one_iteration(void *tid) {
-    
     long gpu_id = (long) tid; // Dont use tid, Use gpu_id instead
-
-
-
     if (DEBUG >= 1) {
         cout << "GPU Handler: " << gpu_id << endl;
     }
