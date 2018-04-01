@@ -88,7 +88,7 @@ void kernelLauncher(int gpu_id) {
 	// Calculate memory sizes required:
 	uint64_cu elementsPerSplit = IL_len / total_gpus;			// WARNING: 'total_gpus' should be a power of 2 (code added for this check)
 	uint64_cu splitILsize = (elementsPerSplit / (sizeof(uint64_cu) * 8)); 				// Confirm during code integration whether a '+1' is needed in the end.
-	uint64_cu size_PL = (pheader->length) * sizeof(uint64_cu);
+	uint64_cu size_PL = (pheader.length) * sizeof(uint64_cu);
 
 	// Space for device copies:
 	gpuErrchk( cudaMalloc((void **) &d_IL, splitILsize));
@@ -102,7 +102,7 @@ void kernelLauncher(int gpu_id) {
 
     
 	// Copy the data to the device (GPU):
-	gpuErrchk( cudaMemcpy(d_PL, pheader->primelist, size_PL, cudaMemcpyHostToDevice) );
+	gpuErrchk( cudaMemcpy(d_PL, pheader.primelist, size_PL, cudaMemcpyHostToDevice) );
     gpuErrchk( cudaMemcpy(d_startPrimelist, &c_startPrimelist, sizeof(uint64_cu), cudaMemcpyHostToDevice) );
     gpuErrchk( cudaMemcpy(d_splitILsize, &splitILsize, sizeof(uint64_cu), cudaMemcpyHostToDevice) );
     gpuErrchk( cudaMemcpy(d_elementsPerSplit, &elementsPerSplit, sizeof(uint64_cu), cudaMemcpyHostToDevice) );
