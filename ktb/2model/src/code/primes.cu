@@ -49,11 +49,11 @@ if (DEBUG >= 1) {
     cout << "Launched GPU Handler: " << gpu_id << endl;
 }
 
-cudaEvent_t start; 
-cudaEvent_t stop;
+cudaEvent_t start_kernel; 
+cudaEvent_t stop_kernel;
 float time;
-gpuErrchk( cudaEventCreate (&start));
-gpuErrchk( cudaEventCreate (&stop));
+gpuErrchk( cudaEventCreate (&start_kernel));
+gpuErrchk( cudaEventCreate (&stop_kernel));
 
 
     
@@ -62,14 +62,14 @@ gpuErrchk( cudaEventCreate (&stop));
 gpu_data.IL_start = pl_end_number+1;
 gpu_data.IL_end = pl_end_number*pl_end_number;
 
-gpuErrchk( cudaEventRecord(start,0));
+gpuErrchk( cudaEventRecord(start_kernel,0));
   
 kernelLauncher(gpu_id);
 
 
-gpuErrchk( cudaEventRecord(stop,0));
-gpuErrchk( cudaEventSynchronize(stop));
-gpuErrchk( cudaEventElapsedTime(&time, start, stop));
+gpuErrchk( cudaEventRecord(stop_kernel,0));
+gpuErrchk( cudaEventSynchronize(stop_kernel));
+gpuErrchk( cudaEventElapsedTime(&time, start_kernel, stop_kernel));
 printf("GPU %d Time: %.2f ms\n", gpu_id, time);
 
 }
