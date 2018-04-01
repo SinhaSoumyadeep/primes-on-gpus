@@ -137,18 +137,18 @@ void kernelLauncher(int gpu_id) {
 
 
 calculate_primes_on_cpu() {
-    // Time Variables
-    cudaEvent_t start, stop;
-    float time;
-    gpuErrchk(cudaEventCreate (&start));
-    gpuErrchk(cudaEventCreate (&stop));
+// Time Variables
+cudaEvent_t start, stop;
+float time;
+gpuErrchk(cudaEventCreate (&start));
+gpuErrchk(cudaEventCreate (&stop));
 
 
 
-    // Create Small 
-    if (DEBUG >=2) {
-        cout << "Allocating SMALL_SIEVE" << endl;
-    }
+// Create Small 
+if (DEBUG >=2) {
+    cout << "Allocating SMALL_SIEVE" << endl;
+}
 
 
 
