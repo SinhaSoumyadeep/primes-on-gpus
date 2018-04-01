@@ -127,7 +127,9 @@ int main(int argc, char *argv[]) {
         color_reset();
     }
 
-    pheader = calculate_primes_on_cpu(pheader,pl_end_number); 
+    pheader = calculate_primes_on_cpu(pheader,pl_end_number);
+    
+    cout << "pheader.length: " << pheader.length << endl;
 
 //    while(end_reached) {
 
