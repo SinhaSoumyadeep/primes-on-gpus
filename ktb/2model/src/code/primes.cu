@@ -184,6 +184,7 @@ long long int pl_end_number = 1000;
 long long int total_primes=0;
 long number_of_gpus = 1;
 PrimeHeader pheader;
+GpuHandler gpu_data;
 //long long int end_val = 1000000;
 
 
@@ -195,6 +196,8 @@ int main(int argc, char *argv[]) {
     start_info(); // Complete
 
     number_of_gpus = find_number_of_gpus(); // Complete
+    number_of_gpus = pow(2,int(log(number_of_gpus)/log(2)));
+    gpu_data->gpus = number_of_gpus;
 
     // Accepting input from Console
     // INLINE
@@ -293,29 +296,7 @@ int main(int argc, char *argv[]) {
 
 
 
-    while(end_reached) {
-
-
-
-
-
-
-
-    // Create Input list on CPU
-    long long int il_size = pl_end_number*pl_end_number;
-    if (DEBUG >=2) {
-        cout << "Allocating INPUT_LIST" << endl;
-    }
-    bool *input_list = new bool [il_size];
-    for (long long int i =0; i < il_size; i++) {
-        input_list[i] = true;
-    }
-
-    if (DEBUG >=1) {
-    printf("Input List Size on CPU: %llu\n", il_size);
-    }
-
-
+//    while(end_reached) {
 
     //  *************** Pthreads Launch *******************
 
@@ -339,17 +320,18 @@ int main(int argc, char *argv[]) {
         thread_error[i] = pthread_join(thread[i], NULL);
     }
 
+// output_combine();
 
     // INLINE
-    iteration_info();
+    //iteration_info();
 
-}
+//}
 
 
 // CODE
 
     // INLINE
-    end_info();
+    //end_info();
 
     return 0;
 }
