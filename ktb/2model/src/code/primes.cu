@@ -43,9 +43,8 @@ if (tid < *d_number_of_primes) {
 // ********************** PTHREAD ITERATION **********************
 
 void *one_iteration(void *tid) {
-    // Dont use tid
-    // Use thread_id
-    long gpu_id = (long) tid;
+    
+    long gpu_id = (long) tid; // Dont use tid, Use gpu_id instead
 
 
 
