@@ -43,13 +43,16 @@ if (tid < *d_number_of_primes) {
 // ********************** PTHREAD ITERATION **********************
 
 void *one_iteration(void *tid) {
-    long gpu_id = (long) tid; // Dont use tid, Use gpu_id instead
-    if (DEBUG >= 1) {
-        cout << "Launched GPU Handler: " << gpu_id << endl;
-    }
+long gpu_id = (long) tid; // Dont use tid, Use gpu_id instead
 
-    cudaEvent_t start, stop;
-    
+if (DEBUG >= 1) {
+    cout << "Launched GPU Handler: " << gpu_id << endl;
+}
+
+cudaEvent_t start, stop;
+gpuErrchk( cudaEventCreate (&start));
+gpuErrchk( cudaEventCreate (&stop));
+
 
     
 
