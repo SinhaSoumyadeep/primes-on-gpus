@@ -26,7 +26,6 @@
 #include <math.h>
 #include <cuda_profiler_api.h>
 #include <errno.h>
-
 #include <memory>
 #include <stdexcept>
 
@@ -37,6 +36,23 @@ extern GpuHandler gpu_data;
 using namespace std;
 
 typedef unsigned long long int uint64_cu;
+
+
+
+
+// DEFINES
+
+#define THREADS_PER_BLOCK 32
+
+
+#define block_size   32
+#define DEBUG 1
+#define GPU 0
+#define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
+#define WARNINGS 1
+#define WORD 64 // Size 
+
+
 
 typedef struct PrimeHeader{
     uint64_cu lastMaxNo;
