@@ -12,31 +12,27 @@ using namespace std;
 
 // ********************** KERNEL DEFINITION **********************
 
-__global__ void prime( bool *il, 
-    long long int *pl, 
-    long long int *dev_input_size_ptr, 
-    long long int *dev_prime_size_ptr, 
-    long long int *dev_pl_end_number_ptr ) {
-    
-        long long int dev_input_size = *dev_input_size_ptr;
-        long long int dev_prime_size = *dev_prime_size_ptr; 
-        long long int dev_pl_end_number = *dev_pl_end_number_ptr;
-
-
-
-        long long int tid = (blockIdx.x*blockDim.x) + threadIdx.x;    // this thread handles the data at its thread id
-
-
-    if (tid <= dev_prime_size) {
-        long long int tpno = pl[tid];
-        //printf("\tTID: %d", tid);
-            for (long long int k=dev_pl_end_number; k<dev_input_size; k++) {
-                if (k % tpno == 0) {
-                    il[k] = false;                   // add vectors together                
-            }
+__global__ void prime_generator(int* d_input_list, uint64_cu* d_prime_list, uint64_cu* d_startPrimelist,uint64_cu* d_total_inputsize,uint64_cu* d_number_of_primes)
+{
+        long long int tid = (blockIdx.x*blockDim.x) + threadIdx.x;
+        if (tid < d_number_of_primes[0]) {
+                                uint64_cu primes=d_prime_list[tid];
+                      //  printf("%llu\n",primes);
+                        for(uint64_cu i=0;i<=d_total_inputsize[0];i++) // Added less than eual to here.
+                        {
+                                uint64_cu bucket= i/(WORD);
+                                uint64_cu setbit= i%(WORD);
+                                uint64_cu number=d_startPrimelist[0]+i;
+                        //      printf("%llu -----> hash the value %llu to %llu bucket and change the %llu bit\n",number,i,bucket,setbit );
+                        //      printf("**************  %llu --- %llu \n",number,primes);
+                                if(number%primes==0)
+                                {
+                                        d_input_list[bucket]=d_input_list[bucket]| 1U<<setbit;
+                                }
+                        }
         }
-    }
 }
+
 
 
 // ********************** PTHREAD ITERATION **********************
@@ -44,7 +40,7 @@ __global__ void prime( bool *il,
 void *one_iteration(void *tid) {
     // Dont use tid
     // Use thread_id
-    long thread_id = (long) tid;
+    long gpu_id = (long) tid;
 
 
 
@@ -187,6 +183,7 @@ void *one_iteration(void *tid) {
 long long int pl_end_number = 1000;
 long long int total_primes=0;
 long number_of_gpus = 1;
+PrimeHeader pheader;
 //long long int end_val = 1000000;
 
 
@@ -195,18 +192,13 @@ long number_of_gpus = 1;
 int main(int argc, char *argv[]) { 
 
     // INLINE
-    start_info();
+    start_info(); // Complete
 
-    number_of_gpus = find_number_of_gpus();
-
-
-    // For debugging, I am hardcoding the numbber of GPUs to 1.
-    number_of_gpus = 1; // Remove this line to run on multiple GPUs.
-
+    number_of_gpus = find_number_of_gpus(); // Complete
 
     // Accepting input from Console
     // INLINE
-    console_input();
+    console_input(); // Complete
 
 
     
@@ -214,7 +206,7 @@ int main(int argc, char *argv[]) {
 
 
 
-    calculate_primes_on_cpu();
+    //calculate_primes_on_cpu(); //TODO Store code in this function
 
 
 
@@ -281,6 +273,8 @@ int main(int argc, char *argv[]) {
     if (DEBUG >=2) {
         cout << "Allocating PRIME_LIST" << endl;
     }
+
+
     long long int *prime_list = new long long int [small_sieve_counter];
 
     // Storing numbers from the sieve to an array.
@@ -291,6 +285,9 @@ int main(int argc, char *argv[]) {
             inner_counter++;
         }
     }
+    pheader.primelist=prime_list;
+    pheader.length=small_sieve_counter;
+    pheader.lastMaxNo=pl_end_number;
 
     
 
@@ -320,7 +317,9 @@ int main(int argc, char *argv[]) {
 
 
 
-    // Pthreads Launch
+    //  *************** Pthreads Launch *******************
+
+
     pthread_t *thread = new pthread_t [number_of_gpus];
     int *thread_error = new int [number_of_gpus];
     GpuHandler *handler = new GpuHandler [number_of_gpus];
