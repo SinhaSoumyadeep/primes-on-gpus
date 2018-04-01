@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
 
 //    while(end_reached) {
 
-    //  *************** Pthreads Launch *******************
+    //  *************** PTHREADS Launch *******************
 
 
     pthread_t *thread = new pthread_t [number_of_gpus];
