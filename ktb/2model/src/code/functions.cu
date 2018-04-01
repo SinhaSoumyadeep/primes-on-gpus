@@ -176,7 +176,7 @@ for (uint64_cu i = 0; i < pl_end_number; i++) {
     gpuErrchk( cudaEventRecord(stop,0));
     gpuErrchk( cudaEventSynchronize(stop));
     gpuErrchk( cudaEventElapsedTime(&time, start, stop));
-    printf("CPU Time: %.2f ms till end prime number: %llu\n", time,pl_end_number);
+    printf("CPU Time: %.2f ms till end prime number: %llu\n", time, pl_end_number);
 
 
     // Count Total Primes
