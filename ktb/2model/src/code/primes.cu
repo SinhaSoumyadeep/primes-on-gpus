@@ -14,7 +14,7 @@ using namespace std;
 
 __global__ void prime_generator(int* d_input_list, uint64_cu* d_prime_list, uint64_cu* d_startPrimelist,uint64_cu* d_total_inputsize,uint64_cu* d_number_of_primes)
 {
-        long long int tid = (blockIdx.x*blockDim.x) + threadIdx.x;
+    uint64_cu tid = (blockIdx.x*blockDim.x) + threadIdx.x;
         if (tid < d_number_of_primes[0]) {
                                 uint64_cu primes=d_prime_list[tid];
                       //  printf("%llu\n",primes);
@@ -100,8 +100,8 @@ kernelLauncher(gpu_id);
 
 
 // Global Variables.
-long long int pl_end_number = 1000;
-long long int total_primes=0;
+uint64_cu pl_end_number = 1000;
+uint64_cu total_primes=0;
 int number_of_gpus = 1;
 PrimeHeader pheader;
 GpuHandler gpu_data;
@@ -140,7 +140,7 @@ int main(int argc, char *argv[]) {
         case 2:
             long input_1;
             input_1 = atol(argv[1]); // First input
-            pl_end_number = (long long int)input_1;
+            pl_end_number = (uint64_cu)input_1;
 
             break;
         case 1:
@@ -183,15 +183,15 @@ int main(int argc, char *argv[]) {
 
     
     // Initialize Small Sieve
-    for (long long int i = 0; i < pl_end_number; i++) {
+    for (uint64_cu i = 0; i < pl_end_number; i++) {
         small_sieve[i] = true;
     }
 
     // Compute Small Sieve on CPU
     cudaEventRecord(start,0);
     
-    for (long long int i = 2; i <= int(sqrt(pl_end_number))+1; i++) {
-        for (long long int j = i+1; j <= pl_end_number; j++) {
+    for (uint64_cu i = 2; i <= int(sqrt(pl_end_number))+1; i++) {
+        for (uint64_cu j = i+1; j <= pl_end_number; j++) {
             if (j % i == 0) {
                 small_sieve[j] = false;
                 //cout << j << " is Composite, as divisible by " << i << endl;
@@ -206,8 +206,8 @@ int main(int argc, char *argv[]) {
 
 
     // Count Total Primes
-    long long int small_sieve_counter = 0;
-    for (long long int i = 2; i <= pl_end_number; i++) {
+    uint64_cu small_sieve_counter = 0;
+    for (uint64_cu i = 2; i <= pl_end_number; i++) {
         if (small_sieve[i] == true) {
             // To display prime numbers
             //cout << i << " ";
@@ -228,11 +228,11 @@ int main(int argc, char *argv[]) {
     }
 
 
-    long long int *prime_list = new long long int [small_sieve_counter];
+    uint64_cu *prime_list = new uint64_cu [small_sieve_counter];
 
     // Storing numbers from the sieve to an array.
-    long long int inner_counter = 0;
-    for (long long int i = 2; i <= pl_end_number; i++) {
+    uint64_cu inner_counter = 0;
+    for (uint64_cu i = 2; i <= pl_end_number; i++) {
         if (small_sieve[i] == true) {
             prime_list[inner_counter] = i;
             inner_counter++;
