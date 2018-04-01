@@ -191,7 +191,7 @@ for (uint64_cu i = 0; i < pl_end_number; i++) {
 
     total_primes += small_sieve_counter;
     if (DEBUG >= 1) {
-        cout << "Total Primes in Small Sieve: " << small_sieve_counter << endl;
+        cout << "Total Primes Calculated on CPU: " << small_sieve_counter << endl;
     }
 
 
