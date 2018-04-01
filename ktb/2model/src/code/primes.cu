@@ -49,7 +49,8 @@ if (DEBUG >= 1) {
     cout << "Launched GPU Handler: " << gpu_id << endl;
 }
 
-cudaEvent_t start, stop;
+cudaEvent_t start; 
+cudaEvent_t stop;
 float time;
 gpuErrchk( cudaEventCreate (&start));
 gpuErrchk( cudaEventCreate (&stop));
