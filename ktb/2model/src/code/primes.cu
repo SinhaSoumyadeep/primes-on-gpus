@@ -63,44 +63,6 @@ gpu_data.IL_start = pl_end_number+1;
 gpu_data.IL_end = pl_end_number*pl_end_number;
 kernelLauncher(gpu_id);
 
-
-
-/*    
-        // Check Returned Primes
-        long long int ret_primes=0;
-        
-        for (long long int i = pl_end_number; i < pl_end_number*pl_end_number; i++) {
-            if (output_list[i] == true) {
-                // To display prime numbers
-                //cout << i << " ";
-                ret_primes++;
-                //small_sieve_counter++;
-            }
-        }
-    
-        total_primes += ret_primes; 
-        green_start();
-        cout << "Total Primes: "<< total_primes;
-        cout << endl;
-        color_reset();
-                 
-        
-    
-        // Free the memory allocated on the GPU
-        cudaFree( dev_il );
-        cudaFree( dev_pl );
-        cudaFree( dev_prime_size );
-        cudaFree( dev_input_size );
-        cudaFree( dev_pl_end_number );
-        
-    
-         free(small_sieve);
-         free(prime_list);
-         free(input_list);
-         free(output_list);
-    */
-    
-
 }
 
 
