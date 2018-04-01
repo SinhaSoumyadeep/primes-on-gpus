@@ -6,7 +6,6 @@ using namespace std;
 
 // Global Variables.
 uint64_cu pl_end_number = 10000;
-uint64_cu total_primes=0;
 int number_of_gpus = 1;
 
 PrimeHeader pheader;
@@ -158,7 +157,7 @@ int main(int argc, char *argv[]) {
 
 
 
-    pheader = calculate_primes_on_cpu(pheader); 
+    pheader = calculate_primes_on_cpu(pheader,pl_end_number); 
 
 
     
