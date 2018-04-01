@@ -67,12 +67,12 @@ gpuErrchk( cudaEventCreate (&stop_kernel[gpu_id]) );
 gpu_data.IL_start = pl_end_number+1;
 gpu_data.IL_end = pl_end_number*pl_end_number;
 
-gpuErrchk( cudaEventRecord(start_kernel[gpu_id],0);
+gpuErrchk( cudaEventRecord(start_kernel[gpu_id],(cudaStream_t)gpu_id));
   
 kernelLauncher(gpu_id);
 
 
-gpuErrchk( cudaEventRecord(stop_kernel[gpu_id],0);
+gpuErrchk( cudaEventRecord(stop_kernel[gpu_id],(cudaStream_t)gpu_id));
 gpuErrchk( cudaEventSynchronize(stop_kernel[gpu_id]));
 gpuErrchk( cudaEventElapsedTime(&time[gpu_id], start_kernel[gpu_id], stop_kernel[gpu_id]));
 printf("GPU %d Time: %.2f ms\n", gpu_id, time[gpu_id]);
