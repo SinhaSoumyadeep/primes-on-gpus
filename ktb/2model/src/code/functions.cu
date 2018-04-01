@@ -140,8 +140,8 @@ PrimeHeader calculate_primes_on_cpu(PrimeHeader pheader, uint64_cu pl_end_number
 // Time Variables
 cudaEvent_t start, stop;
 float time;
-gpuErrchk(cudaEventCreate (&start));
-gpuErrchk(cudaEventCreate (&stop));
+gpuErrchk( cudaEventCreate (&start));
+gpuErrchk( cudaEventCreate (&stop));
 
 
 
