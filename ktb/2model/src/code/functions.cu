@@ -136,7 +136,7 @@ void kernelLauncher(int gpu_id) {
 
 
 
-PrimeHeader calculate_primes_on_cpu(PrimeHeader pheader) {
+PrimeHeader calculate_primes_on_cpu(PrimeHeader pheader, uint64_cu pl_end_number, ) {
 // Time Variables
 cudaEvent_t start, stop;
 float time;
@@ -156,10 +156,10 @@ bool *small_sieve = new bool [pl_end_number];
 
 
     
-    // Initialize Small Sieve
-    for (uint64_cu i = 0; i < pl_end_number; i++) {
-        small_sieve[i] = true;
-    }
+// Initialize Small Sieve
+for (uint64_cu i = 0; i < pl_end_number; i++) {
+    small_sieve[i] = true;
+}
 
     // Compute Small Sieve on CPU
     cudaEventRecord(start,0);
@@ -176,7 +176,7 @@ bool *small_sieve = new bool [pl_end_number];
     gpuErrchk( cudaEventRecord(stop,0));
     gpuErrchk( cudaEventSynchronize(stop));
     gpuErrchk( cudaEventElapsedTime(&time, start, stop));
-    printf("CPU Time: %.2f ms\n", time);
+    printf("CPU Time: %.2f ms till end prime number: %llu\n", time,pl_end_number);
 
 
     // Count Total Primes
