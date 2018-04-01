@@ -189,7 +189,6 @@ for (uint64_cu i = 0; i < pl_end_number; i++) {
     }
     //cout << endl;
 
-    total_primes += small_sieve_counter;
     if (DEBUG >= 1) {
         cout << "Total Primes Calculated on CPU: " << small_sieve_counter << endl;
     }
@@ -207,5 +206,4 @@ for (uint64_cu i = 0; i < pl_end_number; i++) {
     pheader.primelist=prime_list;
     pheader.length=small_sieve_counter;
     pheader.lastMaxNo=pl_end_number;
-
 }
