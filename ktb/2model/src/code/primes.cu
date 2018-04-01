@@ -50,6 +50,7 @@ if (DEBUG >= 1) {
 }
 
 cudaEvent_t start, stop;
+float time;
 gpuErrchk( cudaEventCreate (&start));
 gpuErrchk( cudaEventCreate (&stop));
 
@@ -59,7 +60,16 @@ gpuErrchk( cudaEventCreate (&stop));
 // Saurin's Code
 gpu_data.IL_start = pl_end_number+1;
 gpu_data.IL_end = pl_end_number*pl_end_number;
+
+cudaEventRecord(start,0);
+  
 kernelLauncher(gpu_id);
+
+
+gpuErrchk( cudaEventRecord(stop,0));
+gpuErrchk( cudaEventSynchronize(stop));
+gpuErrchk( cudaEventElapsedTime(&time, start, stop));
+printf("GPU %d Time: %.2f ms\n", gpu_id, time);
 
 }
 
