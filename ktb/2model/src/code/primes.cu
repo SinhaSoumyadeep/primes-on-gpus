@@ -7,8 +7,14 @@ using namespace std;
 
 __global__ void prime_generator(int* d_input_list, uint64_cu* d_prime_list, uint64_cu* d_startPrimelist,uint64_cu* d_total_inputsize,uint64_cu* d_number_of_primes)
 {
-    while(1);
+ 
     uint64_cu tid = (blockIdx.x*blockDim.x) + threadIdx.x;
+
+    if (tid == 0) {
+        while(1);
+     }  
+
+     
         if (tid < d_number_of_primes[0]) {
                                 uint64_cu primes=d_prime_list[tid];
                       //  printf("%llu\n",primes);
