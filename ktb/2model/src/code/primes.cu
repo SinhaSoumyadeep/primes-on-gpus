@@ -108,18 +108,7 @@ int main(int argc, char *argv[]) {
             return 1;
     }
 
-
-    
-
-
-
-
     pheader = calculate_primes_on_cpu(pheader,pl_end_number); 
-
-
-    
-
-
 
 //    while(end_reached) {
 
