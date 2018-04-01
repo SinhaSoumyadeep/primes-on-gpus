@@ -60,11 +60,11 @@ typedef struct PrimeHeader{
 
 
 struct GpuHandler {
-    int gpus;
-    uint64_cu* PL;
-    uint64_cu PL_len;
-    uint64_cu IL_start; 
-    uint64_cu IL_end; 
+    int gpus=-1;
+    uint64_cu* PL = NULL;
+    uint64_cu PL_len = -1;;
+    uint64_cu IL_start = -1; 
+    uint64_cu IL_end = -1; 
 };
 
 
