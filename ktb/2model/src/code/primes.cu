@@ -11,7 +11,7 @@ __global__ void prime_generator(int* d_input_list, uint64_cu* d_prime_list, uint
     uint64_cu tid = (blockIdx.x*blockDim.x) + threadIdx.x;
 
      
-        if (tid < d_number_of_primes[0]) {
+        if (tid < *d_number_of_primes) {
             printf("Kaustubh\n");
                                 uint64_cu primes=d_prime_list[tid];
                       //  printf("%llu\n",primes);
