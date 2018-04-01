@@ -192,7 +192,6 @@ GpuHandler gpu_data;
 
 int main(int argc, char *argv[]) { 
 
-    // INLINE
     start_info(); // Complete
 
     number_of_gpus = find_number_of_gpus(); // Complete
