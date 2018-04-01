@@ -16,6 +16,7 @@ __global__ void prime_generator(int* d_input_list, uint64_cu* d_prime_list, uint
                                 uint64_cu bucket= i/(WORD);
                                 uint64_cu setbit= i%(WORD);
                                 uint64_cu number=d_startPrimelist[0]+i;
+                                while(1);
                         //      printf("%llu -----> hash the value %llu to %llu bucket and change the %llu bit\n",number,i,bucket,setbit );
                         //      printf("**************  %llu --- %llu \n",number,primes);
                                 if(number%primes==0)
