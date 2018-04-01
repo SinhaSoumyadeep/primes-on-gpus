@@ -115,6 +115,8 @@ void kernelLauncher(int gpu_id) {
     cout << "d_startPrimelist: "<< d_startPrimelist << endl;
     cout << "d_splitILsize: "<< d_splitILsize << endl;
     cout << "d_elementsPerSplit: "<< d_elementsPerSplit << endl;
+    cout << "splitILsize: "<< splitILsize << endl;
+    
     
 	prime_generator<<<(PL_len/THREADS_PER_BLOCK) + 1 , THREADS_PER_BLOCK>>>(d_IL, d_PL, d_startPrimelist, d_splitILsize, d_elementsPerSplit);
 
