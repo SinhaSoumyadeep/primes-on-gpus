@@ -91,7 +91,7 @@ void kernelLauncher(int gpu_id) {
 	uint64_cu size_PL = (pheader.length) * sizeof(uint64_cu);
 
 	// Space for device copies:
-	gpuErrchk( cudaMalloc((void **) &d_IL, splitILsize));
+	gpuErrchk( cudaMalloc((void **) d_IL, splitILsize));
 	gpuErrchk( cudaMalloc((void **) &d_PL, size_PL));
     gpuErrchk( cudaMalloc((void **) &d_startPrimelist, sizeof(uint64_cu)) );
     gpuErrchk( cudaMalloc((void **) &d_splitILsize, sizeof(uint64_cu)) );
