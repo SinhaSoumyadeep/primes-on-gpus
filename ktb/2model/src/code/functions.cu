@@ -136,7 +136,11 @@ void kernelLauncher(int gpu_id) {
 
 
 
+
+
+
 PrimeHeader calculate_primes_on_cpu(PrimeHeader pheader, uint64_cu pl_end_number ) {
+    
 // Time Variables
 cudaEvent_t start, stop;
 float time;
