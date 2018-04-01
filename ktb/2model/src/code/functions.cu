@@ -66,9 +66,9 @@ void kernelLauncher(int gpu_id) {
 
     
     
-    uint64_cu Il_len =  gpu_data->IL_end - gpu_data->IL_start;
+    uint64_cu Il_len =  gpu_data.IL_end - gpu_data.IL_start;
     
-    int total_gpus=gpu_data->gpus;
+    int total_gpus=gpu_data.gpus;
 	// Round off the number of GPUs to the next lower power of 2:
 	// for(int i=0; i<10; i++) {
 	// 	if(pow(2,i) > gpu_data->gpus)
