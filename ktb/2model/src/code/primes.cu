@@ -61,7 +61,7 @@ gpuErrchk( cudaEventCreate (&stop));
 gpu_data.IL_start = pl_end_number+1;
 gpu_data.IL_end = pl_end_number*pl_end_number;
 
-cudaEventRecord(start,0);
+gpuErrchk( cudaEventRecord(start,0));
   
 kernelLauncher(gpu_id);
 
