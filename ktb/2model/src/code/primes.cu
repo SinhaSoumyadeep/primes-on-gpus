@@ -72,11 +72,6 @@ int main(int argc, char *argv[]) {
     number_of_gpus = find_number_of_gpus(); // Complete
     number_of_gpus = pow(2,int(log(number_of_gpus)/log(2)));
     gpu_data.gpus = number_of_gpus;
-    if (number_of_gpus != find_number_of_gpus()) {
-        cyan_start();
-        cout << "INFO: Running on " << number_of_gpus << " GPUs out of " << find_number_of_gpus() << " GPUs." << endl;
-        color_reset();
-    }
 
     // Accepting input from Console
     switch (argc) { // For getting input from console
@@ -111,6 +106,12 @@ int main(int argc, char *argv[]) {
             cout << "FATAL ERROR: Wrong Number of Inputs" << endl; // If incorrect number of inputs are used.
             color_reset();
             return 1;
+    }
+
+    if (number_of_gpus != find_number_of_gpus()) {
+        cyan_start();
+        cout << "INFO: Running on " << number_of_gpus << " GPUs out of " << find_number_of_gpus() << " GPUs." << endl;
+        color_reset();
     }
 
     pheader = calculate_primes_on_cpu(pheader,pl_end_number); 
