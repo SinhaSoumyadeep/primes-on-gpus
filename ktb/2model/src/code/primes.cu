@@ -116,7 +116,7 @@ int main(int argc, char *argv[]) {
 
     number_of_gpus = find_number_of_gpus(); // Complete
     number_of_gpus = pow(2,int(log(number_of_gpus)/log(2)));
-    gpu_data->gpus = number_of_gpus;
+    gpu_data.gpus = number_of_gpus;
 
     // Accepting input from Console
     switch (argc) { // For getting input from console
