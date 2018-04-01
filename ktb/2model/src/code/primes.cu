@@ -200,8 +200,39 @@ int main(int argc, char *argv[]) {
     gpu_data->gpus = number_of_gpus;
 
     // Accepting input from Console
-    // INLINE
-    console_input(); // Complete
+    switch (argc) { // For getting input from console
+        case 6:
+            //long input_5;
+            //input_5 = atol(argv[5]); //Fifth Input
+            
+        case 5:
+            //long input_4;
+            //input_4 = atol(argv[4]); //Fourth Input
+            
+        case 4:
+            //long input_3;
+            //input_3 = atol(argv[3]); // Third Input
+            
+        case 3:
+            long input_2;
+            input_2 = atol(argv[2]); // Second Input
+            number_of_gpus = (int)input_2; // Number of GPUs on the NODE.
+            // Over-ride with input value.
+        case 2:
+            long input_1;
+            input_1 = atol(argv[1]); // First input
+            pl_end_number = (long long int)input_1;
+
+            break;
+        case 1:
+            // Keep this empty
+            break;
+        default:
+            red_start();
+            cout << "FATAL ERROR: Wrong Number of Inputs" << endl; // If incorrect number of inputs are used.
+            color_reset();
+            return 1;
+    }
 
 
     
