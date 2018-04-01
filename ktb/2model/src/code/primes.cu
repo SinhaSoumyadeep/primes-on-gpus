@@ -55,6 +55,10 @@ float time[gpu_id];
 gpuErrchk( cudaEventCreate (&start_kernel[gpu_id]));
 gpuErrchk( cudaEventCreate (&stop_kernel[gpu_id]));
 
+cudaStream_t stream[gpu_data.gpus];
+for (int i=0;i<gpu_data.gpus;i++) {
+    stream[i] = i;
+}
 
     
 
