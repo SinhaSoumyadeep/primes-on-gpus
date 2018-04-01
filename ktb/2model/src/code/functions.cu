@@ -136,7 +136,7 @@ void kernelLauncher(int gpu_id) {
 
 
 
-calculate_primes_on_cpu() {
+PrimeHeader calculate_primes_on_cpu(PrimeHeader pheader) {
 // Time Variables
 cudaEvent_t start, stop;
 float time;
@@ -152,7 +152,7 @@ if (DEBUG >=2) {
 
 
 
-    bool *small_sieve = new bool [pl_end_number];
+bool *small_sieve = new bool [pl_end_number];
 
 
     
