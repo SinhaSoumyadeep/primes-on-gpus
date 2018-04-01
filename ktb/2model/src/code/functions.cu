@@ -117,9 +117,9 @@ void kernelLauncher(int gpu_id) {
     
     cout << "d_IL: "<< d_IL << endl;
     cout << "d_PL: "<< d_PL << endl;
-    cout << "*d_startPrimelist: "<< *d_startPrimelist << endl;
-    cout << "*d_splitILsize: "<< *d_splitILsize << endl;
-    cout << "*d_elementsPerSplit: "<< *d_elementsPerSplit << endl;
+    cout << "d_startPrimelist: "<< d_startPrimelist << endl;
+    cout << "d_splitILsize: "<< d_splitILsize << endl;
+    cout << "d_elementsPerSplit: "<< d_elementsPerSplit << endl;
     
     
 
