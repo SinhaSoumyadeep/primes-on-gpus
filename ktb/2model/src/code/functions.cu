@@ -88,7 +88,9 @@ void kernelLauncher(int gpu_id) {
 	// Calculate memory sizes required:
 	uint64_cu elementsPerSplit = IL_len / total_gpus;			// WARNING: 'total_gpus' should be a power of 2 (code added for this check)
 	uint64_cu splitILsize = (elementsPerSplit / (sizeof(uint64_cu) * 8)); 				// Confirm during code integration whether a '+1' is needed in the end.
-	uint64_cu size_PL = (pheader.length) * sizeof(uint64_cu);
+    uint64_cu size_PL = (pheader.length) * sizeof(uint64_cu);
+    
+    cout << "size_PL: " << size_PL << endl;
 
 	// Space for device copies:
 	gpuErrchk( cudaMalloc((void **) &d_IL, splitILsize));
@@ -140,7 +142,7 @@ void kernelLauncher(int gpu_id) {
 
 
 PrimeHeader calculate_primes_on_cpu(PrimeHeader pheader, uint64_cu pl_end_number ) {
-    
+
 // Time Variables
 cudaEvent_t start, stop;
 float time;
