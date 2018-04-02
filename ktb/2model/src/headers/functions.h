@@ -60,12 +60,13 @@ typedef struct PrimeHeader{
 
 
 struct GpuHandler {
-    int gpus;
-    uint64_cu* PL;
-    uint64_cu PL_len;
-    uint64_cu IL_start; 
-    uint64_cu IL_end; 
+    int gpus=-1;
+    uint64_cu* PL = NULL;
+    uint64_cu PL_len = -1;;
+    uint64_cu IL_start = -1; 
+    uint64_cu IL_end = -1; 
 };
+
 
 
  long find_number_of_gpus();
@@ -78,6 +79,7 @@ void kernelLauncher(int gpu_id);
 
 __global__ void prime_generator(int* d_input_list, uint64_cu* d_prime_list, uint64_cu* d_startPrimelist,uint64_cu* d_total_inputsize,uint64_cu* d_number_of_primes);
 
+PrimeHeader calculate_primes_on_cpu(PrimeHeader pheader, uint64_cu pl_end_number);
 
 
 

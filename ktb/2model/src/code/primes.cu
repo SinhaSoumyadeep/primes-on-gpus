@@ -5,8 +5,7 @@ using namespace std;
 
 
 // Global Variables.
-uint64_cu pl_end_number = 1000;
-uint64_cu total_primes=0;
+uint64_cu pl_end_number = 10000;
 int number_of_gpus = 1;
 
 PrimeHeader pheader;
@@ -21,28 +20,22 @@ GpuHandler gpu_data;
 __global__ void prime_generator(int* d_input_list, uint64_cu* d_prime_list, uint64_cu* d_startPrimelist,uint64_cu* d_total_inputsize,uint64_cu* d_number_of_primes)
 {
  
-    uint64_cu tid = (blockIdx.x*blockDim.x) + threadIdx.x;
+uint64_cu tid = (blockIdx.x*blockDim.x) + threadIdx.x;
 
      
-        if (tid < *d_number_of_primes) {
-            printf("Kaustubh\n");
-                                uint64_cu primes=d_prime_list[tid];
-                      //  printf("%llu\n",primes);
-                        for(uint64_cu i=0;i<=d_total_inputsize[0];i++) // Added less than eual to here.
-                        {
-                                uint64_cu bucket= i/(WORD);
-                                uint64_cu setbit= i%(WORD);
-                                uint64_cu number=d_startPrimelist[0]+i;
-                                
-                        //      printf("%llu -----> hash the value %llu to %llu bucket and change the %llu bit\n",number,i,bucket,setbit );
-                        //      printf("**************  %llu --- %llu \n",number,primes);
-                                if(number%primes==0)
-                                {
-                                        printf("%llu is divisible by %llu \n", number,primes);
-                                        d_input_list[bucket]=d_input_list[bucket]| 1U<<setbit;
-                                }
-                        }
+if (tid < *d_number_of_primes) {
+    printf("Kaustubh\n");
+    uint64_cu primes=d_prime_list[tid];
+    for(uint64_cu i=0;i<=d_total_inputsize[0];i++) { // Added less than eual to here.
+        uint64_cu bucket= i/(WORD);
+        uint64_cu setbit= i%(WORD);
+        uint64_cu number=d_startPrimelist[0]+i;
+        if(number%primes==0) {
+            //printf("%llu is divisible by %llu \n", number,primes);
+            d_input_list[bucket]=d_input_list[bucket]| 1U<<setbit;
+            }
         }
+    }
 }
 
 
@@ -50,63 +43,39 @@ __global__ void prime_generator(int* d_input_list, uint64_cu* d_prime_list, uint
 // ********************** PTHREAD ITERATION **********************
 
 void *one_iteration(void *tid) {
-    // Dont use tid
-    // Use thread_id
-    long gpu_id = (long) tid;
+long gpu_id = (long) tid; // Dont use tid, Use gpu_id instead
 
+if (DEBUG >= 1) {
+    cout << "Launched GPU Handler: " << gpu_id << endl;
+}
 
+cudaEvent_t start_kernel[gpu_data.gpus]; 
+cudaEvent_t stop_kernel[gpu_data.gpus];
+float time[gpu_id];
+gpuErrchk( cudaEventCreate (&start_kernel[gpu_id]) );
+gpuErrchk( cudaEventCreate (&stop_kernel[gpu_id]) );
 
-    if (DEBUG >= 1) {
-        cout << "GPU Handler: " << gpu_id << endl;
-    }
+// cudaStream_t stream[gpu_data.gpus];
+// for (int i=0;i<gpu_data.gpus;i++) {
+//     stream[i] = i;
+// }
 
-    cudaEvent_t start, stop;
     
 
-    
 
 // Saurin's Code
 gpu_data.IL_start = pl_end_number+1;
 gpu_data.IL_end = pl_end_number*pl_end_number;
+
+gpuErrchk( cudaEventRecord(start_kernel[gpu_id],(cudaStream_t)gpu_id));
+  
 kernelLauncher(gpu_id);
 
 
-
-/*    
-        // Check Returned Primes
-        long long int ret_primes=0;
-        
-        for (long long int i = pl_end_number; i < pl_end_number*pl_end_number; i++) {
-            if (output_list[i] == true) {
-                // To display prime numbers
-                //cout << i << " ";
-                ret_primes++;
-                //small_sieve_counter++;
-            }
-        }
-    
-        total_primes += ret_primes; 
-        green_start();
-        cout << "Total Primes: "<< total_primes;
-        cout << endl;
-        color_reset();
-                 
-        
-    
-        // Free the memory allocated on the GPU
-        cudaFree( dev_il );
-        cudaFree( dev_pl );
-        cudaFree( dev_prime_size );
-        cudaFree( dev_input_size );
-        cudaFree( dev_pl_end_number );
-        
-    
-         free(small_sieve);
-         free(prime_list);
-         free(input_list);
-         free(output_list);
-    */
-    
+gpuErrchk( cudaEventRecord(stop_kernel[gpu_id],(cudaStream_t)gpu_id));
+gpuErrchk( cudaEventSynchronize(stop_kernel[gpu_id]));
+gpuErrchk( cudaEventElapsedTime(&time[gpu_id], start_kernel[gpu_id], stop_kernel[gpu_id]));
+printf("GPU %d Time: %.2f ms\n", gpu_id, time[gpu_id]);
 
 }
 
@@ -158,109 +127,23 @@ int main(int argc, char *argv[]) {
             return 1;
     }
 
+    if (number_of_gpus != find_number_of_gpus()) {
+        cyan_start();
+        cout << "INFO: Running on " << number_of_gpus << " GPUs out of " << find_number_of_gpus() << " GPUs." << endl;
+        color_reset();
+    }
 
+    pheader = calculate_primes_on_cpu(pheader,pl_end_number);
     
-
-
-
-
-    //calculate_primes_on_cpu(); //TODO Store code in this function
-
-
-
-    // Time Variables
-    cudaEvent_t start, stop;
-    float time;
-    gpuErrchk(cudaEventCreate (&start));
-    gpuErrchk(cudaEventCreate (&stop));
-
-
-
-    // Create Small 
-    if (DEBUG >=2) {
-        cout << "Allocating SMALL_SIEVE" << endl;
-    }
-
-
-
-    bool *small_sieve = new bool [pl_end_number];
-
-
-    
-    // Initialize Small Sieve
-    for (uint64_cu i = 0; i < pl_end_number; i++) {
-        small_sieve[i] = true;
-    }
-
-    // Compute Small Sieve on CPU
-    cudaEventRecord(start,0);
-    
-    for (uint64_cu i = 2; i <= int(sqrt(pl_end_number))+1; i++) {
-        for (uint64_cu j = i+1; j <= pl_end_number; j++) {
-            if (j % i == 0) {
-                small_sieve[j] = false;
-                //cout << j << " is Composite, as divisible by " << i << endl;
-            }
-        }        
-    }
-
-    gpuErrchk( cudaEventRecord(stop,0));
-    gpuErrchk( cudaEventSynchronize(stop));
-    gpuErrchk( cudaEventElapsedTime(&time, start, stop));
-    printf("CPU Time: %.2f ms\n", time);
-
-
-    // Count Total Primes
-    uint64_cu small_sieve_counter = 0;
-    for (uint64_cu i = 2; i <= pl_end_number; i++) {
-        if (small_sieve[i] == true) {
-            // To display prime numbers
-            //cout << i << " ";
-            small_sieve_counter++;
-        }
-    }
-    cout << endl;
-
-    total_primes += small_sieve_counter;
-    if (DEBUG >= 1) {
-        cout << "Total Primes in Small Sieve: " << small_sieve_counter << endl;
-    }
-
-
-
-    if (DEBUG >=2) {
-        cout << "Allocating PRIME_LIST" << endl;
-    }
-
-
-    uint64_cu *prime_list = new uint64_cu [small_sieve_counter];
-
-    // Storing numbers from the sieve to an array.
-    uint64_cu inner_counter = 0;
-    for (uint64_cu i = 2; i <= pl_end_number; i++) {
-        if (small_sieve[i] == true) {
-            prime_list[inner_counter] = i;
-            inner_counter++;
-        }
-    }
-    pheader.primelist=prime_list;
-    pheader.length=small_sieve_counter;
-    pheader.lastMaxNo=pl_end_number;
-
-    
-
-
+    cout << "pheader.length: " << pheader.length << endl;
 
 //    while(end_reached) {
 
-    //  *************** Pthreads Launch *******************
+    //  *************** PTHREADS LAUNCH *******************
 
 
     pthread_t *thread = new pthread_t [number_of_gpus];
     int *thread_error = new int [number_of_gpus];
-    GpuHandler *handler = new GpuHandler [number_of_gpus];
-
-    //initialize_handlers(handler);
 
     for (long i = 0; i < number_of_gpus; i++) {
         thread_error[i] = pthread_create(&thread[i], NULL, one_iteration, (void *) i);
