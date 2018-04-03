@@ -63,6 +63,59 @@ void iteration_info() {
 // Launch the kernel:
 
 void kernelLauncher(int gpu_id) {
+    /*
+    Convention for naming variables:
+    len: relates to number of elements
+    size: relates to size of memory
+    */
+
+    uint64_cu IL_len =  gpu_data.IL_end - gpu_data.IL_start + 1;
+    int total_gpus = gpu_data.gpus;
+    uint64_cu PL_len = pheader.length;
+
+    // Declare all pointers to GPU:
+    int *d_IL;                                                                      // Should be change to uint64_cu* 
+    uint64_cu *d_PL, *d_startInputlist, *d_elementsPerILSplit, *d_PL_len;
+
+    // Calculate memory sizes required:
+    uint64_cu size_PL = (pheader.length) * sizeof(uint64_cu);
+    uint64_cu elementsPerILSplit = IL_len / total_gpus;                               // WARNING: 'total_gpus' should be a power of 2 (code added for this check)
+    
+    // Calculate number of blocks (of 'int' type) required to store IL for a specific GPU (i.e. after splitting original IL):
+    uint64_cu blocksFor_splitIL = (elementsPerILSplit / (sizeof(int) * 8));                 // Change the sizeof(param) to int / uint64_cu as per decision
+    blocksFor_splitIL = (elementsPerILSplit % (sizeof(uint64_cu) * 8)) ? blocksFor_splitIL + 1 : blocksFor_splitIL;     // Taking ceiling of decimal (which will mean that last few bits will be unused by us)
+
+    // Space for device copies:
+    gpuErrchk( cudaMalloc((void **) &d_IL, blocksFor_splitIL));
+    gpuErrchk( cudaMalloc((void **) &d_PL, size_PL));
+    gpuErrchk( cudaMalloc((void **) &d_startInputlist, sizeof(uint64_cu)) );
+    //gpuErrchk( cudaMalloc((void **) &d_blocksFor_splitIL, sizeof(uint64_cu)) );
+    gpuErrchk( cudaMalloc((void **) &d_elementsPerILSplit, sizeof(uint64_cu)) );
+    //gpuErrchk( cudaMalloc((void **) &d_ILlenPerGPU, sizeof(uint64_cu)) );
+    gpuErrchk( cudaMalloc((void **) &d_PL_len, sizeof(uint64_cu)) );
+
+    // Calculate the start value of I/P list for kernel of current GPU:
+    uint64_cu startInputlist = (gpu_id * elementsPerILSplit) + gpu_data.IL_start;                               
+
+    // Copy the data to the device (GPU):
+    gpuErrchk( cudaMemcpy(d_PL, pheader.primelist, size_PL, cudaMemcpyHostToDevice) );
+    gpuErrchk( cudaMemcpy(d_startInputlist, &startInputlist, sizeof(uint64_cu), cudaMemcpyHostToDevice) );
+    //gpuErrchk( cudaMemcpy(d_blocksFor_splitIL, &blocksFor_splitIL, sizeof(uint64_cu), cudaMemcpyHostToDevice) );
+    gpuErrchk( cudaMemcpy(d_elementsPerILSplit, &elementsPerILSplit, sizeof(uint64_cu), cudaMemcpyHostToDevice) );
+    //gpuErrchk( cudaMemcpy(d_ILlenPerGPU, &ILlenPerGPU, sizeof(uint64_cu), cudaMemcpyHostToDevice) );
+    gpuErrchk( cudaMemcpy(d_PL_len, &PL_len, sizeof(uint64_cu), cudaMemcpyHostToDevice) );
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Print and Cross-check the data received by this API:
+    printf("Running on GPU with ID = %d\n", gpu_id);
+    printf("gpus = %llu\n", gpu_data.gpus);
+    printf("size_PL = %llu bytes\n", size_PL);
+
+
+
+// Launch the kernel:
+
+void kernelLauncher(int gpu_id) {
 
     
     
