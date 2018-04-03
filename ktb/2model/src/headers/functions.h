@@ -48,7 +48,7 @@ typedef unsigned long long int uint64_cu;
 #define GPU 0
 #define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
 #define WARNINGS 1
-#define WORD 64 // Size 
+#define WORD 32 // Size 
 
 
 
