@@ -23,7 +23,7 @@ __global__ void prime_generator(int* d_input_list, uint64_cu* d_prime_list, uint
 uint64_cu tid = (blockIdx.x*blockDim.x) + threadIdx.x;
 
 uint64_cu primes= d_prime_list[tid];
-
+if(tid< d_number_of_primes[0])
 printf("%d ---->  %llu\n",tid,primes);
 /*
      
