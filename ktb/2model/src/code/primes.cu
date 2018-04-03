@@ -24,7 +24,7 @@ uint64_cu tid = (blockIdx.x*blockDim.x) + threadIdx.x;
 
      
 if (tid < *d_number_of_primes) {
-    printf("Kaustubh\n");
+    //printf("Kaustubh\n");
     uint64_cu primes=d_prime_list[tid];
     for(uint64_cu i=0;i<=d_total_inputsize[0];i++) { // Added less than eual to here.
         uint64_cu bucket= i/(WORD);
