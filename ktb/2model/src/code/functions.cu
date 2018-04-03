@@ -171,7 +171,7 @@ if (gpu_id==1) {
 // SOUMYADEEP :: Needs to make sure additional unused bits in IL (after ceiling) are converted to values other than 0, 
 // else they might be interpreted wrongly as primes:
 
-
+/*
     // Free GPU memory:
     cudaFree(d_IL);
     cudaFree(d_PL);
@@ -179,6 +179,8 @@ if (gpu_id==1) {
     //cudaFree(d_blocksFor_splitIL);
     cudaFree(d_elementsPerILSplit);
     cudaFree(d_PL_len);
+
+    */
 }
 
 
