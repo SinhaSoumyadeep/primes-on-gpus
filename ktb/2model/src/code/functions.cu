@@ -132,8 +132,11 @@ void kernelLauncher(int gpu_id) {
 
     // Allocate space on host to copy back the splitIL from device:
     int *result = (int*) malloc(blocksFor_splitIL*sizeof(int));
-cout << "KTB: " << blocksFor_splitIL*sizeof(int) << "Result: " << result<<endl;
+cout << "KTB: " << blocksFor_splitIL*sizeof(int) << " Result: " << result<<endl;
     // Copy the result back to the host:
+    yellow_start();
+ cout << "*********** Copying back IL: " << gpu_id << endl;
+color_reset();
     gpuErrchk( cudaMemcpy(result, d_IL, blocksFor_splitIL*sizeof(int), cudaMemcpyDeviceToHost) );
 
 /*  ********** DECODING: NOT WORKING FOR NOW **************
