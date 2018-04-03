@@ -134,9 +134,9 @@ int main(int argc, char *argv[]) {
     }
 
     if (number_of_gpus != find_number_of_gpus()) {
-        cyan_start();
+        //cyan_start();
         cout << "INFO: Running on " << number_of_gpus << " GPUs out of " << find_number_of_gpus() << " GPUs." << endl;
-        color_reset();
+        //color_reset();
     }
 
     pheader = calculate_primes_on_cpu(pheader,pl_end_number);
