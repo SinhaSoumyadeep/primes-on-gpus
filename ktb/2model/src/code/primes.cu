@@ -22,6 +22,8 @@ __global__ void prime_generator(int* d_input_list, uint64_cu* d_prime_list, uint
  
 uint64_cu tid = (blockIdx.x*blockDim.x) + threadIdx.x;
 
+printf("INSIDE KERNEL\n");
+/*
      
 if (tid < *d_number_of_primes) {
     //printf("Kaustubh\n");
@@ -35,7 +37,7 @@ if (tid < *d_number_of_primes) {
             d_input_list[bucket]=d_input_list[bucket]| 1U<<setbit;
             }
         }
-    }
+    } */
 }
 
 
