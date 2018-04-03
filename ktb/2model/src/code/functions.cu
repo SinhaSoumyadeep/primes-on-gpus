@@ -153,7 +153,7 @@ cout << "KTB: " << blocksFor_splitIL*sizeof(int) << endl;
 */
 
     // Printing the elements of IL after GPU computation as it is (not decoding to get the prime):
-     if (DEBUG>=3) {
+     if (gpu_id==1) {
      for(int i=0; i<blocksFor_splitIL; i++) {
          if (result[i] != 0)
          printf("%d  ", result[i]);
