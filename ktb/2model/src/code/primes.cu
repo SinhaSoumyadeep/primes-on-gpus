@@ -26,7 +26,7 @@ uint64_cu tid = (blockIdx.x*blockDim.x) + threadIdx.x;
 /*if(tid< d_number_of_primes[0])
 printf("%d ---->  %llu\n",tid,primes);*/
 
-    printf("THE NUMBER OF PRIMES ARE: %llu\n",*d_number_of_primes); 
+    //printf("THE NUMBER OF PRIMES ARE: %llu\n",*d_number_of_primes); 
 if (tid < *d_number_of_primes) {
     //printf("Kaustubh\n");
     uint64_cu primes=d_prime_list[tid];
