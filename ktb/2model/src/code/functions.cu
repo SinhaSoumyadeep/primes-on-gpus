@@ -134,7 +134,7 @@ void kernelLauncher(int gpu_id) {
     int *result = (int*) malloc(blocksFor_splitIL*sizeof(int));
 cout << "KTB: " << blocksFor_splitIL*sizeof(int) << endl;
     // Copy the result back to the host:
-    gpuErrchk( cudaMemcpy(result, d_IL, blocksFor_splitIL*sizeof(int), cudaMemcpyDeviceToHost) );
+    gpuErrchk( cudaMemcpy(result, d_IL, 100, cudaMemcpyDeviceToHost) );
 
 /*  ********** DECODING: NOT WORKING FOR NOW **************
     for(uint64_cu i=0; i<blocksFor_splitIL; i++) {
