@@ -137,6 +137,7 @@ cout << "KTB: " << blocksFor_splitIL*sizeof(int) << " Result: " << result<<endl;
 //    yellow_start();
  cout << "*********** Copying back IL: " << gpu_id << endl;
 //color_reset();
+sleep(4);
     gpuErrchk( cudaMemcpy(result, d_IL, blocksFor_splitIL*sizeof(int), cudaMemcpyDeviceToHost) );
 if (gpu_id==1) {
     cout << "**********************HELLO!!!" << endl;
