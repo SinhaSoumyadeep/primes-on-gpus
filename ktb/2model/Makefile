@@ -7,7 +7,6 @@ TARGET=primes.bin
 NVCC=nvcc
 FLAGS=-O0 -std=c++11 -Xcompiler="-pthread" -g #-G -Xptxas=-v
 LDFLAGS=
-
 ROOT_DIR=$(PWD)
 CODE_DIR=$(ROOT_DIR)/src/code
 HEADER_DIR=$(ROOT_DIR)/src/headers
