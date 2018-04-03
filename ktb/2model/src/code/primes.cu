@@ -5,7 +5,7 @@ using namespace std;
 
 
 // Global Variables.
-uint64_cu pl_end_number = 10000;
+uint64_cu pl_end_number = 1000;
 int number_of_gpus = 1;
 
 PrimeHeader pheader;
