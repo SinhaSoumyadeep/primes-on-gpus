@@ -36,7 +36,7 @@ if (tid < *d_number_of_primes) {
         uint64_cu number=d_startPrimelist[0]+i;
         //printf("THE NUMBER %llu IS BEING DIVIDED BY %llu\n",number,primes);
         if(number%primes==0) {
-            printf("%llu is divisible by %llu \n", number,primes);
+            //printf("%llu is divisible by %llu \n", number,primes);
             d_input_list[bucket]=d_input_list[bucket]| 1U<<setbit;
             }
         }
