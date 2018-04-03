@@ -60,8 +60,6 @@ void iteration_info() {
 
 }
 
-// Launch the kernel:
-
 void kernelLauncher(int gpu_id) {
     /*
     Convention for naming variables:
@@ -110,9 +108,72 @@ void kernelLauncher(int gpu_id) {
     printf("Running on GPU with ID = %d\n", gpu_id);
     printf("gpus = %llu\n", gpu_data.gpus);
     printf("size_PL = %llu bytes\n", size_PL);
+    printf("IL_len = %llu\n", IL_len);
+    printf("IL_start = %llu\n", gpu_data.IL_start);
+    printf("IL_end = %llu\n\n", gpu_data.IL_end);
+    printf("blocksFor_splitIL = %llu blocks of 'int' type\n", blocksFor_splitIL);
+
+    printf("startInputlist = %llu\n\n", startInputlist);
+    printf("elementsPerILSplit = %llu\n", elementsPerILSplit);
+    printf("PL_len (= pheader.length) = %llu\n", PL_len);
+   
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Select the device:
+    gpuErrchk( cudaSetDevice(gpu_id) );
+
+    // Launch the GPU kernel:
+    // Should pass the 'blocksFor_splitIL' too?
+    //prime_generator<<<(PL_len/THREADS_PER_BLOCK) + 1 , THREADS_PER_BLOCK>>>(d_IL, d_PL, d_startInputlist, d_blocksFor_splitIL, d_elementsPerILSplit);
+    //                                                                                                        10^6-10^3/2         #168
+    prime_generator<<<(PL_len/THREADS_PER_BLOCK) + 1 , THREADS_PER_BLOCK>>>(d_IL, d_PL, d_startInputlist, d_elementsPerILSplit, d_PL_len);
+    
+
+    // Allocate space on host to copy back the splitIL from device:
+    int *result = (int*) malloc(blocksFor_splitIL*sizeof(int));
+
+    // Copy the result back to the host:
+    cudaMemcpy(result, d_IL, blocksFor_splitIL*sizeof(int), cudaMemcpyDeviceToHost);
+
+/*  ********** DECODING: NOT WORKING FOR NOW **************
+    for(uint64_cu i=0; i<blocksFor_splitIL; i++) {
+        int bitvec = result[i];
+        int num = 1;
+        for(int j=sizeof(int)*8; j>0; j--) {
+            int value = bitvec & num ;
+            if(value == num) {
+                printf("%llu  ", (uint64_cu) (((uint64_cu)sizeof(int)*(uint64_cu)i*8) + (uint64_cu) j) );
+                printf("Hi  ");
+            }
+            num = num << 1;
+        }
+        printf("\n");
+    }
+*/
+
+    // Printing the elements of IL after GPU computation as it is (not decoding to get the prime):
+    for(int i=0; i<blocksFor_splitIL; i++) {
+        printf("%d  ", result[i]);
+    }
+
+// SOUMYADEEP :: Needs to make sure additional unused bits in IL (after ceiling) are converted to values other than 0, 
+// else they might be interpreted wrongly as primes:
 
 
+    // Free GPU memory:
+    cudaFree(d_IL);
+    cudaFree(d_PL);
+    cudaFree(d_startInputlist);
+    //cudaFree(d_blocksFor_splitIL);
+    cudaFree(d_elementsPerILSplit);
+    cudaFree(d_PL_len);
 }
+
+
+
+/* NOTES:
+1) Finalize the function parameters. They vary across APIs. (kernel launcher)
+*/
 
 
 
