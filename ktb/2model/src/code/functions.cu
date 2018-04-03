@@ -134,9 +134,9 @@ void kernelLauncher(int gpu_id) {
     int *result = (int*) malloc(blocksFor_splitIL*sizeof(int));
 cout << "KTB: " << blocksFor_splitIL*sizeof(int) << " Result: " << result<<endl;
     // Copy the result back to the host:
-    yellow_start();
+//    yellow_start();
  cout << "*********** Copying back IL: " << gpu_id << endl;
-color_reset();
+//color_reset();
     gpuErrchk( cudaMemcpy(result, d_IL, blocksFor_splitIL*sizeof(int), cudaMemcpyDeviceToHost) );
 if (gpu_id==1) {
     cout << "**********************HELLO!!!" << endl;
@@ -164,9 +164,9 @@ if (gpu_id==1) {
 //          printf("%d  ", result[i]);
 //      }
 //  }
-red_start();
+//red_start();
  cout << "*********** I am GPU: " << gpu_id << endl;
-color_reset();
+//color_reset();
 // SOUMYADEEP :: Needs to make sure additional unused bits in IL (after ceiling) are converted to values other than 0, 
 // else they might be interpreted wrongly as primes:
 
