@@ -94,6 +94,7 @@ int main(int argc, char *argv[]) {
     start_info(); // Complete
 
     number_of_gpus = find_number_of_gpus(); // Complete
+    number_of_gpus = 1;
     number_of_gpus = pow(2,int(log(number_of_gpus)/log(2)));
     gpu_data.gpus = number_of_gpus;
 
