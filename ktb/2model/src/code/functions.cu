@@ -32,6 +32,7 @@ long find_number_of_gpus() {
 
 
 
+
 void start_info() {
     // Will print all the stats about the program like
     // Number of GPU being used.
