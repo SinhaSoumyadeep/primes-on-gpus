@@ -85,7 +85,7 @@ void kernelLauncher(int gpu_id) {
     blocksFor_splitIL = (elementsPerILSplit % (sizeof(uint64_cu) * 8)) ? blocksFor_splitIL + 1 : blocksFor_splitIL;     // Taking ceiling of decimal (which will mean that last few bits will be unused by us)
 
     // Space for device copies:
-    gpuErrchk( cudaMalloc((void **) &d_IL, blocksFor_splitIL));
+    gpuErrchk( cudaMalloc((void **) &d_IL, blocksFor_splitIL*sizeof(int)));
     gpuErrchk( cudaMalloc((void **) &d_PL, size_PL));
     gpuErrchk( cudaMalloc((void **) &d_startInputlist, sizeof(uint64_cu)) );
     //gpuErrchk( cudaMalloc((void **) &d_blocksFor_splitIL, sizeof(uint64_cu)) );
@@ -134,7 +134,7 @@ void kernelLauncher(int gpu_id) {
     int *result = (int*) malloc(blocksFor_splitIL*sizeof(int));
 cout << "KTB: " << blocksFor_splitIL*sizeof(int) << endl;
     // Copy the result back to the host:
-    gpuErrchk( cudaMemcpy(result, d_IL, blocksFor_splitIL*((unsigned long long int)sizeof(int)), cudaMemcpyDeviceToHost) );
+    gpuErrchk( cudaMemcpy(result, d_IL, blocksFor_splitIL*sizeof(int), cudaMemcpyDeviceToHost) );
 
 /*  ********** DECODING: NOT WORKING FOR NOW **************
     for(uint64_cu i=0; i<blocksFor_splitIL; i++) {
