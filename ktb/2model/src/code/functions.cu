@@ -160,7 +160,7 @@ cout << "KTB: " << blocksFor_splitIL*sizeof(int) << endl;
      }
  }
 
- cout << "I am GPU: " << gpu_id << endl;
+ cout << "*********** I am GPU: " << gpu_id << endl;
 
 // SOUMYADEEP :: Needs to make sure additional unused bits in IL (after ceiling) are converted to values other than 0, 
 // else they might be interpreted wrongly as primes:
