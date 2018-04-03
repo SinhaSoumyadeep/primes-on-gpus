@@ -126,7 +126,9 @@ void kernelLauncher(int gpu_id) {
     // Launch the GPU kernel:
     // Should pass the 'blocksFor_splitIL' too?
     //prime_generator<<<(PL_len/THREADS_PER_BLOCK) + 1 , THREADS_PER_BLOCK>>>(d_IL, d_PL, d_startInputlist, d_blocksFor_splitIL, d_elementsPerILSplit);
-    //                                                                                                        10^6-10^3/2         #168
+    //
+    cout << "Block Size: " <<  PL_len/THREADS_PER_BLOCK) + 1 << endl;
+    cout << "Threads Per block: " << THREADS_PER_BLOCK << endl;                                                                                                      10^6-10^3/2         #168
     prime_generator<<<(PL_len/THREADS_PER_BLOCK) + 1 , THREADS_PER_BLOCK>>>(d_IL, d_PL, d_startInputlist, d_elementsPerILSplit, d_PL_len);
     
 
