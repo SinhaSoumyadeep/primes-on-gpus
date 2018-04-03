@@ -153,9 +153,11 @@ void kernelLauncher(int gpu_id) {
 */
 
     // Printing the elements of IL after GPU computation as it is (not decoding to get the prime):
-    for(int i=0; i<blocksFor_splitIL; i++) {
-        printf("%d  ", result[i]);
-    }
+//     if (DEBUG>=3) {
+//     for(int i=0; i<blocksFor_splitIL; i++) {
+//         printf("%d  ", result[i]);
+//     }
+// }
 
 // SOUMYADEEP :: Needs to make sure additional unused bits in IL (after ceiling) are converted to values other than 0, 
 // else they might be interpreted wrongly as primes:
