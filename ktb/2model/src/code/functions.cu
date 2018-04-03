@@ -107,7 +107,6 @@ void kernelLauncher(int gpu_id) {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Print and Cross-check the data received by this API:
     printf("Running on GPU with ID = %d\n", gpu_id);
-    printf("gpus = %llu\n", gpu_data.gpus);
     printf("size_PL = %llu bytes\n", size_PL);
     printf("IL_len = %llu\n", IL_len);
     printf("IL_start = %llu\n", gpu_data.IL_start);
