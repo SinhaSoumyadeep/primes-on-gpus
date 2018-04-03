@@ -128,7 +128,7 @@ void kernelLauncher(int gpu_id) {
     //
     cout << "Block Size: " <<  PL_len/THREADS_PER_BLOCK + 1 << endl;
     //cout << "Threads Per block: " << THREADS_PER_BLOCK << endl;                                                                                                      10^6-10^3/2         #168
-    prime_generator<<<1 , THREADS_PER_BLOCK>>>(d_IL, d_PL, d_startInputlist, d_elementsPerILSplit, d_PL_len);
+    prime_generator<<<dim3((PL_len/THREADS_PER_BLOCK) + 1,1,1 ), dim3(THREADS_PER_BLOCK,1,1)>>>(d_IL, d_PL, d_startInputlist, d_elementsPerILSplit, d_PL_len);
     
 
     // Allocate space on host to copy back the splitIL from device:
