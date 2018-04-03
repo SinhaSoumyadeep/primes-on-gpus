@@ -138,7 +138,9 @@ cout << "KTB: " << blocksFor_splitIL*sizeof(int) << " Result: " << result<<endl;
  cout << "*********** Copying back IL: " << gpu_id << endl;
 color_reset();
     gpuErrchk( cudaMemcpy(result, d_IL, blocksFor_splitIL*sizeof(int), cudaMemcpyDeviceToHost) );
-
+if (gpu_id==1) {
+    cout << "**********************HELLO!!!" << endl;
+}
 /*  ********** DECODING: NOT WORKING FOR NOW **************
     for(uint64_cu i=0; i<blocksFor_splitIL; i++) {
         int bitvec = result[i];
