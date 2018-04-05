@@ -25,18 +25,48 @@
 #include <stdlib.h>
 #include <math.h>
 #include <cuda_profiler_api.h>
-
+#include <errno.h>
 #include <memory>
 #include <stdexcept>
 
+
+
 using namespace std;
+
+typedef unsigned long long int uint64_cu;
+
+
+
+
+// DEFINES
+
+#define THREADS_PER_BLOCK 32
+
+
+#define block_size   32
+#define DEBUG 1
+#define GPU 0
+#define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
+#define WARNINGS 1
+#define WORD 32 // Size 
+
+
+
+typedef struct PrimeHeader{
+    uint64_cu lastMaxNo;
+    uint64_cu length;
+    uint64_cu* primelist;
+}PrimeHeader;
 
 
 struct GpuHandler {
-    long id = -1;
-    unsigned long long int prime_list_counter = -1;
-    
+    int gpus=-1;
+    uint64_cu* PL = NULL;
+    uint64_cu PL_len = -1;;
+    uint64_cu IL_start = -1; 
+    uint64_cu IL_end = -1; 
 };
+
 
 
  long find_number_of_gpus();
@@ -45,43 +75,13 @@ void start_info();
 
 void end_info();
 
+void kernelLauncher(int gpu_id);
+
+__global__ void prime_generator(int* d_input_list, uint64_cu* d_prime_list, uint64_cu* d_startPrimelist,uint64_cu* d_total_inputsize,uint64_cu* d_number_of_primes);
+
+PrimeHeader calculate_primes_on_cpu(PrimeHeader pheader, uint64_cu pl_end_number);
 
 
-inline void console_input() {
-        switch (argc) { // For getting input from console
-        case 6:
-            //long input_5;
-            //input_5 = atol(argv[5]); //Fifth Input
-            
-        case 5:
-            //long input_4;
-            //input_4 = atol(argv[4]); //Fourth Input
-            
-        case 4:
-            //long input_3;
-            //input_3 = atol(argv[3]); // Third Input
-            
-        case 3:
-            long input_2;
-            input_2 = atol(argv[2]); // Second Input
-            number_of_gpus = (int)input_2; // Number of GPUs on the NODE.
-            // Over-ride with input value.
-        case 2:
-            long input_1;
-            input_1 = atol(argv[1]); // First input
-            pl_end_number = (long long int)input_1;
-
-            break;
-        case 1:
-            // Keep this empty
-            break;
-        default:
-            red_start();
-            cout << "FATAL ERROR: Wrong Number of Inputs" << endl; // If incorrect number of inputs are used.
-            color_reset();
-            return 1;
-    }
-}
 
  inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
  {
