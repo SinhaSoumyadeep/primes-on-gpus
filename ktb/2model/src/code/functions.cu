@@ -63,10 +63,14 @@ void iteration_info() {
 
 void kernelLauncher(int gpu_id) {
     /*
-    Convention for naming variables:
-    len: relates to number of elements
-    size: relates to size of memory
-    */
+       Convention for naming variables:
+len: relates to number of elements
+size: relates to size of memory
+     */
+
+    // Select the device:
+    cout <<endl<< "#################### START of gpu_id "<< gpu_id << " ####################"<<endl;
+    gpuErrchk( cudaSetDevice(gpu_id) );
 
     uint64_cu IL_len =  gpu_data.IL_end - gpu_data.IL_start + 1;
     int total_gpus = gpu_data.gpus;
@@ -79,7 +83,7 @@ void kernelLauncher(int gpu_id) {
     // Calculate memory sizes required:
     uint64_cu size_PL = (pheader.length) * sizeof(uint64_cu);
     uint64_cu elementsPerILSplit = IL_len / total_gpus;                               // WARNING: 'total_gpus' should be a power of 2 (code added for this check)
-    
+
     // Calculate number of blocks (of 'int' type) required to store IL for a specific GPU (i.e. after splitting original IL):
     uint64_cu blocksFor_splitIL = (elementsPerILSplit / (sizeof(int) * 8));                 // Change the sizeof(param) to int / uint64_cu as per decision
     blocksFor_splitIL = (elementsPerILSplit % (sizeof(uint64_cu) * 8)) ? blocksFor_splitIL + 1 : blocksFor_splitIL;     // Taking ceiling of decimal (which will mean that last few bits will be unused by us)
@@ -116,11 +120,9 @@ void kernelLauncher(int gpu_id) {
     printf("startInputlist = %llu\n\n", startInputlist);
     printf("elementsPerILSplit = %llu\n", elementsPerILSplit);
     printf("PL_len (= pheader.length) = %llu\n", PL_len);
-   
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Select the device:
-    gpuErrchk( cudaSetDevice(gpu_id) );
 
     // Launch the GPU kernel:
     // Should pass the 'blocksFor_splitIL' too?
@@ -129,50 +131,35 @@ void kernelLauncher(int gpu_id) {
     cout << "Block Size: " <<  PL_len/THREADS_PER_BLOCK + 1 << endl;
     //cout << "Threads Per block: " << THREADS_PER_BLOCK << endl;                                                                                                      10^6-10^3/2         #168
     prime_generator<<<dim3((PL_len/THREADS_PER_BLOCK) + 1,1,1 ), dim3(THREADS_PER_BLOCK,1,1)>>>(d_IL, d_PL, d_startInputlist, d_elementsPerILSplit, d_PL_len);
-    
+
 
     // Allocate space on host to copy back the splitIL from device:
     int *result = (int*) malloc(blocksFor_splitIL*sizeof(int));
-cout << "KTB: " << blocksFor_splitIL*sizeof(int) << " Result: " << result<<endl;
+    cout << "KTB: " << blocksFor_splitIL*sizeof(int) << " Result: " << result<<endl;
     // Copy the result back to the host:
-//    yellow_start();
- cout << "*********** Copying back IL: " << gpu_id << endl;
-//color_reset();
-//sleep(4);
+    //    yellow_start();
+    cout << "*********** Copying back IL: " << gpu_id << endl;
+    //color_reset();
+    //sleep(4);
     gpuErrchk( cudaMemcpy(result, d_IL, blocksFor_splitIL*sizeof(int), cudaMemcpyDeviceToHost) );
-if (gpu_id==1) {
-    cout << "**********************HELLO!!!" << endl;
-}
-/*  ********** DECODING: NOT WORKING FOR NOW **************
-    for(uint64_cu i=0; i<blocksFor_splitIL; i++) {
-        int bitvec = result[i];
-        int num = 1;
-        for(int j=sizeof(int)*8; j>0; j--) {
-            int value = bitvec & num ;
-            if(value == num) {
-                printf("%llu  ", (uint64_cu) (((uint64_cu)sizeof(int)*(uint64_cu)i*8) + (uint64_cu) j) );
-                printf("Hi  ");
-            }
-            num = num << 1;
+    cout <<endl<< "#################### END of gpu_id "<< gpu_id << " ####################"<<endl;
+
+    for(uint64_cu index=0;index<elementsPerILSplit; index++){
+        uint64_cu bucket = index / (WORD);
+        uint64_cu setbit = index % (WORD);
+        uint64_cu actualNumber = startInputlist + index;
+        if( !(result[bucket] & (1U << (setbit)))){
+            cout << actualNumber << " is prime?? "<< endl;
         }
-        printf("\n");
     }
-*/
 
-    // Printing the elements of IL after GPU computation as it is (not decoding to get the prime):
-//      if (gpu_id==1) {
-//      for(int i=0; i<blocksFor_splitIL; i++) {
-//          if (result[i] != 0)
-//          printf("%d  ", result[i]);
-//      }
-//  }
-//red_start();
- cout << "*********** I am GPU: " << gpu_id << endl;
-//color_reset();
-// SOUMYADEEP :: Needs to make sure additional unused bits in IL (after ceiling) are converted to values other than 0, 
-// else they might be interpreted wrongly as primes:
+    //red_start();
+    cout << "*********** I am GPU: " << gpu_id << endl;
+    //color_reset();
+    // SOUMYADEEP :: Needs to make sure additional unused bits in IL (after ceiling) are converted to values other than 0, 
+    // else they might be interpreted wrongly as primes:
 
-/*
+    /*
     // Free GPU memory:
     cudaFree(d_IL);
     cudaFree(d_PL);
@@ -181,20 +168,20 @@ if (gpu_id==1) {
     cudaFree(d_elementsPerILSplit);
     cudaFree(d_PL_len);
 
-    */
+     */
 }
 
 
 
 /* NOTES:
-1) Finalize the function parameters. They vary across APIs. (kernel launcher)
-*/
+   1) Finalize the function parameters. They vary across APIs. (kernel launcher)
+ */
 
 
 
 /* NOTES:
-1) Finalize the function parameters. They vary across APIs. (kernel launcher)
-*/
+   1) Finalize the function parameters. They vary across APIs. (kernel launcher)
+ */
 
 
 
@@ -203,33 +190,33 @@ if (gpu_id==1) {
 
 PrimeHeader calculate_primes_on_cpu(PrimeHeader pheader, uint64_cu pl_end_number ) {
 
-// Time Variables
-cudaEvent_t start, stop;
-float time;
-gpuErrchk( cudaEventCreate (&start));
-gpuErrchk( cudaEventCreate (&stop));
+    // Time Variables
+    cudaEvent_t start, stop;
+    float time;
+    gpuErrchk( cudaEventCreate (&start));
+    gpuErrchk( cudaEventCreate (&stop));
 
 
 
-// Create Small 
-if (DEBUG >=2) {
-    cout << "Allocating SMALL_SIEVE" << endl;
-}
+    // Create Small 
+    if (DEBUG >=2) {
+        cout << "Allocating SMALL_SIEVE" << endl;
+    }
 
 
 
-bool *small_sieve = new bool [pl_end_number];
+    bool *small_sieve = new bool [pl_end_number];
 
 
-    
-// Initialize Small Sieve
-for (uint64_cu i = 0; i < pl_end_number; i++) {
-    small_sieve[i] = true;
-}
+
+    // Initialize Small Sieve
+    for (uint64_cu i = 0; i < pl_end_number; i++) {
+        small_sieve[i] = true;
+    }
 
     // Compute Small Sieve on CPU
     cudaEventRecord(start,0);
-    
+
     for (uint64_cu i = 2; i <= int(sqrt(pl_end_number))+1; i++) {
         for (uint64_cu j = i+1; j <= pl_end_number; j++) {
             if (j % i == 0) {

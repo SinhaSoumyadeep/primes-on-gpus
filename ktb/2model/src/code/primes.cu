@@ -160,6 +160,7 @@ int main(int argc, char *argv[]) {
             color_reset();
         }
     }
+    cout << "number_of_gpus -->>>> " << number_of_gpus<<endl;
     for (long i = 0; i < number_of_gpus; i++) {
         thread_error[i] = pthread_join(thread[i], NULL);
     }
