@@ -61,7 +61,26 @@ void iteration_info() {
 
 }
 
-void kernelLauncher(int gpu_id) {
+
+uint64_cu countPrimes(uint64_cu* result, uint64_cu length){
+
+}
+
+void printList(uint64_cu* ilist, uint64_cu len){
+    printf("\n(START, length-> %llu)\n", len);
+    int c = 0 ;
+    for(uint64_cu index=0; index<len ; index++){
+        printf("%llu ",ilist[index]);
+        c++;
+        if(c==100){
+            printf("\n");
+            c = 0;
+        }
+    }
+    printf("\nEND \n");
+}
+
+ThreadRetValue* kernelLauncher(int gpu_id) {
     /*
        Convention for naming variables:
 len: relates to number of elements
@@ -144,17 +163,39 @@ size: relates to size of memory
     gpuErrchk( cudaMemcpy(result, d_IL, blocksFor_splitIL*sizeof(int), cudaMemcpyDeviceToHost) );
     cout <<endl<< "#################### END of gpu_id "<< gpu_id << " ####################"<<endl;
 
+    uint64_cu foundPrimes = 0 ;
     for(uint64_cu index=0;index<elementsPerILSplit; index++){
         uint64_cu bucket = index / (WORD);
         uint64_cu setbit = index % (WORD);
         uint64_cu actualNumber = startInputlist + index;
         if( !(result[bucket] & (1U << (setbit)))){
-            cout << actualNumber << " is prime?? "<< endl;
+            //cout << actualNumber << " is prime?? "<< endl;
+            foundPrimes ++;
         }
     }
 
     //red_start();
-    cout << "*********** I am GPU: " << gpu_id << endl;
+    cout << "*********** I am GPU: " << gpu_id << ", foundPrimes "<< foundPrimes << endl;
+
+    uint64_cu* newPrimeList = new uint64_cu[foundPrimes];
+    uint64_cu count = 0;
+    for(uint64_cu index=0;index<elementsPerILSplit; index++){
+        uint64_cu bucket = index / (WORD);
+        uint64_cu setbit = index % (WORD);
+        uint64_cu actualNumber = startInputlist + index;
+        if( !(result[bucket] & (1U << (setbit)))){
+            newPrimeList[count++] = actualNumber;
+        }
+    }
+
+    //printList(newPrimeList,foundPrimes);
+    //ThreadRetValue* tretvalue = (ThreadRetValue* ) malloc(sizeof(ThreadRetValue));
+    ThreadRetValue* tretvalue = new ThreadRetValue();
+    tretvalue->primelist = newPrimeList;
+    tretvalue->length = foundPrimes;
+
+    return tretvalue;
+
     //color_reset();
     // SOUMYADEEP :: Needs to make sure additional unused bits in IL (after ceiling) are converted to values other than 0, 
     // else they might be interpreted wrongly as primes:

@@ -59,6 +59,12 @@ typedef struct PrimeHeader{
 }PrimeHeader;
 
 
+typedef struct ThreadRetValue{
+    uint64_cu length;
+    uint64_cu* primelist;
+}ThreadRetValue;
+
+
 struct GpuHandler {
     int gpus=-1;
     uint64_cu* PL = NULL;
@@ -75,7 +81,8 @@ void start_info();
 
 void end_info();
 
-void kernelLauncher(int gpu_id);
+void printList(uint64_cu* ilist, uint64_cu len);
+ThreadRetValue* kernelLauncher(int gpu_id);
 
 __global__ void prime_generator(int* d_input_list, uint64_cu* d_prime_list, uint64_cu* d_startPrimelist,uint64_cu* d_total_inputsize,uint64_cu* d_number_of_primes);
 

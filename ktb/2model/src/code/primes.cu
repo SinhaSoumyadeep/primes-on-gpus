@@ -19,25 +19,25 @@ GpuHandler gpu_data;
 
 __global__ void prime_generator(int* d_input_list, uint64_cu* d_prime_list, uint64_cu* d_startPrimelist,uint64_cu* d_total_inputsize,uint64_cu* d_number_of_primes)
 {
- 
-uint64_cu tid = (blockIdx.x*blockDim.x) + threadIdx.x;
 
-//uint64_cu primes= d_prime_list[tid];
-/*if(tid< d_number_of_primes[0])
-printf("%d ---->  %llu\n",tid,primes);*/
+    uint64_cu tid = (blockIdx.x*blockDim.x) + threadIdx.x;
+
+    //uint64_cu primes= d_prime_list[tid];
+    /*if(tid< d_number_of_primes[0])
+      printf("%d ---->  %llu\n",tid,primes);*/
 
     //printf("THE NUMBER OF PRIMES ARE: %llu\n",*d_number_of_primes); 
-if (tid < *d_number_of_primes) {
-    //printf("Kaustubh\n");
-    uint64_cu primes=d_prime_list[tid];
-    for(uint64_cu i=0;i<d_total_inputsize[0];i++) { // Added less than eual to here.
-        uint64_cu bucket= i/(WORD);
-        uint64_cu setbit= i%(WORD);
-        uint64_cu number=d_startPrimelist[0]+i;
-        //printf("THE NUMBER %llu IS BEING DIVIDED BY %llu\n",number,primes);
-        if(number%primes==0) {
-            //printf("%llu is divisible by %llu \n", number,primes);
-            d_input_list[bucket]=d_input_list[bucket]| 1U<<setbit;
+    if (tid < *d_number_of_primes) {
+        //printf("Kaustubh\n");
+        uint64_cu primes=d_prime_list[tid];
+        for(uint64_cu i=0;i<d_total_inputsize[0];i++) { // Added less than eual to here.
+            uint64_cu bucket= i/(WORD);
+            uint64_cu setbit= i%(WORD);
+            uint64_cu number=d_startPrimelist[0]+i;
+            //printf("THE NUMBER %llu IS BEING DIVIDED BY %llu\n",number,primes);
+            if(number%primes==0) {
+                //printf("%llu is divisible by %llu \n", number,primes);
+                d_input_list[bucket]=d_input_list[bucket]| 1U<<setbit;
             }
         }
     } 
@@ -48,39 +48,44 @@ if (tid < *d_number_of_primes) {
 // ********************** PTHREAD ITERATION **********************
 
 void *one_iteration(void *tid) {
-long gpu_id = (long) tid; // Dont use tid, Use gpu_id instead
+    long gpu_id = (long) tid; // Dont use tid, Use gpu_id instead
 
-if (DEBUG >= 1) {
-    cout << "Launched GPU Handler: " << gpu_id << endl;
-}
+    if (DEBUG >= 1) {
+        cout << "Launched GPU Handler: " << gpu_id << endl;
+    }
 
-cudaEvent_t start_kernel[gpu_data.gpus]; 
-cudaEvent_t stop_kernel[gpu_data.gpus];
-float time[gpu_id];
-gpuErrchk( cudaEventCreate (&start_kernel[gpu_id]) );
-gpuErrchk( cudaEventCreate (&stop_kernel[gpu_id]) );
+    cudaEvent_t start_kernel[gpu_data.gpus]; 
+    cudaEvent_t stop_kernel[gpu_data.gpus];
+    float time[gpu_id];
+    gpuErrchk( cudaEventCreate (&start_kernel[gpu_id]) );
+    gpuErrchk( cudaEventCreate (&stop_kernel[gpu_id]) );
 
-// cudaStream_t stream[gpu_data.gpus];
-// for (int i=0;i<gpu_data.gpus;i++) {
-//     stream[i] = i;
-// }
-
-    
+    // cudaStream_t stream[gpu_data.gpus];
+    // for (int i=0;i<gpu_data.gpus;i++) {
+    //     stream[i] = i;
+    // }
 
 
-// Saurin's Code
-gpu_data.IL_start = pl_end_number+1;
-gpu_data.IL_end = pl_end_number*pl_end_number;
-
-//gpuErrchk( cudaEventRecord(start_kernel[gpu_id],(cudaStream_t)gpu_id));
-  
-kernelLauncher(gpu_id);
 
 
-//gpuErrchk( cudaEventRecord(stop_kernel[gpu_id],(cudaStream_t)gpu_id));
-//gpuErrchk( cudaEventSynchronize(stop_kernel[gpu_id]));
-//gpuErrchk( cudaEventElapsedTime(&time[gpu_id], start_kernel[gpu_id], stop_kernel[gpu_id]));
-//printf("GPU %d Time: %.2f ms\n", gpu_id, time[gpu_id]);
+    // Saurin's Code
+    gpu_data.IL_start = pl_end_number+1;
+    gpu_data.IL_end = pl_end_number*pl_end_number;
+
+    //gpuErrchk( cudaEventRecord(start_kernel[gpu_id],(cudaStream_t)gpu_id));
+
+    //return (void*) kernelLauncher(gpu_id);
+    ThreadRetValue* trv = kernelLauncher(gpu_id);
+    cout<< ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PRINTING trv "<< endl;
+    //printList(trv->primelist,trv->length);
+    cout << "trv address " << trv << endl;
+    return (void*) trv;
+
+
+    //gpuErrchk( cudaEventRecord(stop_kernel[gpu_id],(cudaStream_t)gpu_id));
+    //gpuErrchk( cudaEventSynchronize(stop_kernel[gpu_id]));
+    //gpuErrchk( cudaEventElapsedTime(&time[gpu_id], start_kernel[gpu_id], stop_kernel[gpu_id]));
+    //printf("GPU %d Time: %.2f ms\n", gpu_id, time[gpu_id]);
 
 }
 
@@ -103,15 +108,15 @@ int main(int argc, char *argv[]) {
         case 6:
             //long input_5;
             //input_5 = atol(argv[5]); //Fifth Input
-            
+
         case 5:
             //long input_4;
             //input_4 = atol(argv[4]); //Fourth Input
-            
+
         case 4:
             //long input_3;
             //input_3 = atol(argv[3]); // Third Input
-            
+
         case 3:
             long input_2;
             input_2 = atol(argv[2]); // Second Input
@@ -140,16 +145,17 @@ int main(int argc, char *argv[]) {
     }
 
     pheader = calculate_primes_on_cpu(pheader,pl_end_number);
-    
+
     cout << "pheader.length: " << pheader.length << endl;
 
-//    while(end_reached) {
+    //    while(end_reached) {
 
     //  *************** PTHREADS LAUNCH *******************
 
 
     pthread_t *thread = new pthread_t [number_of_gpus];
     int *thread_error = new int [number_of_gpus];
+    ThreadRetValue** trvs = new ThreadRetValue*[number_of_gpus];
 
     for (long i = 0; i < number_of_gpus; i++) {
         thread_error[i] = pthread_create(&thread[i], NULL, one_iteration, (void *) i);
@@ -161,19 +167,29 @@ int main(int argc, char *argv[]) {
         }
     }
     cout << "number_of_gpus -->>>> " << number_of_gpus<<endl;
+    void* ret ;
     for (long i = 0; i < number_of_gpus; i++) {
-        thread_error[i] = pthread_join(thread[i], NULL);
+        thread_error[i] = pthread_join(thread[i], &ret);
+        trvs[i] = (ThreadRetValue*) ret;
     }
 
-// output_combine();
+    for (long i = 0; i < number_of_gpus; i++) {
+        cout << "IN MAIN  length part "<< trvs[i]->length << endl;
+        printList(trvs[i]->primelist,trvs[i]->length);
+    }
+
+
+    // combine results
+
+    // output_combine();
 
     // INLINE
     //iteration_info();
 
-//}
+    //}
 
 
-// CODE
+    // CODE
 
     // INLINE
     //end_info();
