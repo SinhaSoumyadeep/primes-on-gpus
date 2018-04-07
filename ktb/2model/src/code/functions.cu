@@ -287,7 +287,8 @@ PrimeHeader calculate_primes_on_cpu(PrimeHeader pheader, uint64_cu pl_end_number
         cout << "Total Primes Calculated on CPU: " << small_sieve_counter << endl;
     }
 
-    uint64_cu *prime_list = new uint64_cu [small_sieve_counter];
+    //uint64_cu *prime_list = new uint64_cu [small_sieve_counter];
+    uint64_cu *prime_list = (uint64_cu*) malloc(small_sieve_counter * sizeof(uint64_cu));
 
     // Storing numbers from the sieve to an array.
     uint64_cu inner_counter = 0;

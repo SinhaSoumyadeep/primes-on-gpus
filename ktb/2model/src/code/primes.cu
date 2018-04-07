@@ -173,13 +173,35 @@ int main(int argc, char *argv[]) {
         trvs[i] = (ThreadRetValue*) ret;
     }
 
+    // FIRST find total new primes from each thread
+    uint64_cu newPrimesFromThreads = 0 ;
     for (long i = 0; i < number_of_gpus; i++) {
-        cout << "IN MAIN  length part "<< trvs[i]->length << endl;
-        printList(trvs[i]->primelist,trvs[i]->length);
+        newPrimesFromThreads += trvs[i]->length;
     }
 
+    newPrimesFromThreads += pheader.length;
+
+    cout << endl << "all newPrimesFromThreads " << newPrimesFromThreads << endl;
+    cout<<endl<<"this is before iteration combined"<<endl;
+    printList(pheader.primelist,pheader.length);
+
+    // now do realloc
+    uint64_cu* allPrimes = (uint64_cu*) realloc(pheader.primelist,newPrimesFromThreads);
+    uint64_cu* cpyPointer = allPrimes + pheader.length;
 
     // combine results
+    uint64_cu prevLength = 0; 
+    for (long i = 0; i < number_of_gpus; i++) {
+        uint64_cu threadListLength = trvs[i] -> length;
+        uint64_cu threadListBytes = threadListLength * sizeof(uint64_cu);
+        memcpy(cpyPointer + prevLength , trvs[i]->primelist, threadListBytes);
+        prevLength = threadListLength; 
+    }
+
+    pheader.primelist = allPrimes;
+    pheader.length = newPrimesFromThreads;
+    cout<<endl<< "this is after memcpy"<<endl;
+    printList(pheader.primelist,pheader.length);
 
     // output_combine();
 
