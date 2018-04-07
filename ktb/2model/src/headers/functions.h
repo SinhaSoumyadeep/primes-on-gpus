@@ -99,5 +99,6 @@ PrimeHeader calculate_primes_on_cpu(PrimeHeader pheader, uint64_cu pl_end_number
 
 #define INTSIZE sizeof(uint64_cu)
 void writePrimes(uint64_cu* primes, uint64_cu length, uint64_cu lastNo);
+PrimeHeader readPrimes();
 
 #endif // FUNCTIONS_H

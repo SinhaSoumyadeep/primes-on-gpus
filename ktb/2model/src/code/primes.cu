@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
     start_info(); // Complete
 
     number_of_gpus = find_number_of_gpus(); // Complete
-    //number_of_gpus = 1; // REMOVE THIS LINE!!!
+    //number_of_gpus = 1; // TODO REMOVE THIS LINE!!!
     number_of_gpus = pow(2,int(log(number_of_gpus)/log(2)));
     gpu_data.gpus = number_of_gpus;
 
@@ -145,9 +145,18 @@ int main(int argc, char *argv[]) {
         //color_reset();
     }
 
-    pheader = calculate_primes_on_cpu(pheader,pl_end_number);
+    pheader = readPrimes();
+
+    if(pheader.length == 0){
+        cout << " FILE HAD NO PRIMES , SO CALUCLATING on CPU first iteration" << endl;
+        pheader = calculate_primes_on_cpu(pheader,pl_end_number);
+    }else{
+        cout << pheader.length <<" primes were read from the file" << endl;
+    }
 
     cout << "pheader.length: " << pheader.length << endl;
+
+    cout << endl <<"pthread launch starting"<< endl;
 
     //    while(end_reached) {
 
@@ -185,7 +194,7 @@ int main(int argc, char *argv[]) {
 
     cout << endl << "all newPrimesFromThreads " << newPrimesFromThreads << endl;
     cout<<endl<<"this is before iteration combined"<<endl;
-    printList(pheader.primelist,pheader.length);
+    //printList(pheader.primelist,pheader.length);
 
     // now do realloc
     uint64_cu previousIterationPrimes = pheader.length;
@@ -211,7 +220,7 @@ int main(int argc, char *argv[]) {
 
     // write this iterations combined results
     cout << "thisIterationPrimes: "<< thisIterationPrimes << endl;
-    printList(cpyPointer, thisIterationPrimes);
+    //printList(cpyPointer, thisIterationPrimes);
     //writePrimes(pheader.primelist,pheader.length,pheader.lastMaxNo);
     writePrimes(cpyPointer, thisIterationPrimes, pheader.lastMaxNo);
 

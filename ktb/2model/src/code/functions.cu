@@ -238,18 +238,12 @@ PrimeHeader calculate_primes_on_cpu(PrimeHeader pheader, uint64_cu pl_end_number
     gpuErrchk( cudaEventCreate (&start));
     gpuErrchk( cudaEventCreate (&stop));
 
-
-
     // Create Small 
     if (DEBUG >=2) {
         cout << "Allocating SMALL_SIEVE" << endl;
     }
 
-
-
     bool *small_sieve = new bool [pl_end_number];
-
-
 
     // Initialize Small Sieve
     for (uint64_cu i = 0; i < pl_end_number; i++) {
@@ -272,7 +266,6 @@ PrimeHeader calculate_primes_on_cpu(PrimeHeader pheader, uint64_cu pl_end_number
     gpuErrchk( cudaEventSynchronize(stop));
     gpuErrchk( cudaEventElapsedTime(&time, start, stop));
     printf("CPU Time: %.2f ms till end prime number: %llu\n", time, pl_end_number);
-
 
     // Count Total Primes
     uint64_cu small_sieve_counter = 0;
@@ -334,6 +327,72 @@ void writePrimes(uint64_cu primes[], uint64_cu length, uint64_cu lastNo){
         fprintf(stderr,"Error clossing %s file, error-> %s",PRIME_FILENAME,strerror(errno));
         exit(1);
     }
-    
+}
+
+PrimeHeader readPrimes(){
+    PrimeHeader ret;
+    FILE* fin = fopen(PRIME_FILENAME,"rb");
+    if(!fin){
+        ret.lastMaxNo = 0 ;
+        ret.length = 0;
+        ret.primelist = NULL;
+        printf("fin null pointer");
+        return ret;
+    }
+    uint64_cu aggregatePrimes = 0 ;
+    PrimeHeader hdr;
+    uint64_cu offset = 0;
+    printf("\nFIRST PASS: to find number of total primes\n");
+    while(!feof(fin)){
+        uint64_cu nread = fread(&hdr, sizeof(PrimeHeader), 1, fin);
+        if(nread == 0)break;
+        aggregatePrimes += hdr.length;
+        printf("\nnread %llu ",nread);
+        printf("\tlastMaxNo-> %llu ",hdr.lastMaxNo);
+        printf("\tlength -> %llu ",hdr.length);
+        // skip past primes in current line
+        int ret = fseek(fin, (hdr.length *INTSIZE) , SEEK_CUR);
+        if(ret==-1){
+            fprintf(stderr,"Error in fseek %s file, error-> %s",PRIME_FILENAME,strerror(errno));
+            exit(1);
+        }
+    }
+
+    printf("\nAggregatePrimes %llu",aggregatePrimes);
+
+    // now read all primes
+    printf("\nSECOND PASS: to read all primes\n");
+    fseek(fin,0,SEEK_SET);
+    uint64_cu* retPtr = (uint64_cu*) malloc(aggregatePrimes * INTSIZE);
+    if(!retPtr){
+        fprintf(stderr,"Error in malloc of %llu primes, error-> %s",aggregatePrimes,strerror(errno));
+        exit(1);
+    }
+    offset = 0;
+
+    while(!feof(fin)){
+        uint64_cu nread = fread(&hdr, sizeof(PrimeHeader), 1, fin);
+        if(nread == 0)break;
+        printf("\nnread %llu ",nread);
+        ret.lastMaxNo = hdr.lastMaxNo;
+        printf("\tlastMaxNo-> %llu ",hdr.lastMaxNo);
+        printf("\tlength -> %llu ",hdr.length);
+        uint64_cu nreadArr = fread(retPtr + offset ,INTSIZE,hdr.length,fin);
+        if(nreadArr == 0){
+            fprintf(stderr,"Error in reading of %llu primes, 0 were read",hdr.length);
+            exit(1);
+        }
+        printf("\t %llu",nreadArr);
+        offset += hdr.length;
+    }
+    printf("\n*************  PRINT AGGREGATE PRIMES ****************\n");
+    //printList(retPtr,aggregatePrimes);
+    ret.length = aggregatePrimes;
+    ret.primelist = retPtr;
+    size_t num = fclose(fin);
+    if(num != 0){
+        fprintf(stderr,"Error clossing %s file, error-> %s",PRIME_FILENAME,strerror(errno));
+    }
+    return ret;
 }
 
