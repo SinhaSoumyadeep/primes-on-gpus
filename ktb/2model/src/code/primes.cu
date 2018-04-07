@@ -10,6 +10,7 @@ int number_of_gpus = 1;
 
 PrimeHeader pheader;
 GpuHandler gpu_data;
+const char* PRIME_FILENAME = "diskprime.txt";
 //long long int end_val = 1000000;
 
 
@@ -179,6 +180,7 @@ int main(int argc, char *argv[]) {
         newPrimesFromThreads += trvs[i]->length;
     }
 
+    uint64_cu thisIterationPrimes = newPrimesFromThreads;
     newPrimesFromThreads += pheader.length;
 
     cout << endl << "all newPrimesFromThreads " << newPrimesFromThreads << endl;
@@ -186,7 +188,9 @@ int main(int argc, char *argv[]) {
     printList(pheader.primelist,pheader.length);
 
     // now do realloc
-    uint64_cu* allPrimes = (uint64_cu*) realloc(pheader.primelist,newPrimesFromThreads);
+    uint64_cu previousIterationPrimes = pheader.length;
+    uint64_cu* allPrimes = (uint64_cu*) realloc(pheader.primelist,newPrimesFromThreads*sizeof(uint64_cu));
+    //uint64_cu* allPrimes = (uint64_cu*) malloc (pheader.primelist,newPrimesFromThreads);
     uint64_cu* cpyPointer = allPrimes + pheader.length;
 
     // combine results
@@ -200,8 +204,16 @@ int main(int argc, char *argv[]) {
 
     pheader.primelist = allPrimes;
     pheader.length = newPrimesFromThreads;
+    pheader.lastMaxNo = gpu_data.IL_end; 
     cout<<endl<< "this is after memcpy"<<endl;
-    printList(pheader.primelist,pheader.length);
+    //printList(pheader.primelist,pheader.length);
+
+
+    // write this iterations combined results
+    cout << "thisIterationPrimes: "<< thisIterationPrimes << endl;
+    printList(cpyPointer, thisIterationPrimes);
+    //writePrimes(pheader.primelist,pheader.length,pheader.lastMaxNo);
+    writePrimes(cpyPointer, thisIterationPrimes, pheader.lastMaxNo);
 
     // output_combine();
 

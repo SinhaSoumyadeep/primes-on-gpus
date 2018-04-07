@@ -3,6 +3,7 @@
 
 extern PrimeHeader pheader;
 extern GpuHandler gpu_data;
+extern const char* PRIME_FILENAME;
 
 
 using namespace std;
@@ -301,6 +302,39 @@ PrimeHeader calculate_primes_on_cpu(PrimeHeader pheader, uint64_cu pl_end_number
     pheader.primelist=prime_list;
     pheader.length=small_sieve_counter;
     pheader.lastMaxNo=pl_end_number; 
+    writePrimes(pheader.primelist,pheader.length,pheader.lastMaxNo);
 
     return (pheader);
 }
+
+void writePrimes(uint64_cu primes[], uint64_cu length, uint64_cu lastNo){
+    FILE * fout1 = fopen(PRIME_FILENAME,"ab+");
+    if(!fout1){
+        fprintf(stderr,"Error opening %s file for writing primes, error-> %s",PRIME_FILENAME,strerror(errno));
+        exit(1);
+    }
+
+    PrimeHeader hdr;
+    hdr.primelist = NULL;
+    hdr.lastMaxNo = lastNo;
+    hdr.length = length;
+
+    size_t num = fwrite(&hdr, sizeof(PrimeHeader), 1, fout1);
+    if(num!=1){
+        fprintf(stdout,"Error writing prime header needed 1 , written only %ld",num);
+        exit(1);
+    }
+    num = fwrite(primes, INTSIZE, length, fout1);
+    if(num!=length){
+        fprintf(stderr,"Error writing prime header needed %llu , written only %ld",length,num);
+        exit(1);
+    }
+    /*
+    num = fclose(fout1);
+    if(num != 0){
+        fprintf(stderr,"Error clossing %s file, error-> %s",PRIME_FILENAME,strerror(errno));
+        exit(1);
+    }
+    */
+}
+

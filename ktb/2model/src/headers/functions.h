@@ -29,12 +29,9 @@
 #include <memory>
 #include <stdexcept>
 
-
-
 using namespace std;
 
 typedef unsigned long long int uint64_cu;
-
 
 
 
@@ -98,5 +95,9 @@ PrimeHeader calculate_primes_on_cpu(PrimeHeader pheader, uint64_cu pl_end_number
        if (abort) exit(code);
     }
  }
+
+
+#define INTSIZE sizeof(uint64_cu)
+void writePrimes(uint64_cu* primes, uint64_cu length, uint64_cu lastNo);
 
 #endif // FUNCTIONS_H
