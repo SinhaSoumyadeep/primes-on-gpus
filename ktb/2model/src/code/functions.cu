@@ -329,12 +329,11 @@ void writePrimes(uint64_cu primes[], uint64_cu length, uint64_cu lastNo){
         fprintf(stderr,"Error writing prime header needed %llu , written only %ld",length,num);
         exit(1);
     }
-    /*
     num = fclose(fout1);
     if(num != 0){
         fprintf(stderr,"Error clossing %s file, error-> %s",PRIME_FILENAME,strerror(errno));
         exit(1);
     }
-    */
+    
 }
 
