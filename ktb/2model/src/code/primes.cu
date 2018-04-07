@@ -152,6 +152,7 @@ int main(int argc, char *argv[]) {
         pheader = calculate_primes_on_cpu(pheader,pl_end_number);
     }else{
         cout << pheader.length <<" primes were read from the file" << endl;
+        pl_end_number = pheader.lastMaxNo ;
     }
 
     cout << "pheader.length: " << pheader.length << endl;
