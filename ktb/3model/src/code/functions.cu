@@ -141,8 +141,6 @@ size: relates to size of memory
     // Should pass the 'blocksFor_splitIL' too?
     //prime_generator<<<(PL_len/THREADS_PER_BLOCK) + 1 , THREADS_PER_BLOCK>>>(d_IL, d_PL, d_startInputlist, d_blocksFor_splitIL, d_elementsPerILSplit);
     //
-    cout << "Block Size: " <<  PL_len/THREADS_PER_BLOCK + 1 << endl;
-    //cout << "Threads Per block: " << THREADS_PER_BLOCK << endl;                                                                                                      10^6-10^3/2         #168
 
     cudaEvent_t start_kernel; 
     cudaEvent_t stop_kernel;
@@ -151,7 +149,8 @@ size: relates to size of memory
     gpuErrchk( cudaEventCreate (&stop_kernel) );
     gpuErrchk( cudaEventRecord(start_kernel,0));
 
-    prime_generator<<<dim3((PL_len/THREADS_PER_BLOCK) + 1,1,1 ), dim3(THREADS_PER_BLOCK,1,1)>>>(d_IL, d_PL, d_startInputlist, d_elementsPerILSplit, d_PL_len);
+    cout << "Block Size: " <<  ((elementsPerILSplit/THREADS_PER_BLOCK) + 1) << endl;
+    prime_generator<<<dim3((elementsPerILSplit/THREADS_PER_BLOCK) + 1,1,1 ), dim3(THREADS_PER_BLOCK,1,1)>>>(d_IL, d_PL, d_startInputlist, d_elementsPerILSplit, d_PL_len);
 
     gpuErrchk( cudaEventRecord(stop_kernel,0) );
     gpuErrchk( cudaEventSynchronize(stop_kernel));
