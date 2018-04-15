@@ -73,8 +73,12 @@ void *one_iteration(void *tid) {
 
 
     // Saurin's Code
-    gpu_data.IL_start = pl_end_number+1;
-    gpu_data.IL_end = pl_end_number*pl_end_number;
+    //gpu_data.IL_start = 100000000 +1;
+    // gpu_data.IL_end = 10000000000;
+
+    gpu_data.IL_start = pl_end_number +1;
+    gpu_data.IL_end = pl_end_number* pl_end_number;
+
 
     //gpuErrchk( cudaEventRecord(start_kernel[gpu_id],(cudaStream_t)gpu_id));
 
@@ -103,8 +107,8 @@ int main(int argc, char *argv[]) {
     start_info(); // Complete
 
     number_of_gpus = find_number_of_gpus(); // Complete
-    //number_of_gpus = 1; // TODO REMOVE THIS LINE!!!
     number_of_gpus = pow(2,int(log(number_of_gpus)/log(2)));
+    //number_of_gpus = 1; // TODO REMOVE THIS LINE!!!
     gpu_data.gpus = number_of_gpus;
 
     // Accepting input from Console

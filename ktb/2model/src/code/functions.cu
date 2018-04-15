@@ -152,7 +152,9 @@ size: relates to size of memory
 
 
     // Allocate space on host to copy back the splitIL from device:
-    int *result = (int*) malloc(blocksFor_splitIL*sizeof(int));
+    int *result; // = (int*) malloc(blocksFor_splitIL*sizeof(int));
+    gpuErrchk(cudaMallocHost((void**)&result,blocksFor_splitIL*sizeof(int)));
+
     cout << "KTB: " << blocksFor_splitIL*sizeof(int) << " Result: " << result<<endl;
     // Copy the result back to the host:
     //    yellow_start();
@@ -176,6 +178,7 @@ size: relates to size of memory
     //red_start();
     cout << "*********** I am GPU: " << gpu_id << ", foundPrimes "<< foundPrimes << endl;
 
+    // TODO : make it malloc
     uint64_cu* newPrimeList = new uint64_cu[foundPrimes];
     uint64_cu count = 0;
     for(uint64_cu index=0;index<elementsPerILSplit; index++){
@@ -188,7 +191,7 @@ size: relates to size of memory
     }
 
     //printList(newPrimeList,foundPrimes);
-    //ThreadRetValue* tretvalue = (ThreadRetValue* ) malloc(sizeof(ThreadRetValue));
+    //ThreadRetValue* tretvalue = (ThreadRetValue* ) malloc(sizeof(ThreadRetValue)); TODO: non issue of new against malloc
     ThreadRetValue* tretvalue = new ThreadRetValue();
     tretvalue->primelist = newPrimeList;
     tretvalue->length = foundPrimes;

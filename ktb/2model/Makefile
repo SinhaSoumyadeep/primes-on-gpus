@@ -3,9 +3,10 @@
 # Created by KAUSTUBH SHIVDIKAR
 
 TARGET=primes.bin
-
+GPU_ARCH = compute_35
+GPU_CODE = sm_35
 NVCC=nvcc
-FLAGS=-O0 -std=c++11 -Xcompiler="-pthread" -g #-G -Xptxas=-v
+FLAGS=-O0 -std=c++11 -Xcompiler="-pthread" -arch=$(GPU_ARCH) -code=$(GPU_CODE) #-g -G -Xptxas=-v
 LDFLAGS=
 ROOT_DIR=$(PWD)
 CODE_DIR=$(ROOT_DIR)/src/code
