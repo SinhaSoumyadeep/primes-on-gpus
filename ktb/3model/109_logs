@@ -1,0 +1,59 @@
+[1;32m
+
+
+
+
+
+
+
+
+
+Program Start
+[0m
+FIRST PASS: to find number of total primes
+
+nread 1 	lastMaxNo-> 100 	length -> 25 
+nread 1 	lastMaxNo-> 10000 	length -> 1204 
+nread 1 	lastMaxNo-> 100000000 	length -> 5760226 
+AggregatePrimes 5761455
+SECOND PASS: to read all primes
+
+nread 1 	lastMaxNo-> 100 	length -> 25 	 25
+nread 1 	lastMaxNo-> 10000 	length -> 1204 	 1204
+nread 1 	lastMaxNo-> 100000000 	length -> 5760226 	 5760226
+*************  PRINT AGGREGATE PRIMES ****************
+5761455 primes were read from the file
+pheader.length: 5761455
+
+pthread launch starting
+number_of_gpus -->>>> 2
+Launched GPU Handler: 0
+Launched GPU Handler: 1
+
+#################### START of gpu_id 0 ####################
+Running on GPU with ID = 0
+size_PL = 46091640 bytes
+IL_len = 900000000
+IL_start = 100000001
+IL_end = 1000000000
+
+blocksFor_splitIL = 14062500 blocks of 'int' type
+startInputlist = 100000001
+
+elementsPerILSplit = 450000000
+PL_len (= pheader.length) = 5761455
+Block Size: 180046
+
+#################### START of gpu_id 1 ####################
+Running on GPU with ID = 1
+size_PL = 46091640 bytes
+IL_len = 900000000
+IL_start = 100000001
+IL_end = 1000000000
+
+blocksFor_splitIL = 14062500 blocks of 'int' type
+startInputlist = 550000001
+
+elementsPerILSplit = 450000000
+PL_len (= pheader.length) = 5761455
+Block Size: 180046
