@@ -33,12 +33,13 @@ __global__ void prime_generator(int* d_input_list, uint64_cu* d_prime_list, uint
         uint64_cu primes=d_prime_list[tid];
         for(uint64_cu i=0;i<d_total_inputsize[0];i++) { // Added less than eual to here.
             uint64_cu bucket= i/(WORD);
-            uint64_cu setbit= i%(WORD);
+            int setbit= i%(WORD);
             uint64_cu number=d_startPrimelist[0]+i;
             //printf("THE NUMBER %llu IS BEING DIVIDED BY %llu\n",number,primes);
             if(number%primes==0) {
                 //printf("%llu is divisible by %llu \n", number,primes);
-                d_input_list[bucket]=d_input_list[bucket]| 1U<<setbit;
+                // THIS WAS WRONG  : d_input_list[bucket]=d_input_list[bucket]| 1U<<setbit;
+                atomicOr(&d_input_list[bucket],1U<<setbit);
             }
         }
     } 
@@ -50,6 +51,8 @@ __global__ void prime_generator(int* d_input_list, uint64_cu* d_prime_list, uint
 
 void *one_iteration(void *tid) {
     long gpu_id = (long) tid; // Dont use tid, Use gpu_id instead
+    // Select the device:
+    gpuErrchk( cudaSetDevice(gpu_id) );
 
     if (DEBUG >= 1) {
         cout << "Launched GPU Handler: " << gpu_id << endl;

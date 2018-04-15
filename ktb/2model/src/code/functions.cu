@@ -88,9 +88,7 @@ len: relates to number of elements
 size: relates to size of memory
      */
 
-    // Select the device:
     cout <<endl<< "#################### START of gpu_id "<< gpu_id << " ####################"<<endl;
-    gpuErrchk( cudaSetDevice(gpu_id) );
 
     uint64_cu IL_len =  gpu_data.IL_end - gpu_data.IL_start + 1;
     int total_gpus = gpu_data.gpus;
