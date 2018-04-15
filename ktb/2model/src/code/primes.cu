@@ -1,5 +1,6 @@
-#include <functions.h>
+
 #include <debugger.h>
+#include<functions.h>
 
 using namespace std;
 
@@ -58,11 +59,11 @@ void *one_iteration(void *tid) {
         cout << "Launched GPU Handler: " << gpu_id << endl;
     }
 
-    cudaEvent_t start_kernel[gpu_data.gpus]; 
-    cudaEvent_t stop_kernel[gpu_data.gpus];
-    float time[gpu_id];
-    gpuErrchk( cudaEventCreate (&start_kernel[gpu_id]) );
-    gpuErrchk( cudaEventCreate (&stop_kernel[gpu_id]) );
+    cudaEvent_t start_kernel; 
+    cudaEvent_t stop_kernel;
+    float time;
+    gpuErrchk( cudaEventCreate (&start_kernel) );
+    gpuErrchk( cudaEventCreate (&stop_kernel) );
 
     // cudaStream_t stream[gpu_data.gpus];
     // for (int i=0;i<gpu_data.gpus;i++) {
@@ -80,21 +81,22 @@ void *one_iteration(void *tid) {
     gpu_data.IL_end = pl_end_number* pl_end_number;
 
 
-    //gpuErrchk( cudaEventRecord(start_kernel[gpu_id],(cudaStream_t)gpu_id));
+    gpuErrchk( cudaEventRecord(start_kernel,0));
 
     //return (void*) kernelLauncher(gpu_id);
     ThreadRetValue* trv = kernelLauncher(gpu_id);
     cout<< ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PRINTING trv "<< endl;
     //printList(trv->primelist,trv->length);
     cout << "trv address " << trv << endl;
+
+
+    gpuErrchk( cudaEventRecord(stop_kernel,0) );
+    gpuErrchk( cudaEventSynchronize(stop_kernel));
+    gpuErrchk( cudaEventElapsedTime(&time, start_kernel, stop_kernel));
+    green_start();
+    printf("GPU %ld Time: %.2f ms\n", gpu_id, time);
+    color_reset();
     return (void*) trv;
-
-
-    //gpuErrchk( cudaEventRecord(stop_kernel[gpu_id],(cudaStream_t)gpu_id));
-    //gpuErrchk( cudaEventSynchronize(stop_kernel[gpu_id]));
-    //gpuErrchk( cudaEventElapsedTime(&time[gpu_id], start_kernel[gpu_id], stop_kernel[gpu_id]));
-    //printf("GPU %d Time: %.2f ms\n", gpu_id, time[gpu_id]);
-
 }
 
 
@@ -205,7 +207,7 @@ int main(int argc, char *argv[]) {
     //printList(pheader.primelist,pheader.length);
 
     // now do realloc
-    uint64_cu previousIterationPrimes = pheader.length;
+   // uint64_cu previousIterationPrimes = pheader.length;
     uint64_cu* allPrimes = (uint64_cu*) realloc(pheader.primelist,newPrimesFromThreads*sizeof(uint64_cu));
     //uint64_cu* allPrimes = (uint64_cu*) malloc (pheader.primelist,newPrimesFromThreads);
     uint64_cu* cpyPointer = allPrimes + pheader.length;

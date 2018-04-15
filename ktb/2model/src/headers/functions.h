@@ -65,9 +65,9 @@ typedef struct ThreadRetValue{
 struct GpuHandler {
     int gpus=-1;
     uint64_cu* PL = NULL;
-    uint64_cu PL_len = -1;;
-    uint64_cu IL_start = -1; 
-    uint64_cu IL_end = -1; 
+    uint64_cu PL_len = 0;
+    uint64_cu IL_start = 1; 
+    uint64_cu IL_end = 1; 
 };
 
 

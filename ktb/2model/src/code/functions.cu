@@ -8,7 +8,6 @@ extern const char* PRIME_FILENAME;
 
 using namespace std;
 
-#define WARNINGS 0
 
 long find_number_of_gpus() {
     // System command to find number of GPUs attached 
@@ -62,10 +61,6 @@ void iteration_info() {
 
 }
 
-
-uint64_cu countPrimes(uint64_cu* result, uint64_cu length){
-
-}
 
 void printList(uint64_cu* ilist, uint64_cu len){
     printf("\n(START, length-> %llu)\n", len);
@@ -168,7 +163,7 @@ size: relates to size of memory
     for(uint64_cu index=0;index<elementsPerILSplit; index++){
         uint64_cu bucket = index / (WORD);
         uint64_cu setbit = index % (WORD);
-        uint64_cu actualNumber = startInputlist + index;
+       // uint64_cu actualNumber = startInputlist + index;
         if( !(result[bucket] & (1U << (setbit)))){
             //cout << actualNumber << " is prime?? "<< endl;
             foundPrimes ++;
