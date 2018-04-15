@@ -143,8 +143,22 @@ size: relates to size of memory
     //
     cout << "Block Size: " <<  PL_len/THREADS_PER_BLOCK + 1 << endl;
     //cout << "Threads Per block: " << THREADS_PER_BLOCK << endl;                                                                                                      10^6-10^3/2         #168
+
+    cudaEvent_t start_kernel; 
+    cudaEvent_t stop_kernel;
+    float time;
+    gpuErrchk( cudaEventCreate (&start_kernel) );
+    gpuErrchk( cudaEventCreate (&stop_kernel) );
+    gpuErrchk( cudaEventRecord(start_kernel,0));
+
     prime_generator<<<dim3((PL_len/THREADS_PER_BLOCK) + 1,1,1 ), dim3(THREADS_PER_BLOCK,1,1)>>>(d_IL, d_PL, d_startInputlist, d_elementsPerILSplit, d_PL_len);
 
+    gpuErrchk( cudaEventRecord(stop_kernel,0) );
+    gpuErrchk( cudaEventSynchronize(stop_kernel));
+    gpuErrchk( cudaEventElapsedTime(&time, start_kernel, stop_kernel));
+    green_start();
+    printf("KERNEL GPU %d Time: %.2f ms\n", gpu_id, time);
+    color_reset();
 
     // Allocate space on host to copy back the splitIL from device:
     int *result; // = (int*) malloc(blocksFor_splitIL*sizeof(int));

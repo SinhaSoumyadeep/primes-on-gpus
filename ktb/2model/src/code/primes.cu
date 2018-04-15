@@ -40,7 +40,9 @@ __global__ void prime_generator(int* d_input_list, uint64_cu* d_prime_list, uint
             if(number%primes==0) {
                 //printf("%llu is divisible by %llu \n", number,primes);
                 // THIS WAS WRONG  : d_input_list[bucket]=d_input_list[bucket]| 1U<<setbit;
-                atomicOr(&d_input_list[bucket],1U<<setbit);
+                if(0 == (d_input_list[bucket] & 1U<<setbit)){ // testbit 
+                    atomicOr(&d_input_list[bucket],1U<<setbit); // setbit
+                }
             }
         }
     } 
@@ -74,11 +76,11 @@ void *one_iteration(void *tid) {
 
 
     // Saurin's Code
-    //gpu_data.IL_start = 100000000 +1;
-    // gpu_data.IL_end = 10000000000;
+    gpu_data.IL_start = 100000000 +1;
+    gpu_data.IL_end = 1000000000;
 
-    gpu_data.IL_start = pl_end_number +1;
-    gpu_data.IL_end = pl_end_number* pl_end_number;
+    //gpu_data.IL_start = pl_end_number +1;
+    //gpu_data.IL_end = pl_end_number* pl_end_number;
 
 
     gpuErrchk( cudaEventRecord(start_kernel,0));
@@ -207,7 +209,7 @@ int main(int argc, char *argv[]) {
     //printList(pheader.primelist,pheader.length);
 
     // now do realloc
-   // uint64_cu previousIterationPrimes = pheader.length;
+    //uint64_cu previousIterationPrimes = pheader.length;
     uint64_cu* allPrimes = (uint64_cu*) realloc(pheader.primelist,newPrimesFromThreads*sizeof(uint64_cu));
     //uint64_cu* allPrimes = (uint64_cu*) malloc (pheader.primelist,newPrimesFromThreads);
     uint64_cu* cpyPointer = allPrimes + pheader.length;
